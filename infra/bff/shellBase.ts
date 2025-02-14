@@ -2,6 +2,7 @@
 import startSpinner from "lib/terminalSpinner.ts";
 import { getLogger } from "packages/logger.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import { register } from "infra/bff/bff.ts";
 const logger = getLogger(import.meta);
 
 // Global array to track running child processes
