@@ -55,48 +55,6 @@ export async function run(): Promise<number> {
     try {
       logger.info("Starting web server and Python backend...");
 
-      // Start Python server
-      logger.info("Starting Python server...");
-      const pythonProc = new Deno.Command("python", {
-        args: ["packages/python_server/server.py"],
-        stdin: "null",
-        stdout: "piped",
-        stderr: "piped",
-        env: {
-          ...Deno.env.toObject(),
-          PORT: "3333",  // Explicitly set Python server port
-        },
-      }).spawn();
-
-      // Keep track of the process
-      runningProcesses.push(pythonProc);
-
-      // Handle Python server logs
-      if (pythonProc.stdout) {
-        (async () => {
-          for await (const chunk of pythonProc.stdout) {
-            const text = new TextDecoder().decode(chunk);
-            logger.info("[Python] " + text);
-          }
-        })();
-      }
-
-      if (pythonProc.stderr) {
-        (async () => {
-          for await (const chunk of pythonProc.stderr) {
-            const text = new TextDecoder().decode(chunk);
-            logger.error("[Python] " + text);
-          }
-        })();
-      }
-
-      // Wait for Python server to be ready
-      logger.info("Waiting for Python server to be ready on port 3333...");
-      const pythonReady = await waitForPort(3333, "Python Server");
-      if (!pythonReady) {
-        throw new Error("Python server failed to start");
-      }
-
       // Verify the web binary exists
       try {
         const webBinaryInfo = await Deno.stat("./build/web");
