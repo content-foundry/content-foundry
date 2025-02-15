@@ -1,10 +1,8 @@
-import { isBrowser } from "packages/logger.ts";
-
 export function getConfigurationVariable(
   configVar: string,
 ): string | undefined {
   let returnable = undefined;
-  if (isBrowser()) {
+  if (typeof Deno === "undefined") {
     // @ts-expect-error global environment variables
     returnable = globalThis.__ENVIRONMENT__?.[configVar];
   } else {

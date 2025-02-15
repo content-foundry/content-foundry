@@ -15,7 +15,7 @@ import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 // import { toBfGid } from "packages/bfDb/classes/BfBaseModelIdTypes.ts";
 // import { getLogger } from "packages/logger/logger.ts";
 
-const logger = getLogger(import.meta);
+const _logger = getLogger(import.meta);
 
 export type GraphqlNode = {
   __typename: string;

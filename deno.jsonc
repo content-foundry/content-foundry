@@ -48,7 +48,8 @@
   "exclude": [
     ".cache",
     "build",
-    "static"
+    "static",
+    "**/__TEMPLATE__.*"
   ],
   "lint": {
     "exclude": [

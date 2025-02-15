@@ -14,7 +14,7 @@ export const submitYcFormMutation = mutationField("submitYcForm", {
     systemPrompt: stringArg(),
   },
   type: graphqlYCRecommendationsType,
-  resolve: async (_, { formData, taskPrompt, systemPrompt }, ctx) => {
+  resolve: async (_, { formData, taskPrompt, systemPrompt }) => {
     if (!formData) {
       throw new Error("No formData");
     }

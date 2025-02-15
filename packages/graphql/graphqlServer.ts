@@ -1,6 +1,6 @@
 #! /usr/bin/env -S deno run --allow-write --allow-read --allow-env
 
-import { connectionPlugin, makeSchema, queryField } from "nexus";
+import { connectionPlugin, makeSchema } from "nexus";
 import { createYoga } from "graphql-yoga";
 
 import * as types from "packages/graphql/__generated__/graphqlTypesList.ts";
@@ -9,11 +9,6 @@ import type { SchemaConfig } from "nexus/dist/builder.js";
 import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
-
-const helloField = queryField("hello", {
-  type: "String",
-  resolve: () => "world",
-});
 
 const schemaOptions: SchemaConfig = {
   types,
@@ -48,7 +43,8 @@ export const yoga = createYoga({ schema });
 
 export const graphQLHandler = async (req: Request) => {
   using ctx = await createContext(req);
-  const res = await yoga.handleRequest(req, ctx as any);
+  // @ts-expect-error bad types or something
+  const res = await yoga.handleRequest(req, ctx);
   const responseHeaders = ctx.getResponseHeaders();
 
   for (const [key, value] of responseHeaders) {

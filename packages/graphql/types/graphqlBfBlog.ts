@@ -1,4 +1,4 @@
-import { idArg, objectType, queryField } from "nexus";
+import { idArg, objectType } from "nexus";
 import { BfBlogPost } from "packages/bfDb/models/BfBlogPost.ts";
 import { connectionFromArray } from "graphql-relay";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
@@ -43,7 +43,7 @@ export const graphqlBfBlogType = objectType({
     t.connectionField("posts", {
       type: graphqlBfBlogPostType,
       // @ts-ignore problem with compiling on deno pre 2.1.7
-      resolve: async (parent, args, ctx) => {
+      resolve: async (_parent, args, _ctx) => {
         const posts = await BfBlogPost.query();
         return connectionFromArray(posts.map((post) => post.toGraphql()), args);
       },
