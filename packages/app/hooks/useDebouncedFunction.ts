@@ -6,6 +6,7 @@ import { useCallback, useRef } from "react";
  * @param delay Delay in milliseconds
  * @returns Debounced function
  */
+// deno-lint-ignore no-explicit-any
 export function useDebouncedFunction<T extends (...args: any[]) => any>(
   fn: T,
   delay: number,

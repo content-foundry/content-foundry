@@ -17,7 +17,6 @@ import {
 // import type { Environment } from "relay-runtime";
 import { getEnvironment } from "packages/app/isographEnvironment.ts";
 import { getLogger } from "packages/logger.ts";
-import { useMemo } from "react";
 
 const logger = getLogger(import.meta);
 
@@ -50,7 +49,7 @@ export function AppEnvironmentProvider(
     ...appEnvironment
   }: React.PropsWithChildren<ServerProps>,
 ) {
-  const { posthogKey } = appEnvironment;
+  // const { posthogKey } = appEnvironment;
   const isographEnvironment = isographServerEnvironment ??
     getEnvironment();
   // const currentViewerId = props.currentViewer?.id;

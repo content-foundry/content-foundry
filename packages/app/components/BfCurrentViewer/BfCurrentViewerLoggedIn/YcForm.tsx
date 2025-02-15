@@ -6,9 +6,7 @@ import { getLogger } from "packages/logger.ts";
 import { BfDsFormSubmitButton } from "packages/bfDs/components/BfDsForm/BfDsFormSubmitButton.tsx";
 import { useMutation } from "packages/app/hooks/isographPrototypes/useMutation.tsx";
 import ycFormSubmitMutation from "packages/app/__generated__/__isograph/Mutation/SubmitYcForm/entrypoint.ts";
-import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { Revision } from "packages/app/components/ContentOS/Revision.tsx";
-import { BfDsFullPageSpinner } from "packages/bfDs/components/BfDsSpinner.tsx";
 
 const logger = getLogger(import.meta);
 
@@ -62,7 +60,7 @@ export const YcForm = iso(`
   field BfCurrentViewerLoggedIn.YcForm @component {
     __typename
   }
-`)(function YcForm({ data }) {
+`)(function YcForm() {
   const { commit } = useMutation(ycFormSubmitMutation);
   const [revisions, setRevisions] = useState<Revisions>({});
   const [submitted, setSubmitted] = useState(false);
