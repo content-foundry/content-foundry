@@ -268,6 +268,37 @@ async function processPath(
 }
 
 /** 
+ * Check if a file appears to be binary by examining its first few bytes.
+ * Returns true if the file seems to be binary, false if it looks like text.
+ */
+async function isBinaryFile(filePath: string): Promise<boolean> {
+  try {
+    // Read first 512 bytes
+    const file = await Deno.open(filePath);
+    const buffer = new Uint8Array(512);
+    const bytesRead = await file.read(buffer);
+    file.close();
+
+    if (bytesRead === null) return false; // Empty file, treat as text
+
+    // Check the actual bytes read
+    const slice = buffer.slice(0, bytesRead);
+
+    // Look for null bytes or high concentration of non-printable chars
+    let suspiciousBytes = 0;
+    for (const byte of slice) {
+      if (byte === 0) return true; // Null byte -> definitely binary
+      if (byte < 7 || (byte > 14 && byte < 32)) suspiciousBytes++;
+    }
+
+    // If more than 30% non-printable chars, likely binary
+    return (suspiciousBytes / bytesRead) > 0.3;
+  } catch {
+    return false; // If can't read file, treat as text (let downstream handle it)
+  }
+}
+
+/** 
  * Output a single file’s content, either in default or XML-ish mode. 
  */
 async function outputOneFile(
@@ -276,6 +307,11 @@ async function outputOneFile(
   opts: LlmOptions,
   docIndex: number,
 ): Promise<number> {
+  // First check if it's a binary file
+  if (await isBinaryFile(filePath)) {
+    return docIndex; // Skip binary files silently
+  }
+
   let content: string;
   try {
     content = await Deno.readTextFile(filePath);

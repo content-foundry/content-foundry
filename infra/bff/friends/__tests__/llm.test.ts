@@ -261,3 +261,29 @@ Deno.test("llm - extension filtering", async () => {
     await emptyDir(testDir);
   }
 });
+
+Deno.test("llm - ignoring binary files", async () => {
+  const testDir = await Deno.makeTempDir({ prefix: "llm_test_" });
+
+  try {
+    // Create a text file
+    const textFile = join(testDir, "text.txt");
+    await Deno.writeTextFile(textFile, "This is text content");
+
+    // Create a "binary" file with some null bytes and non-printable chars
+    const binaryFile = join(testDir, "binary.bin");
+    const binaryContent = new Uint8Array([0, 1, 2, 3, 0, 5, 6, 7, 0]);
+    await Deno.writeFile(binaryFile, binaryContent);
+
+    const output = await runLlmAndCapture([testDir]);
+    const joinedOutput = output.join("\n");
+
+    // Should see the text file
+    assertStringIncludes(joinedOutput, "This is text content");
+
+    // Should NOT see the binary file path at all
+    assert(!joinedOutput.includes("binary.bin"), "Binary file should not be listed");
+  } finally {
+    await emptyDir(testDir);
+  }
+});
