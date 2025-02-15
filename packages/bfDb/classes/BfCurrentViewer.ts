@@ -5,9 +5,9 @@ import type {
   RegistrationResponseJSON,
   WebAuthnCredential,
 } from "@simplewebauthn/server";
+// deno-lint-ignore no-external-import
 import { Buffer } from "node:buffer";
 import { BfPerson } from "packages/bfDb/models/BfPerson.ts";
-import { generateUUID } from "lib/generateUUID.ts";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = Buffer.from("content-foundry-secret-key");
@@ -67,7 +67,7 @@ export abstract class BfCurrentViewer {
   get id() {
     return `${this.constructor.name}#${this.bfGid}⚡️${this.bfOid}`;
   }
-  static async createFromRequest(
+  static createFromRequest(
     importMeta: ImportMeta,
     request: Request,
     responseHeaders: Headers,
@@ -163,7 +163,7 @@ export abstract class BfCurrentViewer {
     );
   }
 
-  static async createForDemo(importMeta: ImportMeta, responseHeaders: Headers) {
+  static createForDemo(importMeta: ImportMeta, responseHeaders: Headers) {
     const id = toBfGid("DEMO");
 
     BfCurrentViewer.setLoginSuccessHeaders(

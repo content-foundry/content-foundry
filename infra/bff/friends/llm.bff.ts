@@ -369,6 +369,7 @@ async function outputOneFile(
 function shouldIgnore(
   filePath: string,
   ignorePatterns: string[],
+  _ignoreFilesOnly: boolean,
 ): boolean {
   for (const pattern of ignorePatterns) {
     // Convert the user pattern into a regex

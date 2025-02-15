@@ -1,4 +1,5 @@
-import { init, me } from "@replit/extensions";
+// deno-lint-ignore no-external-import
+import { init, me } from "https://esm.sh/@replit/extensions";
 const updatable = document.querySelector(".updatable");
 const { dispose } = await init({ timeout: 1000 });
 const filePath = await me.filePath();

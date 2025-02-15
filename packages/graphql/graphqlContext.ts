@@ -1,21 +1,15 @@
 import { getLogger } from "packages/logger.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
-// import type { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
-import type { Connection, ConnectionArguments } from "graphql-relay";
 import type {
   BfNodeBase,
   BfNodeBaseProps,
 } from "packages/bfDb/classes/BfNodeBase.ts";
-import { BfErrorNotImplemented } from "packages/BfError.ts";
 import type { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
-import type { GraphqlNode } from "packages/graphql/types/graphqlBfNode.ts";
-// import { BfBlogPost } from "packages/bfDb/models/BfBlogPost.ts";
 import type { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { BfPerson } from "packages/bfDb/models/BfPerson.ts";
-import {
+import type {
   AuthenticationResponseJSON,
-  PublicKeyCredentialCreationOptionsJSON,
   RegistrationResponseJSON,
 } from "@simplewebauthn/server";
 
@@ -23,7 +17,7 @@ const logger = getLogger(import.meta);
 
 export type Context = {
   [Symbol.dispose]: () => void;
-  getCvForGraphql(): any;
+  getCvForGraphql(): { __typename: string; id: string };
   createTargetNode<
     TProps extends BfNodeBaseProps,
     TBfClass extends typeof BfNode<TProps>,
@@ -57,12 +51,6 @@ export type Context = {
     email: string,
   ): Promise<BfPerson>;
   getRequestHeader(name: string): string | null;
-  queryTargetsConnection<T, U extends typeof BfNodeBase>(
-    source: T,
-    BfClass: U,
-    args: ConnectionArguments,
-  ): Promise<Connection<GraphqlNode>>;
-
   getResponseHeaders(): Headers;
   loginDemoUser(): Promise<BfCurrentViewer>;
 };
@@ -193,10 +181,6 @@ export async function createContext(request: Request): Promise<Context> {
     login,
     register,
     loginDemoUser,
-
-    async queryTargetsConnection(source, BfClass, args) {
-      throw new BfErrorNotImplemented();
-    },
   };
   return ctx;
 }

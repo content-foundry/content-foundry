@@ -3,7 +3,7 @@ import {
   type BfNodeBaseProps,
 } from "packages/bfDb/classes/BfNodeBase.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
-import { type BfNodeCache } from "packages/bfDb/classes/BfNodeBase.ts";
+import type { BfNodeCache } from "packages/bfDb/classes/BfNodeBase.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { getLogger } from "packages/logger.ts";
 import { walk } from "@std/fs/walk";
@@ -102,9 +102,9 @@ export class BfDocsPost extends BfNodeBase<BfDocsPostProps> {
     TProps extends BfNodeBaseProps,
     T extends BfNodeBase<TProps>,
   >(
-    cv: BfCurrentViewer,
+    _cv: BfCurrentViewer,
     id: BfGid,
-    cache?: BfNodeCache,
+    _cache?: BfNodeCache,
   ): Promise<T> {
     const postsCache = await this.getPostsCache();
     const item = postsCache.get(id);

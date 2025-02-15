@@ -1,6 +1,7 @@
 import { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
 import { getLogger } from "packages/logger.ts";
-const logger = getLogger(import.meta);
+
+const _logger = getLogger(import.meta);
 
 export type BfBrandBookProps = {
   littleGoldenBook: string;
