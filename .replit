@@ -1,5 +1,5 @@
 entrypoint = "README.md"
-modules = ["postgresql-16", "python-3.11"]
+modules = ["postgresql-16"]
 
 [nix]
 channel = "unstable"
@@ -7,7 +7,7 @@ channel = "unstable"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "bff build"]
-run = ["sh", "-c", "./build/web && python packages/python_server/server.py"]
+run = ["sh", "-c", "./build/web"]
 
 [languages.deno]
 pattern = "**/*.{ts,js,tsx,jsx,json,jsonc,md,mdx}"
@@ -18,45 +18,6 @@ enable = true
 lint = true
 config = "./deno.jsonc"
 
-[objectStorage]
-defaultBucketID = "replit-objstore-606cdad4-5695-4398-ba16-1878dd101ab7"
-
-[extension]
-isExtension = true
-
-[env]
-HISTFILE = "/home/runner/${REPL_SLUG}/.cache/bash_history"
-HISTCONTROL = "ignoredups"
-HISTFILESIZE = "100000"
-HISTSIZE = "10000"
-FLAG_DIRENV = "1"
-REPLIT_PID1_FLAG_DIRENV = "1"
-FLAKE_PATH = "$HOME/workspace/nix_system/bin"
-INFRA_BIN_PATH = "$HOME/workspace/infra/bin"
-PATH = "$INFRA_BIN_PATH:$FLAKE_PATH:$PATH"
-REPLIT_PORT_THINGY="8284"
-DENO_TRACE_PERMISSIONS="true"
-DENO_NO_UPDATE_CHECK="1"
-OTEL_EXPORTER_OTLP_HEADERS="authorization=$HYPERDX_INGESTION_KEY"
-OTEL_EXPORTER_OTLP_ENDPOINT="https://in-otel.hyperdx.io"
-OTEL_SERVICE_NAME="CONTENT_FOUNDRY"
-BF_ENV="DEVELOPMENT"
-
-[[ports]]
-localPort = 3011
-externalPort = 3001
-
-[[ports]]
-localPort = 3333
-
-[[ports]]
-localPort = 8000
-externalPort = 80
-
-[[ports]]
-localPort = 8888
-externalPort = 3000
-
 [workflows]
 runButton = "Run app"
 
@@ -66,55 +27,50 @@ author = 33272860
 mode = "sequential"
 
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Build"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Run servers"
-
-[[workflows.workflow]]
-name = "DevTools"
-author = 33272860
+task = "shell.exec"
+args = "bff build || (sleep 20 || exit 1)"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bff devTools"
+args = "./build/web || (sleep 10 || exit 1)"
 
 [[workflows.workflow]]
-name = "Build"
-author = 33272860
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "bff build"
-
-[[workflows.workflow]]
-name = "Run Python"
-author = 33272860
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python packages/python_server/server.py"
-
-[[workflows.workflow]]
-name = "Run servers"
+name = "Dev tools"
 mode = "parallel"
 author = 33272860
 
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Run Python"
-waitForPort = 3333
+task = "shell.exec"
+args = "sl web -f --no-open"
 
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Run deno"
+task = "shell.exec"
+args = "deno jupyter --install && jupyter notebook --config ./infra/jupyter/config.py"
 
 [[workflows.workflow]]
-name = "Run deno"
+name = "Commit"
 mode = "sequential"
 author = 33272860
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bff commit"
+
+[[ports]]
+localPort = 3011
+externalPort = 3001
+
+[[ports]]
+localPort = 5432
+externalPort = 3002
+
+[[ports]]
+localPort = 8000
+externalPort = 80
+
+[[ports]]
+localPort = 8888
+externalPort = 3000
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -140,3 +96,27 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "deno test --allow-write --allow-read infra/bff/friends/__tests__/llm.test.ts"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-606cdad4-5695-4398-ba16-1878dd101ab7"
+
+[extension]
+isExtension = true
+
+[env]
+HISTFILE = "/home/runner/${REPL_SLUG}/.cache/bash_history"
+HISTCONTROL = "ignoredups"
+HISTFILESIZE = "100000"
+HISTSIZE = "10000"
+FLAG_DIRENV = "1"
+REPLIT_PID1_FLAG_DIRENV = "1"
+FLAKE_PATH = "$HOME/workspace/nix_system/bin"
+INFRA_BIN_PATH = "$HOME/workspace/infra/bin"
+PATH = "$INFRA_BIN_PATH:$FLAKE_PATH:$PATH"
+REPLIT_PORT_THINGY="8284"
+DENO_TRACE_PERMISSIONS="true"
+DENO_NO_UPDATE_CHECK="1"
+OTEL_EXPORTER_OTLP_HEADERS="authorization=$HYPERDX_INGESTION_KEY"
+OTEL_EXPORTER_OTLP_ENDPOINT="https://in-otel.hyperdx.io"
+OTEL_SERVICE_NAME="CONTENT_FOUNDRY"
+BF_ENV="DEVELOPMENT"

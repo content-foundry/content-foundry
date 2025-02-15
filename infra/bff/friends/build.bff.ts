@@ -19,7 +19,6 @@ const allowedEnvironmentVariables = [
   "OPENAI_PROJECT_ID",
   "OPEN_ROUTER_API_KEY",
   "POSTHOG_API_KEY",
-  "PYTHON_PORT",
   "REPL_HOME",
   "REPLIT_DEV_DOMAIN",
   "RPID",
