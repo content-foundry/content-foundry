@@ -6,7 +6,7 @@ const logger = getLogger(import.meta);
 
 export function addTools(routes: Map<string, Handler>) {
   logger.debug("Adding tools");
-  routes.set("/tools/jupyter-notebook-open", async (req) => {
+  routes.set("/tools/jupyter-notebook-open", (req) => {
     const searchParams = new URLSearchParams(new URL(req.url).search);
     const filePath = searchParams.get("filePath");
     return new Response(null, {
@@ -18,7 +18,7 @@ export function addTools(routes: Map<string, Handler>) {
       },
     });
   });
-  routes.set("/tools/jupyter-console-open", async (req) => {
+  routes.set("/tools/jupyter-console-open", (req) => {
     const searchParams = new URLSearchParams(new URL(req.url).search);
     const filePath = searchParams.get("filePath");
     return new Response(null, {

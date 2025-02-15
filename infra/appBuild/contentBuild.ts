@@ -45,13 +45,14 @@ async function processEntry(
         const notebookContent = await Deno.readTextFile(sourcePath);
         const notebook = JSON.parse(notebookContent);
 
-        // Convert notebook to MDX
+        // Convert notebook to MDX #techdebt on any
+        // deno-lint-ignore no-explicit-any
         content = notebook.cells.map((cell: any) => {
           if (cell.cell_type === "markdown") {
             return cell.source.join("\n");
           } else if (cell.cell_type === "code") {
             const codeBlock = "```python\n" + cell.source.join("") + "\n```";
-            let outputs = "";
+            const outputs = "";
 
             // if (cell.outputs) {
             //   outputs += "---\n";
