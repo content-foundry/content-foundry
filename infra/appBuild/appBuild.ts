@@ -72,7 +72,7 @@ export const contentPathRewriter: esbuild.Plugin = {
 const ipynbPlugin: esbuild.Plugin = {
   name: "ipynb-to-mdx",
   setup(build) {
-    build.onResolve({ filter: /\.ipynb$/ }, async (args) => {
+    build.onResolve({ filter: /\.ipynb$/ }, (args) => {
       return {
         path: args.path,
         namespace: "ipynb",
@@ -84,6 +84,8 @@ const ipynbPlugin: esbuild.Plugin = {
       );
       const { cells } = JSON.parse(raw);
 
+      // #techdebt
+      // deno-lint-ignore no-explicit-any
       const mdxSource = cells.map((cell: any) => {
         if (cell.cell_type === "markdown") {
           return cell.source.join("");

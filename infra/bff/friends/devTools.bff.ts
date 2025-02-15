@@ -5,13 +5,10 @@ import {
   runShellCommandWithOutput,
 } from "infra/bff/shellBase.ts";
 import { getLogger } from "packages/logger.ts";
-import { neon } from "@neondatabase/serverless";
-import { upsertBfDb } from "packages/bfDb/bfDbUtils.ts";
-import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 
 const logger = getLogger(import.meta);
 
-async function checkPort(port: number): Promise<boolean> {
+function checkPort(port: number): boolean {
   try {
     const listener = Deno.listen({ port, hostname: "0.0.0.0" });
     listener.close();
@@ -28,7 +25,7 @@ async function waitForPort(
 ): Promise<boolean> {
   const start = Date.now();
   while (Date.now() - start < timeout) {
-    if (await checkPort(port)) {
+    if (checkPort(port)) {
       logger.info(`${serviceName} is ready on port ${port}`);
       return true;
     }
@@ -162,7 +159,7 @@ register(
           false,
         );
         await runShellCommand(["sl", "web", "--kill"], undefined, {}, false);
-      } catch (e) {
+      } catch (_) {
         // Ignore errors if no processes were found
       }
 

@@ -4,6 +4,9 @@ import { walk } from "@std/fs/walk";
 import { basename, dirname, extname, join } from "@std/path";
 import { globToRegExp } from "@std/path";
 import { exists } from "@std/fs/exists";
+import { getLogger } from "packages/logger.ts";
+
+const logger = getLogger(import.meta);
 
 interface LlmOptions {
   paths: string[];
@@ -41,7 +44,7 @@ export async function llm(args: string[]): Promise<number> {
       if (outputFileHandle) {
         await outputFileHandle.write(new TextEncoder().encode(line + "\n"));
       } else {
-        console.log(line);
+        logger.info(line);
       }
     };
 
@@ -84,7 +87,7 @@ export async function llm(args: string[]): Promise<number> {
 
     return 0;
   } catch (error) {
-    console.error("bff llm: Error", error);
+    logger.error("bff llm: Error", error);
     return 1;
   }
 }
@@ -242,7 +245,7 @@ async function processPath(
       includeDirs: false,
     })
   ) {
-    const rel = entry.path.slice(startPath.length).replace(/^\/+/, "");
+    const _rel = entry.path.slice(startPath.length).replace(/^\/+/, "");
     const filename = basename(entry.path);
 
     // 1) If ignoring hidden files
@@ -366,7 +369,6 @@ async function outputOneFile(
 function shouldIgnore(
   filePath: string,
   ignorePatterns: string[],
-  ignoreFilesOnly: boolean,
 ): boolean {
   for (const pattern of ignorePatterns) {
     // Convert the user pattern into a regex
@@ -388,7 +390,7 @@ function shouldIgnore(
  */
 function matchesGitignore(
   filePath: string,
-  rootDir: string,
+  _rootDir: string,
   patternSet: Set<string>,
 ): boolean {
   // For simplicity, just check if the file’s name or path matches any pattern.

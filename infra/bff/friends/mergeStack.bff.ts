@@ -55,7 +55,7 @@ export async function mergeStack(shell: Shell = defaultShell): Promise<number> {
  * The BffCommand adapter: it matches the signature (options: string[]) => Promise<number>
  * and simply calls the real testable function.
  */
-export async function mergeStackBffCommand(options: string[]): Promise<number> {
+export function mergeStackBffCommand(): Promise<number> {
   return mergeStack(); // uses defaultShell
 }
 
@@ -102,6 +102,8 @@ async function getStackedPRs(
   ]);
   const prs = JSON.parse(output);
   return prs
+    // deno-lint-ignore no-explicit-any
     .filter((pr: any) => pr.body.includes(`#${currentPR}`))
+    // deno-lint-ignore no-explicit-any
     .map((pr: any) => String(pr.number));
 }

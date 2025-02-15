@@ -1,8 +1,8 @@
 // ./infra/bff/friends/__tests__/llm.test.ts
-import { assert, assertEquals, assertStringIncludes } from "@std/assert";
+import { assert, assertStringIncludes } from "@std/assert";
 import { join } from "@std/path";
-import { emptyDir, ensureDir } from "@std/fs";
-import { llm } from "../llm.bff.ts";
+import { emptyDir } from "@std/fs";
+import { llm } from "infra/bff/friends/llm.bff.ts";
 
 /**
  * A helper function to capture output from llm. We override llm’s console output by
@@ -12,21 +12,23 @@ async function runLlmAndCapture(args: string[]): Promise<string[]> {
   const lines: string[] = [];
 
   // We'll mock the built-in console.log by temporarily storing the real one.
+    // deno-lint-ignore no-console
   const realLog = console.log;
   try {
     // Override to push lines into our array
+    // deno-lint-ignore no-console
     console.log = (...msgs) => {
       // join all messages with space (like console.log would) and push to lines
       lines.push(msgs.map(String).join(" "));
     };
 
-    // Actually run the command
-    const exitCode = await llm(args);
+    await llm(args);
 
     // We'll also put the exitCode at the end if needed, or just return it from test.
     // For demonstration, we won't. We'll rely on the lines array alone.
     // But you could also push `exitCode` somewhere or do asserts.
   } finally {
+    // deno-lint-ignore no-console 
     console.log = realLog; // restore
   }
 

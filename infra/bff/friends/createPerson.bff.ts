@@ -4,7 +4,6 @@ import { generateBluey } from "lib/generateBluey.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import { BfPerson } from "packages/bfDb/models/BfPerson.ts";
 import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { generateUUID } from "lib/generateUUID.ts";
 const logger = getLogger(import.meta);
 
 export async function createDemoPerson(): Promise<number> {
