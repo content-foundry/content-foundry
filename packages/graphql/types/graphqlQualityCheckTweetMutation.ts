@@ -2,7 +2,7 @@ import { mutationField, stringArg } from "nexus";
 import {
   graphqlYCRecommendationsType,
 } from "packages/graphql/types/graphqlRecommendation.ts";
-import { runIt as runItYC } from "experimental/aiYC.ts";
+import { runIt as runItYC } from "content/documentation/product/backlog/experimental/aiYC.ts";
 import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
@@ -23,7 +23,7 @@ export const submitYcFormMutation = mutationField("submitYcForm", {
       taskPrompt ?? undefined,
       systemPrompt ?? undefined,
     );
-    logger.debug("Response", recommendationsResponse)
+    logger.debug("Response", recommendationsResponse);
     return recommendationsResponse;
   },
 });

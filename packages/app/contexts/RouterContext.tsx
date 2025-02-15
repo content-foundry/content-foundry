@@ -13,7 +13,6 @@ import {
   isographAppRoutes,
   type RouteGuts,
 } from "packages/app/routes.ts";
-import type { Maybe } from "util/types.ts";
 import { createPortal } from "react-dom";
 import { BfDsFullPageSpinner } from "packages/bfDs/components/BfDsSpinner.tsx";
 
@@ -178,7 +177,7 @@ export function RouterProvider(
     currentPath: initialPath,
     routeParams,
     queryParams,
-    NextHeader: null as Maybe<ComponentWithHeader>,
+    NextHeader: null as ComponentWithHeader | null,
   }), [initialPath, routeParams, queryParams]);
 
   const [state, setState] = useState(initialState);
