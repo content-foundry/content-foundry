@@ -37,7 +37,7 @@ type Props = {
   icon: BfDsIconType;
   iconSelected?: BfDsIconType;
   onConfirm: () => void;
-  onCancel?: () => void;
+  // onCancel?: () => void;
   showSpinner?: boolean;
   size?: ButtonSizeType;
   testId?: string; // for identifying the element in posthog
@@ -47,7 +47,7 @@ export function BfDsButtonConfirmation({
   icon,
   iconSelected = icon,
   onConfirm,
-  onCancel,
+  // onCancel,
   showSpinner = false,
   size = "large",
   testId,

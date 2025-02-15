@@ -1,5 +1,5 @@
 // Tests for ./infra/bff/shellBase.ts
-import { assertArrayIncludes, assertEquals } from "@std/assert";
+import { assertEquals } from "@std/assert";
 import {
   registerShellCommand,
   runningProcesses,

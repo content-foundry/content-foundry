@@ -51,6 +51,9 @@
     "static"
   ],
   "lint": {
+    "exclude": [
+      "**/__generated__/**"
+    ],
     "rules": {
       "include": [
         "camelCase",

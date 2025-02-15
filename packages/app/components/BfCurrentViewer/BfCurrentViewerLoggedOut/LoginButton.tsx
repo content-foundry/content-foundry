@@ -22,7 +22,7 @@ export const LoginButton = iso(`
   }
 `)(
   function LoginButton(
-    { data },
+    _,
     { hasEmail, email, isInFlight: parentInFlight }: Props,
   ) {
     logger.debug(

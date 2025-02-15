@@ -1,7 +1,7 @@
 import {
-  FeatureFlagsEnabled,
+  type FeatureFlagsEnabled,
   featureFlagsEnabled,
-  FeatureFlagsVariant,
+  type FeatureFlagsVariant,
   featureFlagsVariant,
 } from "packages/featureFlags/featureFlagsList.ts";
 

@@ -24,7 +24,7 @@ export const RegisterButton = iso(`
   }
 `)(
   function RegisterButton(
-    { data },
+    _,
     { hasEmail, email, isInFlight: parentIsInFlight }: Props,
   ) {
     const { loadFragmentReference } = useImperativeReference(entrypoint);

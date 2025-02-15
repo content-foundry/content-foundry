@@ -37,6 +37,7 @@ export function getCurrentClients() {
 
 export async function ensurePosthogClientIsSetUp(
   distinctID?: string,
+  // deno-lint-ignore no-explicit-any
   featureFlagsBootstrap?: any,
 ): Promise<{
   frontendClient?: PostHog;

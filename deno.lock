@@ -42,7 +42,7 @@
     "npm:@peculiar/asn1-rsa@^2.3.8": "2.3.15",
     "npm:@peculiar/asn1-schema@^2.3.8": "2.3.15",
     "npm:@peculiar/asn1-x509@^2.3.8": "2.3.15",
-    "npm:@replit/extensions@^1.1.1": "1.10.0",
+    "npm:@replit/extensions@^1.10.0": "1.10.0",
     "npm:@types/jsonwebtoken@^9.0.8": "9.0.8",
     "npm:@types/node@^22.10.7": "22.10.7",
     "npm:@types/react-dom@19": "19.0.3_@types+react@19.0.7",
@@ -220,8 +220,8 @@
         "regenerator-runtime@0.14.1"
       ]
     },
-    "@codemirror/state@6.5.1": {
-      "integrity": "sha512-3rA9lcwciEB47ZevqvD8qgbzhM9qMb8vCcQCNmDfVRPQG4JT9mSb0Jg8H7YjKGGQcFnLN323fj9jdnG59Kx6bg==",
+    "@codemirror/state@6.5.2": {
+      "integrity": "sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==",
       "dependencies": [
         "@marijn/find-cluster-break"
       ]
@@ -577,14 +577,14 @@
         "@types/pg"
       ]
     },
-    "@noble/curves@1.8.0": {
-      "integrity": "sha512-j84kjAbzEnQHaSIhRPUmB3/eVXu2k3dKPl2LOrR8fSOIL+89U+7lV117EWHtq/GHM3ReGHM46iRBdZfpc4HRUQ==",
+    "@noble/curves@1.8.1": {
+      "integrity": "sha512-warwspo+UYUPep0Q+vtdVB4Ugn8GGQj8iyB3gnRWsztmUHTI3S1nhdiWNsPUGL0vud7JlRRk1XEu7Lq1KGTnMQ==",
       "dependencies": [
         "@noble/hashes"
       ]
     },
-    "@noble/hashes@1.7.0": {
-      "integrity": "sha512-HXydb0DgzTpDPwbVeDGCG1gIu7X6+AuU6Zl6av/E/KG8LMsvPntvq+w17CHRpKBmN6Ybdrt1eP3k4cj8DJa78w=="
+    "@noble/hashes@1.7.1": {
+      "integrity": "sha512-B8XBPsn4vT/KJAGqDzbwztd+6Yte3P4V7iafm24bxgDe/mlRuK6xmWPuCNrKt2vDafZ8MfJLlchDG/vYafQEjQ=="
     },
     "@opentelemetry/api-logs@0.43.0": {
       "integrity": "sha512-0CXMOYPXgAdLM2OzVkiUfAL6QQwWVhnMfUXCqLsITY42FZ9TxAhZIHkoc4mfVxvPuXsBnRYGR8UQZX86p87z4A==",
@@ -2657,7 +2657,7 @@
         "npm:@mdx-js/esbuild@^3.1.0",
         "npm:@mdx-js/mdx@^3.1.0",
         "npm:@neondatabase/serverless@~0.10.4",
-        "npm:@replit/extensions@^1.1.1",
+        "npm:@replit/extensions@^1.10.0",
         "npm:@types/jsonwebtoken@^9.0.8",
         "npm:@types/node@^22.10.7",
         "npm:@types/react-dom@19",

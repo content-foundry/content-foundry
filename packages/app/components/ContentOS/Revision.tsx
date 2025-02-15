@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   useBfDsFormContext,
 } from "packages/bfDs/components/BfDsForm/BfDsForm.tsx";
@@ -8,10 +8,9 @@ type Props = {
   id: string;
   revision: string;
   explanation: string;
-  confidence: number;
 };
 
-export function Revision({ id, revision, explanation, confidence }: Props) {
+export function Revision({ id, revision, explanation }: Props) {
   const [showExplanation, setShowExplanation] = useState(false);
   const [expand, setExpand] = useState(true);
   const { data, onChange } = useBfDsFormContext();

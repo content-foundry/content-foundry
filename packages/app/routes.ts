@@ -28,6 +28,7 @@ export const appRoutes: RouteMap = new Map([
   ["/fcp", { Component: FinalCutProXML }],
 ]);
 
+// deno-lint-ignore no-explicit-any
 export type IsographRoute = IsographEntrypoint<any, RouteEntrypoint>;
 
 export type RouteEntrypoint = {

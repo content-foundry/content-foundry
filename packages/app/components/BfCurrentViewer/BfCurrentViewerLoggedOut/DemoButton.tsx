@@ -12,7 +12,7 @@ export const DemoButton = iso(`
   field BfCurrentViewerLoggedOut.DemoButton @component {
     __typename
   }
-`)(function DemoButton({ data }) {
+`)(function DemoButton() {
   const { commit: loginAsDemoPerson } = useMutation(mutation);
   const [isInFlight, setIsInFlight] = useState(false);
 

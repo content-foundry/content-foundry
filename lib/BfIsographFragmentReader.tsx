@@ -6,7 +6,7 @@ import { useResult } from "@isograph/react";
 import type { RouteEntrypoint } from "packages/app/routes.ts";
 import { getLogger } from "packages/logger.ts";
 
-const logger = getLogger(import.meta);
+const _logger = getLogger(import.meta);
 
 type NetworkRequestReaderOptions = {
   suspendIfInFlight: boolean;
@@ -14,6 +14,7 @@ type NetworkRequestReaderOptions = {
 };
 
 export function BfIsographFragmentReader<
+  // deno-lint-ignore no-explicit-any
   TEntrypoint extends IsographEntrypoint<any, RouteEntrypoint>,
 >(
   props: {

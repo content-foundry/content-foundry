@@ -19,9 +19,8 @@ import { RouterLink } from "packages/app/components/Router/RouterLink.tsx";
 import { Form } from "packages/bfDs/components/demo/Form.tsx";
 import { IconDemo } from "packages/bfDs/components/BfDsIcon.tsx";
 import { Tooltips } from "packages/bfDs/components/demo/Tooltips.tsx";
-import type { KitchenSink } from "packages/bfDs/components/demo/KitchenSink.tsx";
 import { getLogger } from "packages/logger.ts";
-const logger = getLogger(import.meta);
+const _logger = getLogger(import.meta);
 
 type DemoData = {
   name: string;

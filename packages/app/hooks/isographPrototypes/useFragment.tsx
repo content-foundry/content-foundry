@@ -4,6 +4,7 @@ import {
   useImperativeReference,
 } from "@isograph/react";
 
+// deno-lint-ignore no-explicit-any
 export function useMutation<T extends IsographEntrypoint<any, any>>(
   mutation: T,
 ) {
