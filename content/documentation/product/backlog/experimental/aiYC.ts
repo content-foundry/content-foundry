@@ -346,4 +346,120 @@ export async function runIt(
   }
 }
 
-const testData = {"companySummary":{"revision":"AI-powered open-source CMS alternative","explanation":"The revision succinctly captures the essence of the company by emphasizing the AI aspect and the open-source nature, which aligns with the trend of AI integration in tech products.","confidence":0.9},"productSummary":{"revision":"We’re developing an AI-driven platform that aids content creators in crafting and editing blog posts to maintain a consistent voice. Users can input inspirational content or describe their desired voice, and our system suggests improvements for storytelling elements like tone, active voice, and narrative structure. This tool is the first step towards a broader vision of an open-source platform that empowers content creators and companies to scale their storytelling across various media and platforms, potentially replacing tools like WordPress.","explanation":"The revision clarifies the product's current functionality and future vision, emphasizing the AI-driven aspect and its potential to replace existing solutions like WordPress.","confidence":0.95},"locationDecision":{"revision":"We are based in NYC due to our initial team concentration there, but we embrace a distributed, remote team culture to leverage talent from anywhere.","explanation":"The revision emphasizes the strategic choice of location while highlighting the company's commitment to a remote work culture, which is increasingly relevant in the tech industry.","confidence":0.85},"progress":{"revision":"We launched a prototype on Hacker News today (2/7) and have started building a developer community around our open-source project. We are collaborating with two design partners, AstroForge (W22) and Pattern, generating revenue of $12k and $3k per month, respectively.","explanation":"The revision provides a clear update on the product's launch and progress, highlighting key partnerships and revenue generation, which are critical for demonstrating traction.","confidence":0.9},"workLengthHistory":{"revision":"We began coding in April 2023 and have been fully committed to working on the project full-time since November 2023.","explanation":"The revision provides a clear timeline of the project's development and the founders' commitment, which is important for demonstrating dedication and focus.","confidence":0.9},"techStack":{"revision":"Our tech stack includes Deno, Postgres, React, GraphQL, and Isograph.","explanation":"The revision clearly lists the technologies used, which is important for technical clarity and understanding the foundation of the product.","confidence":0.9},"revenueSource":{"revision":"Our current revenue is derived from our design partners, AstroForge and Pattern.","explanation":"The revision succinctly states the current revenue sources, which is important for understanding the financial foundation of the company.","confidence":0.9},"previousApplicationChange":{"revision":"Initially, our focus was too narrow. Through customer interactions and product development, we learned that determining what content to create is a more significant challenge than the creation process itself. Businesses, especially startups, struggle with starting and identifying effective content marketing strategies. After defining the content, tools are less of an issue. The market for improving video content alone wasn't large enough for our ambitions, prompting us to pivot.","explanation":"The revision provides a clear explanation of the pivot and the insights gained, which is crucial for demonstrating learning and adaptability.","confidence":0.95},"otherIncubators":{"revision":"N/A","explanation":"The response is clear and concise, indicating that the company has not participated in other incubators, which is important for transparency.","confidence":0.9},"reasonForProductChoice":{"revision":"As video producers, creators, and musicians, we've spent years helping people create compelling content. Our team was formed at Vidpresso (W14) and honed at Facebook, where we built scalable products. At Content Foundry, we aim to leverage our expertise to help others tell great stories. Through extensive customer research and prototyping, we've identified a gap in storytelling for technical founders at startups, who understand the importance of organic growth through stories but lack the media expertise to achieve it.","explanation":"The revision effectively communicates the founders' background, expertise, and the insights that led to the current product focus, which is crucial for establishing credibility and market understanding.","confidence":0.95},"competitors":{"revision":"Our initial product competes with tools like Grammarly or Jasper, which focus on text generation. However, we offer a comprehensive solution that integrates the entire content lifecycle, from story crafting to publication and analytics. In the long term, we aim to compete with open-source CMS platforms like WordPress, Strapi, and Ghost by offering an AI-native content operating system that manages content creation and distribution in one place.","explanation":"The revision clearly outlines the competitive landscape and how the product differentiates itself, which is important for understanding market positioning.","confidence":0.95},"moneyMaking":{"revision":"We plan to monetize by offering a cloud-hosted version of our open-source software, similar to the WordPress model. The content creation and management industry is a multi-billion dollar market, and WordPress powers a significant portion of the web. We are initially targeting technical founders at seed and series A startups to refine our product before expanding to broader markets.","explanation":"The revision provides a clear monetization strategy and market opportunity, which is important for understanding the business model and growth potential.","confidence":0.95},"otherIdeas":{"revision":"We are focused on our current idea but remain open to pivoting as needed, based on market feedback and opportunities.","explanation":"The revision indicates flexibility and openness to change, which is important for demonstrating adaptability in a startup environment.","confidence":0.85},"equityBreakdown":{"revision":"Randall Bennett, CEO - 16%, Justin Carter, Software Engineer - 16%, Josh LeVitre, Software Engineer - 16%, George LeVitre, Software Engineer - 16%, Dan Sisco, COO - 16%, with a 20% equity pool for future hires.","explanation":"The revision provides a clear and detailed breakdown of equity, which is important for understanding ownership and potential employee incentives.","confidence":0.9},"investmentsReceived":{"revision":"We have not received any investments yet.","explanation":"The revision clearly states the current investment status, which is important for transparency and understanding the financial position of the company.","confidence":0.9},"reasonForAppling":{"revision":"We previously participated in the W14 batch with Vidpresso and experienced the immense value of the YC network and resources. We believe YC can significantly accelerate our growth and help us refine our product and market strategy.","explanation":"The revision explains the motivation for reapplying to YC, emphasizing past positive experiences and the benefits of the YC network, which is important for demonstrating commitment and understanding of YC's value.","confidence":0.9},"whoToldYou":{"revision":"Paul Graham (PG) introduced us to Y Combinator.","explanation":"The revision clearly states who introduced the team to YC, which is important for understanding the source of influence and connection to YC.","confidence":0.9}};
+const testData = {
+  "companySummary": {
+    "revision": "AI-powered open-source CMS alternative",
+    "explanation":
+      "The revision succinctly captures the essence of the company by emphasizing the AI aspect and the open-source nature, which aligns with the trend of AI integration in tech products.",
+    "confidence": 0.9,
+  },
+  "productSummary": {
+    "revision":
+      "We’re developing an AI-driven platform that aids content creators in crafting and editing blog posts to maintain a consistent voice. Users can input inspirational content or describe their desired voice, and our system suggests improvements for storytelling elements like tone, active voice, and narrative structure. This tool is the first step towards a broader vision of an open-source platform that empowers content creators and companies to scale their storytelling across various media and platforms, potentially replacing tools like WordPress.",
+    "explanation":
+      "The revision clarifies the product's current functionality and future vision, emphasizing the AI-driven aspect and its potential to replace existing solutions like WordPress.",
+    "confidence": 0.95,
+  },
+  "locationDecision": {
+    "revision":
+      "We are based in NYC due to our initial team concentration there, but we embrace a distributed, remote team culture to leverage talent from anywhere.",
+    "explanation":
+      "The revision emphasizes the strategic choice of location while highlighting the company's commitment to a remote work culture, which is increasingly relevant in the tech industry.",
+    "confidence": 0.85,
+  },
+  "progress": {
+    "revision":
+      "We launched a prototype on Hacker News today (2/7) and have started building a developer community around our open-source project. We are collaborating with two design partners, AstroForge (W22) and Pattern, generating revenue of $12k and $3k per month, respectively.",
+    "explanation":
+      "The revision provides a clear update on the product's launch and progress, highlighting key partnerships and revenue generation, which are critical for demonstrating traction.",
+    "confidence": 0.9,
+  },
+  "workLengthHistory": {
+    "revision":
+      "We began coding in April 2023 and have been fully committed to working on the project full-time since November 2023.",
+    "explanation":
+      "The revision provides a clear timeline of the project's development and the founders' commitment, which is important for demonstrating dedication and focus.",
+    "confidence": 0.9,
+  },
+  "techStack": {
+    "revision":
+      "Our tech stack includes Deno, Postgres, React, GraphQL, and Isograph.",
+    "explanation":
+      "The revision clearly lists the technologies used, which is important for technical clarity and understanding the foundation of the product.",
+    "confidence": 0.9,
+  },
+  "revenueSource": {
+    "revision":
+      "Our current revenue is derived from our design partners, AstroForge and Pattern.",
+    "explanation":
+      "The revision succinctly states the current revenue sources, which is important for understanding the financial foundation of the company.",
+    "confidence": 0.9,
+  },
+  "previousApplicationChange": {
+    "revision":
+      "Initially, our focus was too narrow. Through customer interactions and product development, we learned that determining what content to create is a more significant challenge than the creation process itself. Businesses, especially startups, struggle with starting and identifying effective content marketing strategies. After defining the content, tools are less of an issue. The market for improving video content alone wasn't large enough for our ambitions, prompting us to pivot.",
+    "explanation":
+      "The revision provides a clear explanation of the pivot and the insights gained, which is crucial for demonstrating learning and adaptability.",
+    "confidence": 0.95,
+  },
+  "otherIncubators": {
+    "revision": "N/A",
+    "explanation":
+      "The response is clear and concise, indicating that the company has not participated in other incubators, which is important for transparency.",
+    "confidence": 0.9,
+  },
+  "reasonForProductChoice": {
+    "revision":
+      "As video producers, creators, and musicians, we've spent years helping people create compelling content. Our team was formed at Vidpresso (W14) and honed at Facebook, where we built scalable products. At Content Foundry, we aim to leverage our expertise to help others tell great stories. Through extensive customer research and prototyping, we've identified a gap in storytelling for technical founders at startups, who understand the importance of organic growth through stories but lack the media expertise to achieve it.",
+    "explanation":
+      "The revision effectively communicates the founders' background, expertise, and the insights that led to the current product focus, which is crucial for establishing credibility and market understanding.",
+    "confidence": 0.95,
+  },
+  "competitors": {
+    "revision":
+      "Our initial product competes with tools like Grammarly or Jasper, which focus on text generation. However, we offer a comprehensive solution that integrates the entire content lifecycle, from story crafting to publication and analytics. In the long term, we aim to compete with open-source CMS platforms like WordPress, Strapi, and Ghost by offering an AI-native content operating system that manages content creation and distribution in one place.",
+    "explanation":
+      "The revision clearly outlines the competitive landscape and how the product differentiates itself, which is important for understanding market positioning.",
+    "confidence": 0.95,
+  },
+  "moneyMaking": {
+    "revision":
+      "We plan to monetize by offering a cloud-hosted version of our open-source software, similar to the WordPress model. The content creation and management industry is a multi-billion dollar market, and WordPress powers a significant portion of the web. We are initially targeting technical founders at seed and series A startups to refine our product before expanding to broader markets.",
+    "explanation":
+      "The revision provides a clear monetization strategy and market opportunity, which is important for understanding the business model and growth potential.",
+    "confidence": 0.95,
+  },
+  "otherIdeas": {
+    "revision":
+      "We are focused on our current idea but remain open to pivoting as needed, based on market feedback and opportunities.",
+    "explanation":
+      "The revision indicates flexibility and openness to change, which is important for demonstrating adaptability in a startup environment.",
+    "confidence": 0.85,
+  },
+  "equityBreakdown": {
+    "revision":
+      "Randall Bennett, CEO - 16%, Justin Carter, Software Engineer - 16%, Josh LeVitre, Software Engineer - 16%, George LeVitre, Software Engineer - 16%, Dan Sisco, COO - 16%, with a 20% equity pool for future hires.",
+    "explanation":
+      "The revision provides a clear and detailed breakdown of equity, which is important for understanding ownership and potential employee incentives.",
+    "confidence": 0.9,
+  },
+  "investmentsReceived": {
+    "revision": "We have not received any investments yet.",
+    "explanation":
+      "The revision clearly states the current investment status, which is important for transparency and understanding the financial position of the company.",
+    "confidence": 0.9,
+  },
+  "reasonForAppling": {
+    "revision":
+      "We previously participated in the W14 batch with Vidpresso and experienced the immense value of the YC network and resources. We believe YC can significantly accelerate our growth and help us refine our product and market strategy.",
+    "explanation":
+      "The revision explains the motivation for reapplying to YC, emphasizing past positive experiences and the benefits of the YC network, which is important for demonstrating commitment and understanding of YC's value.",
+    "confidence": 0.9,
+  },
+  "whoToldYou": {
+    "revision": "Paul Graham (PG) introduced us to Y Combinator.",
+    "explanation":
+      "The revision clearly states who introduced the team to YC, which is important for understanding the source of influence and connection to YC.",
+    "confidence": 0.9,
+  },
+};
