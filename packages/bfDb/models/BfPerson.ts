@@ -40,7 +40,9 @@ function toBase64(bytes: Uint8Array): string {
 }
 
 // #techdebt :(
+// deno-lint-ignore no-explicit-any
 type StorableRegistrationResponse = any;
+// deno-lint-ignore no-explicit-any
 type StorableAuthenticationResponse = any;
 
 export type BfPersonProps = {

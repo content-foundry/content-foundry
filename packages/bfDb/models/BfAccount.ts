@@ -1,7 +1,7 @@
 import { getLogger } from "packages/logger.ts";
 import { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
 
-const logger = getLogger(import.meta);
+const _logger = getLogger(import.meta);
 
 export type BfAccountProps = {
   name: string;

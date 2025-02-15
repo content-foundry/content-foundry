@@ -93,7 +93,6 @@ export const YcForm = iso(`
                 id={field.id}
                 revision={revisions[field.id]?.revision}
                 explanation={revisions[field.id]?.explanation}
-                confidence={revisions[field.id]?.confidence}
               />
             )}
           </React.Fragment>
