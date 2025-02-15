@@ -13,7 +13,7 @@
     "@std/http": "jsr:@std/http@^1.0.12",
     "@std/path": "jsr:@std/path@^1.0.8",
     "@std/testing": "jsr:@std/testing@^1.0.9",
-    
+
     "experimental/": "./experimental/",
     "infra/": "./infra/",
     "lib/": "./lib/",
@@ -22,12 +22,12 @@
     "posthog-js/react": "./node_modules/posthog-js/react/dist/esm/index.js",
     "react/jsx-runtime": "npm:react/jsx-runtime",
     "content/": "./content/",
-    "build/content/": "./build/content/",
+    "build/content/": "./build/content/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "npm:react",
-    "jsxImportSourceTypes": "npm:@types/react@^19"
+    "jsxImportSourceTypes": "npm:@types/react@^19",
 
     "lib": [
       "dom",
@@ -37,51 +37,21 @@
       "webworker.iterable",
       "deno.ns",
       "deno.unstable"
-    ],
-    "types": [
-      "npm:@types/dom-webcodecs/index.d.ts",
-      "npm:@types/sharedworker/index.d.ts"
     ]
   },
-  "fmt": {
-    "exclude": [
-      "__generated__",
-      "infra/__generated__",
-      "packages/__generated__",
-      "packages/third-party",
-      "packages/client/static",
-      ".config",
-      "static",
-      "**/*.json",
-      "**/*.ipynb",
-      "**/.ipynb_checkpoints"
-    ],
-    "include": [
-      "experimental",
-      "infra",
-      "lib",
-      "packages"
-    ]
-  },
-  "test": {
-    "exclude": [
-      "__generated__",
-      "packages/__generated__",
-      "packages/third-party",
-      "packages/client/static",
-      "**/*.disabled.ts",
-      "static"
-    ],
-    "include": [
-      "experimental",
-      "infra",
-      "lib",
-      "packages"
-    ]
-  },
+  "include": [
+    "infra",
+    "lib",
+    "packages",
+    "content"
+  ],
+  "exclude": [
+    ".cache",
+    "build",
+    "static"
+  ],
   "lint": {
     "rules": {
-      "exclude": [],
       "include": [
         "camelCase",
         "no-console",
@@ -91,25 +61,19 @@
         "verbatim-module-syntax",
         "no-eval"
       ]
-    },
+    }
+  },
+  "fmt": {
     "exclude": [
-      "__generated__",
-      "infra/__generated__",
-      "static",
-      "packages/__generated__",
-      "packages/third-party",
-      "packages/client/static",
-      "packages/vcs"
-    ],
-    "include": [
-      "experimental",
-      "infra",
-      "lib",
-      "packages"
+      "**/__generated__/**",
+      "**/*.json",
+      "**/*.ipynb",
+      "**/.ipynb_checkpoints"
     ]
   },
+
   "lock": {
-    "path": "./deno.lock",
+    "path": "./deno.lock"
   },
   "nodeModulesDir": "manual",
   "vendor": true
