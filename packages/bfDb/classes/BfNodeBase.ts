@@ -6,7 +6,7 @@ import { generateUUID } from "lib/generateUUID.ts";
 import { getLogger } from "packages/logger.ts";
 import type { JSONValue } from "packages/bfDb/bfDb.ts";
 import type { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
-import { BfError, BfErrorNotImplemented } from "packages/BfError.ts";
+import { BfErrorNotImplemented } from "packages/BfError.ts";
 
 const logger = getLogger(import.meta);
 
@@ -48,14 +48,14 @@ export class BfNodeBase<
     return { ...defaults, ...metadata };
   }
 
-  static async findX<
+  static findX<
     TProps extends BfNodeBaseProps,
     TThis extends typeof BfNodeBase<TProps>,
   >(
     this: TThis,
-    cv: BfCurrentViewer,
-    id: BfGid,
-    cache?: BfNodeCache,
+    _cv: BfCurrentViewer,
+    _id: BfGid,
+    _cache?: BfNodeCache,
   ): Promise<InstanceType<TThis>> {
     throw new BfErrorNotImplemented("Not implemented");
   }
@@ -194,9 +194,9 @@ export class BfNodeBase<
     TProps extends BfNodeBaseProps,
     TBfClass extends typeof BfNode<TProps>,
   >(
-    TargetBfClass: TBfClass,
-    props: TProps,
-    metadata?: BfMetadata,
+    _TargetBfClass: TBfClass,
+    _props: TProps,
+    _metadata?: BfMetadata,
   ): Promise<InstanceType<TBfClass>> {
     throw new BfErrorNotImplemented();
   }

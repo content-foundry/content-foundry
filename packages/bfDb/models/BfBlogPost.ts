@@ -3,15 +3,12 @@ import {
   type BfNodeBaseProps,
   type BfNodeCache,
 } from "packages/bfDb/classes/BfNodeBase.ts";
-import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { staticImplements } from "lib/staticImplements.ts";
+import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import { walk } from "@std/fs/walk";
 import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
 import { extractYaml } from "@std/front-matter";
 import { getLogger } from "packages/logger.ts";
-import { BfErrorNotImplemented } from "packages/BfError.ts";
-import { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
 
 const logger = getLogger(import.meta);
 
@@ -55,7 +52,7 @@ export class BfBlogPost extends BfNodeBase<BfBlogPostProps> {
       if (entry.isFile) {
         let addableText = "";
         let props: BlogPostFrontmatter = {};
-        let id = entry.path.split(
+        const id = entry.path.split(
           import.meta.resolve("content/blog/").replace("file://", ""),
         )[1] as BfGid;
         if (entry.path.endsWith(".md")) {
@@ -93,9 +90,9 @@ export class BfBlogPost extends BfNodeBase<BfBlogPostProps> {
     TProps extends BfNodeBaseProps,
     T extends BfNodeBase<TProps>,
   >(
-    cv: BfCurrentViewer,
+    _cv: BfCurrentViewer,
     id: BfGid,
-    cache?: BfNodeCache,
+    _cache?: BfNodeCache,
   ): Promise<T> {
     const postsCache = await this.getPostsCache();
     const item = postsCache.get(id);

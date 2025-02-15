@@ -1,19 +1,17 @@
 import {
   BfNodeBase,
-  BfNodeBaseProps,
-  BfNodeCache,
+  type BfNodeBaseProps,
+  type BfNodeCache,
 } from "packages/bfDb/classes/BfNodeBase.ts";
-import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
-import { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { staticImplements } from "lib/staticImplements.ts";
+import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
+import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { BfErrorNotImplemented } from "packages/BfError.ts";
-import { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
+import type { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { getLogger } from "packages/logger.ts";
 import {
   bfGetItem,
   bfPutItem,
   bfQueryItems,
-  type JSONValue,
 } from "packages/bfDb/bfDb.ts";
 import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
 
@@ -102,26 +100,23 @@ export class BfNode<TProps extends BfNodeBaseProps = BfNodeBaseProps>
     return this;
   }
 
-  override async delete() {
+  override delete(): Promise<boolean> {
     throw new BfErrorNotImplemented();
-    return false;
   }
-  override async load() {
-    const item = await bfGetItem(this.cv.bfOid, this.metadata.bfGid);
+  override async load(): Promise<this> {
+    const _item = await bfGetItem(this.cv.bfOid, this.metadata.bfGid);
     throw new BfErrorNotImplemented();
-    return this;
+    // return this;
   }
 
-  override async createTargetNode<
+  override createTargetNode<
     TProps extends BfNodeBaseProps,
     TBfClass extends typeof BfNode<TProps>,
   >(
-    TargetBfClass: TBfClass,
-    props: TProps,
-    metadata?: BfMetadata,
+    _TargetBfClass: TBfClass,
+    _props: TProps,
+    _metadata?: BfMetadata,
   ): Promise<InstanceType<TBfClass>> {
-    return new TargetBfClass(this.cv, props, metadata) as InstanceType<
-      TBfClass
-    >;
+    throw new BfErrorNotImplemented();
   }
 }

@@ -1,4 +1,4 @@
-import { neon, type Pool } from "@neondatabase/serverless";
+import { neon } from "@neondatabase/serverless";
 
 import { getLogger } from "packages/logger.ts";
 import type {
@@ -7,7 +7,6 @@ import type {
 } from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import type { BfError } from "packages/BfError.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 
 const logger = getLogger(import.meta);
@@ -46,11 +45,6 @@ if (!databaseUrl) {
   throw new BfErrorDb("DATABASE_URL is not set");
 }
 const sql = neon(databaseUrl);
-
-const connectionString = getConfigurationVariable("BF_ENV") === "DEVELOPMENT"
-  ? getConfigurationVariable("DATABASE_URL") ??
-    getConfigurationVariable("DATABASE_URL")
-  : getConfigurationVariable("DATABASE_URL");
 
 // const pool = new Pool({ connectionString });
 export type JSONValue =
