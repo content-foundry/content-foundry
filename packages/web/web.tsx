@@ -5,7 +5,7 @@ import { renderToReadableStream, renderToString } from "react-dom/server";
 import {
   appRoutes,
   isographAppRoutes,
-  RouteEntrypoint,
+  type RouteEntrypoint,
   toolRoutes,
 } from "packages/app/routes.ts";
 import { addTools } from "infra/bff/tools.ts";
@@ -20,7 +20,7 @@ import { getIsographEnvironment } from "packages/app/server/isographEnvironment.
 import { getLogger } from "packages/logger.ts";
 import { AppEnvironmentProvider } from "packages/app/contexts/AppEnvironmentContext.tsx";
 import {
-  IsographEntrypoint,
+  type IsographEntrypoint,
   useLazyReference,
   useResult,
 } from "@isograph/react";
@@ -31,6 +31,7 @@ import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 const logger = getLogger(import.meta);
 
 function IsographHeaderComponent(
+  // deno-lint-ignore no-explicit-any
   { entrypoint }: { entrypoint: IsographEntrypoint<any, RouteEntrypoint> },
 ) {
   const { fragmentReference } = useLazyReference(entrypoint, {});
@@ -40,6 +41,7 @@ function IsographHeaderComponent(
 }
 function getIsographHeaderComponent(
   environment: ServerProps,
+  // deno-lint-ignore no-explicit-any
   entrypoint: IsographEntrypoint<any, RouteEntrypoint>,
 ) {
   return function IsographHeader() {
@@ -72,7 +74,7 @@ if (getConfigurationVariable("BF_ENV") === DeploymentEnvs.DEVELOPMENT) {
     const [path, { Component }] = entry;
 
     const nextUrl = renderToString(React.createElement(Component));
-    routes.set(path, async function ToolRoute(request, routeParams) {
+    routes.set(path, async function ToolRoute(_req, routeParams) {
       const ENVIRONMENT = {
         nextUrl,
         routeParams,
@@ -240,7 +242,7 @@ routes.set("/assemblyai", async (req) => {
   }
 });
 
-routes.set("/logout", async function logoutHandler() {
+routes.set("/logout", function logoutHandler() {
   const headers = new Headers();
   headers.set("location", "/");
   headers.set(

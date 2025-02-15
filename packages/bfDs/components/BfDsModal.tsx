@@ -87,7 +87,7 @@ export const BfDsModal = forwardRef<ModalHandles, ModalOptions>(
       onSave,
       xstyle,
       contentXstyle,
-      kind,
+      // kind,
     }: ModalOptions,
     ref: React.ForwardedRef<ModalHandles>,
   ) => {
