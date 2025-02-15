@@ -22,7 +22,8 @@ import { isoBase64URL } from "@simplewebauthn/server/helpers";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 
 const logger = getLogger(import.meta);
-const rpID = getConfigurationVariable("RPID") ?? getConfigurationVariable("REPLIT_DEV_DOMAIN");
+const rpID = getConfigurationVariable("RPID") ??
+  getConfigurationVariable("REPLIT_DEV_DOMAIN");
 
 /**
  * Helper to correctly Base64URL-decode into raw bytes.

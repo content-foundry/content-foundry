@@ -48,7 +48,8 @@ if (!databaseUrl) {
 const sql = neon(databaseUrl);
 
 const connectionString = getConfigurationVariable("BF_ENV") === "DEVELOPMENT"
-  ? getConfigurationVariable("DATABASE_URL") ?? getConfigurationVariable("DATABASE_URL")
+  ? getConfigurationVariable("DATABASE_URL") ??
+    getConfigurationVariable("DATABASE_URL")
   : getConfigurationVariable("DATABASE_URL");
 
 // const pool = new Pool({ connectionString });

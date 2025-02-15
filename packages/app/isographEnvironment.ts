@@ -9,7 +9,7 @@ const logger = getLogger(import.meta);
 export function getEnvironment() {
   // @ts-expect-error Not typed on the window yet
   if (globalThis.__ISOGRAPH_ENVIRONMENT__) {
-  // @ts-expect-error Not typed on the window yet
+    // @ts-expect-error Not typed on the window yet
     return globalThis.__ISOGRAPH_ENVIRONMENT__;
   }
 

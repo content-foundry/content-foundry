@@ -1,4 +1,3 @@
-
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { BfDsTooltip } from "packages/bfDs/components/BfDsTooltip.tsx";
@@ -31,8 +30,8 @@ export const DemoButton = iso(`
   return (
     <BfDsTooltip text="Try the demo">
       <div className="center">
-        <BfDsButton 
-          text="Try the demo" 
+        <BfDsButton
+          text="Try the demo"
           xstyle={{ width: "80%" }}
           onClick={handleLogin}
           showSpinner={isInFlight}

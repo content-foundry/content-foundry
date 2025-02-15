@@ -5,7 +5,7 @@ export function Editor() {
     <div className="flexRow editor-container">
       <LeftSideBar />
       <div className="flexRow editor-workspace">
-        <TextEditor/>
+        <TextEditor />
         <div className="flexColumn right-side-bar">
           {demoText}
         </div>

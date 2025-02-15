@@ -1,4 +1,3 @@
-
 import { register } from "infra/bff/bff.ts";
 import { getLogger } from "packages/logger.ts";
 import { extractYaml } from "@std/front-matter";
@@ -10,24 +9,32 @@ const logger = getLogger(import.meta);
 
 const REQUIRED_FIELDS = ["title", "author", "summary", "cta"];
 
-export async function contentLint(args: string[], contentDir = "content/blog"): Promise<number> {
+export async function contentLint(
+  args: string[],
+  contentDir = "content/blog",
+): Promise<number> {
   const shouldFix = args.includes("--fix");
-  logger.info(`Starting content linting... ${shouldFix ? "(with auto-fix)" : ""}`);
+  logger.info(
+    `Starting content linting... ${shouldFix ? "(with auto-fix)" : ""}`,
+  );
   let hasErrors = false;
 
   try {
-    for await (const entry of walk(contentDir, {
-      exts: [".md", ".mdx"],
-      includeDirs: false,
-    })) {
+    for await (
+      const entry of walk(contentDir, {
+        exts: [".md", ".mdx"],
+        includeDirs: false,
+      })
+    ) {
       logger.info(`Checking ${entry.path}...`);
-      
+
       const filePath = join(Deno.cwd(), entry.path);
       let content = await Deno.readTextFile(filePath);
-      
+
       if (!content.startsWith("---")) {
         if (shouldFix) {
-          content = `---\ntitle: "Untitled"\nauthor: "Unknown"\nsummary: "No summary provided"\ncta: "Read more"\n---\n${content}`;
+          content =
+            `---\ntitle: "Untitled"\nauthor: "Unknown"\nsummary: "No summary provided"\ncta: "Read more"\n---\n${content}`;
           await Deno.writeTextFile(filePath, content);
           logger.info(`✅ ${entry.path}: Added missing front matter`);
           continue;
@@ -37,7 +44,7 @@ export async function contentLint(args: string[], contentDir = "content/blog"): 
         continue;
       }
 
-      const {attrs, body} = extractYaml(content);
+      const { attrs, body } = extractYaml(content);
       let needsUpdate = false;
       const updatedAttrs = { ...attrs as Record<string, JSONValue> };
 
@@ -47,10 +54,13 @@ export async function contentLint(args: string[], contentDir = "content/blog"): 
           hasErrors = true;
           if (shouldFix) {
             needsUpdate = true;
-            updatedAttrs[field] = field === "title" ? "Untitled" :
-                                field === "author" ? "Unknown" :
-                                field === "summary" ? "No summary provided" :
-                                "Read more";
+            updatedAttrs[field] = field === "title"
+              ? "Untitled"
+              : field === "author"
+              ? "Unknown"
+              : field === "summary"
+              ? "No summary provided"
+              : "Read more";
             logger.info(`✅ ${entry.path}: Added missing ${field}`);
           } else {
             logger.error(`❌ ${entry.path}: Missing required field '${field}'`);
@@ -59,9 +69,11 @@ export async function contentLint(args: string[], contentDir = "content/blog"): 
       }
 
       if (needsUpdate && shouldFix) {
-        const updatedContent = `---\n${Object.entries(updatedAttrs)
-          .map(([key, value]) => `${key}: "${value}"`)
-          .join("\n")}\n---\n${body}`;
+        const updatedContent = `---\n${
+          Object.entries(updatedAttrs)
+            .map(([key, value]) => `${key}: "${value}"`)
+            .join("\n")
+        }\n---\n${body}`;
         await Deno.writeTextFile(filePath, updatedContent);
       }
 
@@ -79,8 +91,16 @@ export async function contentLint(args: string[], contentDir = "content/blog"): 
     return 1;
   }
 
-  logger.info(`Content linting completed ${shouldFix ? "and fixes applied " : ""}successfully`);
+  logger.info(
+    `Content linting completed ${
+      shouldFix ? "and fixes applied " : ""
+    }successfully`,
+  );
   return 0;
 }
 
-register("contentLint", "Lint markdown content files for required front matter", contentLint);
+register(
+  "contentLint",
+  "Lint markdown content files for required front matter",
+  contentLint,
+);

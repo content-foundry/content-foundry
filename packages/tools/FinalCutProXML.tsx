@@ -67,7 +67,7 @@ export function FinalCutProXML() {
 
     const run = async () => {
       const formData = new FormData();
-      formData.append('file', fileUrlForAssemblyAI);
+      formData.append("file", fileUrlForAssemblyAI);
       const response = await fetch("/assemblyai", {
         method: "POST",
         body: formData,
@@ -89,7 +89,7 @@ export function FinalCutProXML() {
 
     run().catch((error) => {
       setRunning(false);
-      throw new BfError("Failed to get transcript", error)
+      throw new BfError("Failed to get transcript", error);
     });
   }
 

@@ -19,7 +19,9 @@ export async function fork(): Promise<number> {
     !authStatus ||
     authStatus.includes("You are not logged into any GitHub hosts")
   ) {
-    logger.info("No valid GitHub authentication found. Attempting interactive login...");
+    logger.info(
+      "No valid GitHub authentication found. Attempting interactive login...",
+    );
 
     // This uses Deno.Command to feed a "y\n" into the prompt:
     const ghCommand = new Deno.Command("gh", {
@@ -59,7 +61,7 @@ export async function fork(): Promise<number> {
     // 0 => success => the repo (fork) is found
     repoAlreadyForked = true;
     logger.info(
-      `It looks like you already have a fork at ${forkRepoUrl}. Skipping fork creation.`
+      `It looks like you already have a fork at ${forkRepoUrl}. Skipping fork creation.`,
     );
   } else {
     logger.info("No existing fork detected. Creating a new fork...");
@@ -84,7 +86,7 @@ export async function fork(): Promise<number> {
   // 5. Configure local Git
   //    Remove any existing "origin" and add a new one pointing to your fork
   logger.info("Removing existing Git origin (if any)...");
-  await runShellCommand(["git", "remote", "remove", "origin"]);  
+  await runShellCommand(["git", "remote", "remove", "origin"]);
   // ^ We ignore errors here in case 'origin' does not exist.
 
   logger.info(`Adding new Git origin => ${forkRepoUrl}`);
@@ -125,4 +127,8 @@ export async function fork(): Promise<number> {
   return 0; // Success
 }
 
-register("fork", "Fork the Content Foundry repository to your personal GitHub account", fork);
+register(
+  "fork",
+  "Fork the Content Foundry repository to your personal GitHub account",
+  fork,
+);

@@ -9,7 +9,6 @@ import { dirname, fromFileUrl, join } from "@std/path";
 
 const logger = getLogger(import.meta);
 
-
 // ──────────────────────────────────────────────────────────────────────────────
 // 2. Deno file resolver plugin (for .ts/.js) unchanged
 // ──────────────────────────────────────────────────────────────────────────────
@@ -94,19 +93,18 @@ const ipynbPlugin: esbuild.Plugin = {
           const codeBlock = "```" + lang + "\n" +
             cell.source.join("") + "\n```\n";
 
-
           let outputs = "";
           if (cell.outputs) {
             for (const out of cell.outputs) {
               outputs += out.output_type + "\n";
               if (out.output_type === "stream") {
                 outputs += "```\n" + out.text.join("") + "\n```\n";
-          //     } else if (
-          //       ["display_data", "execute_result"].includes(out.output_type)
-          //     ) {
-          //       outputs += JSON.stringify(out.data, null, 2) + "\n";
-          //     } else if (out.output_type === "error") {
-          //       outputs += "```error\n" + out.evalue + "\n```\n";
+                //     } else if (
+                //       ["display_data", "execute_result"].includes(out.output_type)
+                //     ) {
+                //       outputs += JSON.stringify(out.data, null, 2) + "\n";
+                //     } else if (out.output_type === "error") {
+                //       outputs += "```error\n" + out.evalue + "\n```\n";
               }
             }
           }
@@ -114,7 +112,7 @@ const ipynbPlugin: esbuild.Plugin = {
         }
         return "";
       }).join("\n\n");
-      const mdxOutput = await compile(mdxSource)
+      const mdxOutput = await compile(mdxSource);
       const contents = String(mdxOutput);
       logger.debug("mdxOutput\n", contents);
       return {
@@ -122,8 +120,6 @@ const ipynbPlugin: esbuild.Plugin = {
         loader: "js",
       };
     });
-
-    
 
     // const destinationPath = import.meta.resolve(`build/${args.path}.mdx`)
     //   .replace("file://", "");
@@ -160,7 +156,6 @@ const ipynbPlugin: esbuild.Plugin = {
     // );
   },
 };
-
 
 // ──────────────────────────────────────────────────────────────────────────────
 // ESBuild Options

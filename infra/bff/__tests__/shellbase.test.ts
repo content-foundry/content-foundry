@@ -1,15 +1,18 @@
 // Tests for ./infra/bff/shellBase.ts
-import { assertEquals, assertArrayIncludes } from "@std/assert";
+import { assertArrayIncludes, assertEquals } from "@std/assert";
 import {
-  runShellCommand,
-  runShellCommandWithOutput,
   registerShellCommand,
   runningProcesses,
+  runShellCommand,
+  runShellCommandWithOutput,
 } from "../shellBase.ts";
 
 Deno.test("shellBase: registerShellCommand adds a friend", async () => {
   // We'll just verify that calling registerShellCommand doesn't throw
-  const cmd = registerShellCommand("fakeShell", "A fake command", ["echo", "hello"]);
+  const cmd = registerShellCommand("fakeShell", "A fake command", [
+    "echo",
+    "hello",
+  ]);
   const result = await cmd([]);
   // Since "echo" is valid, we should get a 0 exit code in normal circumstances
   assertEquals(result, 0);

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
 
 import { ensureDir } from "@std/fs";
-import { join, dirname, extname } from "@std/path";
+import { dirname, extname, join } from "@std/path";
 import { getLogger } from "packages/logger.ts";
 import { compile } from "@mdx-js/mdx";
 
@@ -20,7 +20,11 @@ async function copyContentFiles() {
   }
 }
 
-async function processEntry(entry: Deno.DirEntry, currentPath: string, buildPath: string) {
+async function processEntry(
+  entry: Deno.DirEntry,
+  currentPath: string,
+  buildPath: string,
+) {
   const sourcePath = join(currentPath, entry.name);
   const targetPath = join(buildPath, entry.name);
 
@@ -32,23 +36,23 @@ async function processEntry(entry: Deno.DirEntry, currentPath: string, buildPath
   } else if (entry.isFile) {
     // Ensure target directory exists
     await ensureDir(dirname(targetPath));
-    
+
     const ext = extname(sourcePath).toLowerCase();
-    if (ext === '.md' || ext === '.mdx' || ext === '.ipynb') {
-      let content = '';
-      
-      if (ext === '.ipynb') {
+    if (ext === ".md" || ext === ".mdx" || ext === ".ipynb") {
+      let content = "";
+
+      if (ext === ".ipynb") {
         const notebookContent = await Deno.readTextFile(sourcePath);
         const notebook = JSON.parse(notebookContent);
-        
+
         // Convert notebook to MDX
         content = notebook.cells.map((cell: any) => {
-          if (cell.cell_type === 'markdown') {
-            return cell.source.join('\n');
-          } else if (cell.cell_type === 'code') {
-            const codeBlock = '```python\n' + cell.source.join('') + '\n```';
-            let outputs = '';
-            
+          if (cell.cell_type === "markdown") {
+            return cell.source.join("\n");
+          } else if (cell.cell_type === "code") {
+            const codeBlock = "```python\n" + cell.source.join("") + "\n```";
+            let outputs = "";
+
             // if (cell.outputs) {
             //   outputs += "---\n";
             //   for (const out of cell.outputs) {
@@ -59,10 +63,10 @@ async function processEntry(entry: Deno.DirEntry, currentPath: string, buildPath
             //     }
             //   }
             // }
-            return codeBlock + '\n---\n' + outputs;
+            return codeBlock + "\n---\n" + outputs;
           }
-          return '';
-        }).join('\n\n');
+          return "";
+        }).join("\n\n");
       } else {
         content = await Deno.readTextFile(sourcePath);
       }
@@ -71,15 +75,15 @@ async function processEntry(entry: Deno.DirEntry, currentPath: string, buildPath
         const compiled = await compile(content);
         const destPath = targetPath;
         logger.info(`Processing ${sourcePath} -> ${destPath}`);
-        
+
         // Post-process import statements
         let processedContent = String(compiled).replace(
           /from\s+["']content\//g,
-          'from "build/content/'
+          'from "build/content/',
         );
         processedContent = processedContent.replace(
           /import\s+["']content\//g,
-          'import "build/content/'
+          'import "build/content/',
         );
 
         await Deno.writeTextFile(destPath, processedContent);

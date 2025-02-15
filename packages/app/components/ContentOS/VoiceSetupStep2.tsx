@@ -11,9 +11,9 @@ export function VoiceSetupStep2() {
     "voice-section-voice-style",
     {
       highlight: !showChanges,
-    }
-  ])
-  
+    },
+  ]);
+
   return (
     <>
       <h2 className="voice-section-header">

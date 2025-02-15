@@ -1,4 +1,3 @@
-
 import {
   BfNodeBase,
   type BfNodeBaseProps,
@@ -37,19 +36,21 @@ export class BfDocsPost extends BfNodeBase<BfDocsPostProps> {
   private static _postsCache: Map<BfGid, BfDocsPost>;
 
   static async getPostsCache() {
-    logger.debug('Starting getPostsCache for docs');
+    logger.debug("Starting getPostsCache for docs");
     if (this._postsCache) {
-      logger.debug('Returning existing docs cache');
+      logger.debug("Returning existing docs cache");
       return this._postsCache;
     }
 
     this._postsCache = new Map();
-    const iterable = walk(new URL(import.meta.resolve("content/documentation")));
+    const iterable = walk(
+      new URL(import.meta.resolve("content/documentation")),
+    );
     const loggedOutCV = BfCurrentViewer.createLoggedOut(import.meta);
-    logger.debug('Walking documentation directory');
+    logger.debug("Walking documentation directory");
 
     for await (const entry of iterable) {
-      if (!entry.isFile || !entry.path.endsWith('.md')) continue;
+      if (!entry.isFile || !entry.path.endsWith(".md")) continue;
 
       const maybeId = entry.path.split(".md")[0].split("/").pop();
       if (maybeId == null) {
@@ -59,10 +60,10 @@ export class BfDocsPost extends BfNodeBase<BfDocsPostProps> {
 
       const id = toBfGid(maybeId);
       logger.debug(`Processing file: ${entry.path} with ID: ${id}`);
-      
+
       let content = await Deno.readTextFile(entry.path);
       let metadata = {} as MaybeDocsPostFrontmatter;
-      
+
       try {
         const { body, attrs } = extractYaml(content);
         content = body;
@@ -78,10 +79,12 @@ export class BfDocsPost extends BfNodeBase<BfDocsPostProps> {
         status: metadata.status ?? DocsPostStatus.Published,
       };
 
-      logger.debug(`Creating docs post with title: ${metadata.title || 'untitled'}`);
+      logger.debug(
+        `Creating docs post with title: ${metadata.title || "untitled"}`,
+      );
       const creationMetadata = {
         bfGid: id,
-      }
+      };
       const post = await this.__DANGEROUS__createUnattached(
         loggedOutCV,
         props,
@@ -91,7 +94,7 @@ export class BfDocsPost extends BfNodeBase<BfDocsPostProps> {
       logger.debug(`Added docs post to cache with ID: ${id}`);
     }
 
-    logger.debug('Completed getPostsCache for docs');
+    logger.debug("Completed getPostsCache for docs");
     return this._postsCache;
   }
 

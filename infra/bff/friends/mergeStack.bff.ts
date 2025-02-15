@@ -60,7 +60,11 @@ export async function mergeStackBffCommand(options: string[]): Promise<number> {
 }
 
 // Finally, we register the BffCommand
-register("mergeStack", "Merge current PR and close stacked PRs", mergeStackBffCommand);
+register(
+  "mergeStack",
+  "Merge current PR and close stacked PRs",
+  mergeStackBffCommand,
+);
 
 /**
  * Helper to fetch the current PR # or null if none.
@@ -85,7 +89,10 @@ async function getCurrentPR(shell: Shell): Promise<string | null> {
 /**
  * Helper to find PRs that mention the current PR in their body, etc.
  */
-async function getStackedPRs(shell: Shell, currentPR: string): Promise<string[]> {
+async function getStackedPRs(
+  shell: Shell,
+  currentPR: string,
+): Promise<string[]> {
   const output = await shell.runShellCommandWithOutput([
     "gh",
     "pr",
