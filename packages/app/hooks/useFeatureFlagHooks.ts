@@ -1,4 +1,3 @@
-import { useAppEnvironment } from "packages/app/contexts/AppEnvironmentContext.tsx";
 import {
   type FeatureFlagsEnabled,
   featureFlagsEnabled,

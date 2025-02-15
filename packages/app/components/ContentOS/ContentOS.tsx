@@ -8,9 +8,9 @@ export const ContentOS = iso(`
   field Query.ContentOS @component {
     __typename
   }
-`)(function ContentOS({ data }) {
-  const [hasPasskey, setHasPasskey] = useState(true);
-  const [hasVoice, setHasVoice] = useState(true);
+`)(function ContentOS() {
+  const [hasPasskey, _setHasPasskey] = useState(true);
+  const [hasVoice, _setHasVoice] = useState(true);
   if (hasVoice) {
     return <Editor />;
   }

@@ -1,6 +1,6 @@
 import { colors, colorsDark, fonts } from "packages/bfDs/const.tsx";
 import { getLogger } from "packages/logger.ts";
-const logger = getLogger(import.meta);
+const _logger = getLogger(import.meta);
 
 const varsString = Object.entries({ ...colors, ...fonts }).reduce(
   (acc, [key, value]) => {

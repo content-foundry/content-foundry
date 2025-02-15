@@ -3,6 +3,9 @@ import { useState } from "react";
 import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { classnames } from "lib/classnames.ts";
+
+const logger = getLogger(import.meta);
+
 export function VoiceSetupStep2() {
   const [showChanges, setShowChanges] = useState(false);
   const [voiceLinks, setVoiceLinks] = useState<Array<string | null>>([null]);
@@ -54,7 +57,7 @@ export function VoiceSetupStep2() {
           <>
             <BfDsTextArea
               placeholder="What would you change?"
-              onChange={() => (console.log("foo"))}
+              onChange={() => (logger.info("foo"))}
               value={""}
             />
             {voiceLinks.map((link, index) => (
