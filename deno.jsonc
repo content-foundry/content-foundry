@@ -1,6 +1,7 @@
 {
   "unstable": ["temporal", "webgpu"],
   "imports": {
+    "@denosaurs/python": "jsr:@denosaurs/python@^0.4.4",
     "@iso": "./packages/app/__generated__/__isograph/iso.ts",
     "@iso/": "./packages/app/__generated__/__isograph/",
     "@luca/esbuild-deno-loader": "jsr:@luca/esbuild-deno-loader@^0.11.1",
