@@ -79,7 +79,10 @@ export async function createContext(request: Request): Promise<Context> {
   logger.debug("Current viewer created");
 
   async function loginDemoUser() {
-    currentViewer = await BfCurrentViewer.createForDemo(import.meta, responseHeaders);
+    currentViewer = await BfCurrentViewer.createForDemo(
+      import.meta,
+      responseHeaders,
+    );
     return currentViewer;
   }
 

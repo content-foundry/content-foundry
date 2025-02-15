@@ -61,7 +61,7 @@ const demoData: Array<DemoData> = [
         <h2>Dropzone</h2>
         <ExampleDropzone />
       </div>
-    )
+    ),
   },
   {
     name: "Forms",

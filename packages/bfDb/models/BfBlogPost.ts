@@ -66,9 +66,6 @@ export class BfBlogPost extends BfNodeBase<BfBlogPostProps> {
             props = attrs as BlogPostFrontmatter;
             addableText = body;
           }
-          
-          
-          
         }
 
         const creationMetadata = {

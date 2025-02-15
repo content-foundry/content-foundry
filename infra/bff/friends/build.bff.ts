@@ -84,10 +84,12 @@ export async function build(): Promise<number> {
   await Deno.remove("build", { recursive: true });
   await Deno.mkdir("build", { recursive: true });
   await Deno.writeFile("build/.gitkeep", new Uint8Array());
-  await Deno.remove("static/build", { recursive: true })
+  await Deno.remove("static/build", { recursive: true });
   await Deno.mkdir("static/build", { recursive: true });
   await Deno.writeFile("static/build/.gitkeep", new Uint8Array());
-  const contentResult = await runShellCommand(["./infra/appBuild/contentBuild.ts"]);
+  const contentResult = await runShellCommand([
+    "./infra/appBuild/contentBuild.ts",
+  ]);
   if (contentResult !== 0) {
     return contentResult;
   }

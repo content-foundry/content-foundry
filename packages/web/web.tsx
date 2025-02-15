@@ -283,19 +283,21 @@ function matchRoute(pathWithParams: string): [Handler, Record<string, string>] {
 
 logger.info("Ready to serve");
 
-const pythonPrefix = '/python';
+const pythonPrefix = "/python";
 async function pythonHandler(req: Request) {
   const pythonPort = Deno.env.get("PYTHON_PORT") ?? "3333";
   const incomingUrl = new URL(req.url);
-  const path = incomingUrl.pathname.replace(pythonPrefix, '');
-  const pythonUrl = new URL(`http://0.0.0.0:${pythonPort}${path}${incomingUrl.search}`);
-  
+  const path = incomingUrl.pathname.replace(pythonPrefix, "");
+  const pythonUrl = new URL(
+    `http://0.0.0.0:${pythonPort}${path}${incomingUrl.search}`,
+  );
+
   const pythonReq = new Request(pythonUrl.toString(), {
     method: req.method,
     headers: req.headers,
-    body: req.body
+    body: req.body,
   });
-  
+
   const pythonResponse = await fetch(pythonReq);
   if (!pythonResponse.ok) {
     logger.error("Python server response not ok:", pythonResponse.status);
@@ -308,8 +310,6 @@ if (import.meta.main) {
   Deno.serve(async (req) => {
     const incomingUrl = new URL(req.url);
     if (incomingUrl.pathname.startsWith(pythonPrefix)) {
-      
-      
       return pythonHandler(req);
     }
     const timer = performance.now();
@@ -328,7 +328,9 @@ if (import.meta.main) {
       const perf = performance.now() - timer;
       const perfInMs = Math.round(perf);
       logger.info(
-        `[${new Date().toISOString()}] [${req.method}] ${res.status} ${incomingUrl} ${
+        `[${
+          new Date().toISOString()
+        }] [${req.method}] ${res.status} ${incomingUrl} ${
           req.headers.get("content-type")
         } (${perfInMs}ms)`,
       );

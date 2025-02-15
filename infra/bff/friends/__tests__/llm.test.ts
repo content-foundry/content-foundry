@@ -1,9 +1,5 @@
 // ./infra/bff/friends/__tests__/llm.test.ts
-import {
-  assert,
-  assertEquals,
-  assertStringIncludes,
-} from "@std/assert";
+import { assert, assertEquals, assertStringIncludes } from "@std/assert";
 import { join } from "@std/path";
 import { emptyDir, ensureDir } from "@std/fs";
 import { llm } from "../llm.bff.ts";
@@ -30,7 +26,6 @@ async function runLlmAndCapture(args: string[]): Promise<string[]> {
     // We'll also put the exitCode at the end if needed, or just return it from test.
     // For demonstration, we won't. We'll rely on the lines array alone.
     // But you could also push `exitCode` somewhere or do asserts.
-
   } finally {
     console.log = realLog; // restore
   }
@@ -63,9 +58,8 @@ Deno.test("llm - basic usage with no flags", async () => {
     // Let's do some simple assertions:
     const joinedOutput = output.join("\n");
 
-    assertStringIncludes(joinedOutput, fooFile);          // path
+    assertStringIncludes(joinedOutput, fooFile); // path
     assertStringIncludes(joinedOutput, "## Hello from foo.md"); // content
-
   } finally {
     // 5. Cleanup
     await emptyDir(testDir);
@@ -137,7 +131,10 @@ Deno.test("llm - ignoring hidden files", async () => {
     assertStringIncludes(joinedOutput, normalFile);
     // The hidden file should NOT appear in the output
     // (unless user provided --include-hidden)
-    assert(!joinedOutput.includes(hiddenFile), "Hidden file should not be listed.");
+    assert(
+      !joinedOutput.includes(hiddenFile),
+      "Hidden file should not be listed.",
+    );
   } finally {
     await emptyDir(testDir);
   }
@@ -180,7 +177,10 @@ Deno.test("llm - ignoring patterns", async () => {
     const joinedOutput = output.join("\n");
 
     // skip.me content should not appear
-    assert(!joinedOutput.includes("Should be skipped"), "skip.me was included but shouldn't be.");
+    assert(
+      !joinedOutput.includes("Should be skipped"),
+      "skip.me was included but shouldn't be.",
+    );
 
     // keep.me should appear
     assertStringIncludes(joinedOutput, "Should be kept");
@@ -210,7 +210,10 @@ Deno.test("llm - respect .gitignore by default", async () => {
     assertStringIncludes(joinedOutput, "I am normal");
 
     // Should NOT see ignored
-    assert(!joinedOutput.includes("I should be ignored"), ".gitignore was not respected!");
+    assert(
+      !joinedOutput.includes("I should be ignored"),
+      ".gitignore was not respected!",
+    );
   } finally {
     await emptyDir(testDir);
   }
@@ -226,7 +229,10 @@ Deno.test("llm - ignoring .gitignore with --ignore-gitignore", async () => {
     const normal = join(testDir, "normal.txt");
     await Deno.writeTextFile(normal, "I am normal");
     const ignored = join(testDir, "ignored.ignoreme");
-    await Deno.writeTextFile(ignored, "I should be included if we ignore .gitignore");
+    await Deno.writeTextFile(
+      ignored,
+      "I should be included if we ignore .gitignore",
+    );
 
     // Notice we pass "--ignore-gitignore"
     const output = await runLlmAndCapture([testDir, "--ignore-gitignore"]);
@@ -234,7 +240,10 @@ Deno.test("llm - ignoring .gitignore with --ignore-gitignore", async () => {
 
     // Both normal and ignored should appear
     assertStringIncludes(joinedOutput, "I am normal");
-    assertStringIncludes(joinedOutput, "I should be included if we ignore .gitignore");
+    assertStringIncludes(
+      joinedOutput,
+      "I should be included if we ignore .gitignore",
+    );
   } finally {
     await emptyDir(testDir);
   }
@@ -255,7 +264,10 @@ Deno.test("llm - extension filtering", async () => {
     const joinedOutput = output.join("\n");
 
     // We expect to see fileB, not fileA
-    assert(!joinedOutput.includes("console.log(\"A\")"), "Unexpected TS file in output!");
+    assert(
+      !joinedOutput.includes('console.log("A")'),
+      "Unexpected TS file in output!",
+    );
     assertStringIncludes(joinedOutput, "# B file content");
   } finally {
     await emptyDir(testDir);
@@ -282,7 +294,10 @@ Deno.test("llm - ignoring binary files", async () => {
     assertStringIncludes(joinedOutput, "This is text content");
 
     // Should NOT see the binary file path at all
-    assert(!joinedOutput.includes("binary.bin"), "Binary file should not be listed");
+    assert(
+      !joinedOutput.includes("binary.bin"),
+      "Binary file should not be listed",
+    );
   } finally {
     await emptyDir(testDir);
   }

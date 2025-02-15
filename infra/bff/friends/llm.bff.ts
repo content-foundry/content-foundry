@@ -1,7 +1,7 @@
 // ./infra/bff/friends/llm.bff.ts
 import { register } from "infra/bff/bff.ts";
 import { walk } from "@std/fs/walk";
-import { join, basename, dirname, extname } from "@std/path";
+import { basename, dirname, extname, join } from "@std/path";
 import { globToRegExp } from "@std/path";
 import { exists } from "@std/fs/exists";
 
@@ -17,8 +17,8 @@ interface LlmOptions {
   lineNumbers: boolean;
 }
 
-/** 
- * Main command called by bff. 
+/**
+ * Main command called by bff.
  * Usage example:
  *   bff llm path/to/folder -e .ts -e .md --ignore "*.test.*" -c -n
  */
@@ -89,7 +89,7 @@ export async function llm(args: string[]): Promise<number> {
   }
 }
 
-/** 
+/**
  * Parse the command-line arguments in a simple, manual way.
  * (Feel free to adjust to your liking; BFF is just raw Deno.args after `bff llm`.)
  */
@@ -105,7 +105,7 @@ function parseArgs(args: string[]): LlmOptions {
     lineNumbers: false,
   };
 
-  // We'll do a basic manual parse. More robust solutions might use a library like std/flags, 
+  // We'll do a basic manual parse. More robust solutions might use a library like std/flags,
   // but let's keep it straightforward for BFF usage.
   let i = 0;
   while (i < args.length) {
@@ -175,16 +175,18 @@ function parseArgs(args: string[]): LlmOptions {
   return opts;
 }
 
-/** 
- * Recursively collects patterns from .gitignore files, starting at `startPath` 
- * and walking upward. 
+/**
+ * Recursively collects patterns from .gitignore files, starting at `startPath`
+ * and walking upward.
  */
 async function collectGitignorePatterns(
   startPath: string,
   patternSet: Set<string>,
 ): Promise<void> {
-  // If startPath is a file, use its directory. 
-  let currentDir = (await isDirectory(startPath)) ? startPath : dirname(startPath);
+  // If startPath is a file, use its directory.
+  let currentDir = (await isDirectory(startPath))
+    ? startPath
+    : dirname(startPath);
 
   while (true) {
     const gitignorePath = join(currentDir, ".gitignore");
@@ -206,16 +208,16 @@ async function collectGitignorePatterns(
   }
 }
 
-/** 
- * Return true if the path is a directory, false if file, or error if missing. 
+/**
+ * Return true if the path is a directory, false if file, or error if missing.
  */
 async function isDirectory(p: string): Promise<boolean> {
   const info = await Deno.stat(p);
   return info.isDirectory;
 }
 
-/** 
- * Process a path (file or directory). If directory, walk it. 
+/**
+ * Process a path (file or directory). If directory, walk it.
  */
 async function processPath(
   startPath: string,
@@ -233,7 +235,13 @@ async function processPath(
   }
 
   // It's a directory, so let's walk it:
-  for await (const entry of walk(startPath, { maxDepth: Infinity, includeFiles: true, includeDirs: false })) {
+  for await (
+    const entry of walk(startPath, {
+      maxDepth: Infinity,
+      includeFiles: true,
+      includeDirs: false,
+    })
+  ) {
     const rel = entry.path.slice(startPath.length).replace(/^\/+/, "");
     const filename = basename(entry.path);
 
@@ -248,7 +256,10 @@ async function processPath(
     }
 
     // 3) If .gitignore is to be respected, see if it matches any pattern
-    if (!opts.ignoreGitignore && matchesGitignore(entry.path, startPath, gitignorePatterns)) {
+    if (
+      !opts.ignoreGitignore &&
+      matchesGitignore(entry.path, startPath, gitignorePatterns)
+    ) {
       continue;
     }
 
@@ -267,7 +278,7 @@ async function processPath(
   return docIndex;
 }
 
-/** 
+/**
  * Check if a file appears to be binary by examining its first few bytes.
  * Returns true if the file seems to be binary, false if it looks like text.
  */
@@ -298,8 +309,8 @@ async function isBinaryFile(filePath: string): Promise<boolean> {
   }
 }
 
-/** 
- * Output a single file’s content, either in default or XML-ish mode. 
+/**
+ * Output a single file’s content, either in default or XML-ish mode.
  */
 async function outputOneFile(
   filePath: string,
@@ -348,8 +359,8 @@ async function outputOneFile(
   return docIndex;
 }
 
-/** 
- * Checks if the file should be ignored based on patterns. 
+/**
+ * Checks if the file should be ignored based on patterns.
  * If --ignore-files-only is set, we do not exclude directories from these patterns, etc.
  */
 function shouldIgnore(
@@ -369,14 +380,18 @@ function shouldIgnore(
   return false;
 }
 
-/** 
- * Checks if filePath matches any patterns from .gitignore. 
+/**
+ * Checks if filePath matches any patterns from .gitignore.
  * Typically .gitignore patterns are relative to the repo root or the .gitignore location.
  * We do a simplistic approach: if the basename matches, we skip.
  * For real correctness, you’d interpret each .gitignore pattern relative to its containing directory.
  */
-function matchesGitignore(filePath: string, rootDir: string, patternSet: Set<string>): boolean {
-  // For simplicity, just check if the file’s name or path matches any pattern. 
+function matchesGitignore(
+  filePath: string,
+  rootDir: string,
+  patternSet: Set<string>,
+): boolean {
+  // For simplicity, just check if the file’s name or path matches any pattern.
   const name = basename(filePath);
   for (const pat of patternSet) {
     const reg = globToRegExp(pat, { extended: true, globstar: true });
@@ -388,8 +403,8 @@ function matchesGitignore(filePath: string, rootDir: string, patternSet: Set<str
   return false;
 }
 
-/** 
- * Adds line numbers to each line of the file content. 
+/**
+ * Adds line numbers to each line of the file content.
  */
 function addLineNumbers(content: string): string {
   const lines = content.split("\n");
@@ -401,4 +416,8 @@ function addLineNumbers(content: string): string {
 }
 
 // Finally, register the new friend for "bff llm" usage:
-register("llm", "Outputs files in a prompt-friendly format (like files-to-prompt-cli).", llm);
+register(
+  "llm",
+  "Outputs files in a prompt-friendly format (like files-to-prompt-cli).",
+  llm,
+);

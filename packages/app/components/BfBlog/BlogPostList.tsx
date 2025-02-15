@@ -13,7 +13,9 @@ export const BlogPostList = iso(`
   }
 `)(function Blog({ data }) {
   const nodes = data?.posts?.nodes ?? [];
-  const blogPostListItems = nodes.map((node) => node && <node.BlogPostListItem />).filter(Boolean);
+  const blogPostListItems = nodes.map((node) =>
+    node && <node.BlogPostListItem />
+  ).filter(Boolean);
 
   return blogPostListItems.length > 0
     ? blogPostListItems

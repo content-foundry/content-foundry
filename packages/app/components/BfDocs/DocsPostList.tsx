@@ -16,7 +16,9 @@ export const DocsPostList = iso(`
       <div className="docs-page-item-info">
         <div className="docs-list-item-title">
           {node.title}
-          {node.status && <span className="docs_status_tag">{node.status}</span>}
+          {node.status && (
+            <span className="docs_status_tag">{node.status}</span>
+          )}
         </div>
         <div className="docs-list-item-summary">{node.summary}</div>
       </div>

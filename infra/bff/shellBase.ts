@@ -50,7 +50,9 @@ export async function runShellCommand(
     if (success) {
       logger.info(`Command succeeded: ${commandArray.join(" ")}`);
     } else {
-      logger.error(`Command failed with code ${code}: ${commandArray.join(" ")}`);
+      logger.error(
+        `Command failed with code ${code}: ${commandArray.join(" ")}`,
+      );
     }
   }
 

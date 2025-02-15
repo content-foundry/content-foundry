@@ -15,5 +15,8 @@ export const EntrypointBlog = iso(`
   const title = "Content Foundry";
   const DefaultBody = () => "coming soon";
 
-  return { Body: data?.me?.Blog ?? DefaultBody, title: data?.me?.blog?.name ?? title };
+  return {
+    Body: data?.me?.Blog ?? DefaultBody,
+    title: data?.me?.blog?.name ?? title,
+  };
 });

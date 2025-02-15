@@ -73,7 +73,6 @@ export async function stopJupyter(): Promise<number> {
   }
 }
 
-
 async function stopSapling() {
   logger.info("Stopping Sapling...");
   try {
@@ -90,8 +89,6 @@ async function stopSapling() {
     return 0;
   }
 }
-
-
 
 // Register "devToolStop" / "devToolsStop" commands
 ["devToolStop", "devToolsStop"].forEach((commandName) => {

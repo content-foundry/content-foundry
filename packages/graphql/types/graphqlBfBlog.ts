@@ -1,4 +1,4 @@
-import { objectType, queryField, idArg } from "nexus";
+import { idArg, objectType, queryField } from "nexus";
 import { BfBlogPost } from "packages/bfDb/models/BfBlogPost.ts";
 import { connectionFromArray } from "graphql-relay";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
@@ -18,7 +18,7 @@ export const graphqlBfBlogPostType = objectType({
     t.string("summary");
     t.string("slug");
     t.string("href", {
-      resolve: (parent) => `/blog/${parent.slug || parent.id || ''}`,
+      resolve: (parent) => `/blog/${parent.slug || parent.id || ""}`,
     });
   },
 });
@@ -42,10 +42,10 @@ export const graphqlBfBlogType = objectType({
     // @ts-ignore problem with compiling on deno pre 2.1.7
     t.connectionField("posts", {
       type: graphqlBfBlogPostType,
-    // @ts-ignore problem with compiling on deno pre 2.1.7
+      // @ts-ignore problem with compiling on deno pre 2.1.7
       resolve: async (parent, args, ctx) => {
         const posts = await BfBlogPost.query();
-        return connectionFromArray(posts.map(post => post.toGraphql()), args);
+        return connectionFromArray(posts.map((post) => post.toGraphql()), args);
       },
     });
   },

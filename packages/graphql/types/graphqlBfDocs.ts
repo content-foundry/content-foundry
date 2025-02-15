@@ -17,7 +17,7 @@ export const graphqlBfDocsPostType = objectType({
     t.string("summary");
     t.string("slug");
     t.string("href", {
-      resolve: (parent) => `/docs/${parent.slug || parent.id || ''}`,
+      resolve: (parent) => `/docs/${parent.slug || parent.id || ""}`,
     });
   },
 });
@@ -33,10 +33,10 @@ export const graphqlBfDocsType = objectType({
       // @ts-ignore problem with compiling on deno pre 2.1.7
       resolve: async (parent, args, ctx) => {
         const posts = await BfDocsPost.query();
-        return connectionFromArray(posts.map(post => post.toGraphql()), args);
+        return connectionFromArray(posts.map((post) => post.toGraphql()), args);
       },
     });
-    
+
     t.field("post", {
       type: graphqlBfDocsPostType,
       args: {
