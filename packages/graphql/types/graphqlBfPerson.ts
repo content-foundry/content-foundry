@@ -1,4 +1,4 @@
-import { objectType, queryField } from "nexus";
+import { objectType } from "nexus";
 import { getLogger } from "packages/logger.ts";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
 

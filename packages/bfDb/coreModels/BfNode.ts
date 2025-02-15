@@ -8,11 +8,7 @@ import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { BfErrorNotImplemented } from "packages/BfError.ts";
 import type { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { getLogger } from "packages/logger.ts";
-import {
-  bfGetItem,
-  bfPutItem,
-  bfQueryItems,
-} from "packages/bfDb/bfDb.ts";
+import { bfGetItem, bfPutItem, bfQueryItems } from "packages/bfDb/bfDb.ts";
 import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
 
 const logger = getLogger(import.meta);

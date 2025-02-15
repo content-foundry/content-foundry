@@ -73,23 +73,36 @@ export function isBrowser() {
   return typeof Deno === "undefined";
 }
 
+// Cache for logger instances
+const loggerCache = new Map<string, ReturnType<typeof log.getLogger>>();
+
 export function getLogger(importMeta: ImportMeta | string) {
+  let loggerName: string;
+
   if (typeof importMeta === "string") {
-    return log.getLogger(importMeta);
+    loggerName = importMeta;
+  } else {
+    const url = new URL(importMeta.url);
+    if (isBrowser()) {
+      loggerName = url.pathname;
+    } else {
+      // get relative url and remove leading slash
+      const relativePathname = url.pathname.split("deno-compile-web/")[1];
+      loggerName = relativePathname
+        ? relativePathname.replace(/^\//, "")
+        : url.pathname;
+    }
   }
-  const url = new URL(importMeta.url);
-  if (isBrowser()) {
-    return log.getLogger(url.pathname);
+
+  if (!loggerCache.has(loggerName)) {
+    const logger = log.getLogger(loggerName);
+    const defaultLogLevelString = getConfigurationVariable("LOG_LEVEL") ??
+      "INFO";
+    const defaultLogLevel =
+      log.levels[defaultLogLevelString as keyof typeof log.levels];
+    logger.setDefaultLevel(defaultLogLevel);
+    loggerCache.set(loggerName, logger);
   }
-  // get relative url and remove leading slash
-  const relativePathname = url.pathname.split("deno-compile-web/")[1];
-  const pathName = relativePathname
-    ? relativePathname.replace(/^\//, "")
-    : url.pathname;
-  const logger = log.getLogger(pathName);
-  const defaultLogLevelString = getConfigurationVariable("LOG_LEVEL") ?? "INFO";
-  const defaultLogLevel =
-    log.levels[defaultLogLevelString as keyof typeof log.levels];
-  logger.setDefaultLevel(defaultLogLevel);
-  return logger;
+
+  return loggerCache.get(loggerName)!;
 }
