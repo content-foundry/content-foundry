@@ -1,21 +1,4 @@
-/**
- * 1) Before we import @denosaurs/python, run a Python command to discover the
- *    correct LIBDIR, then set DENO_PYTHON_PATH accordingly.
- */
-const cmd = new Deno.Command("python", {
-  args: [
-    "-c",
-    "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))",
-  ],
-  stdout: "piped",
-  stderr: "piped",
-});
-
-const { stdout } = await cmd.output();
-const output = new TextDecoder().decode(stdout).trim();
-
-// This sets the environment variable at runtime:
-Deno.env.set("DENO_PYTHON_PATH", `${output}/libpython3.so`);
+// ./infra/bff/friends/llm.bff.ts
 
 import { register } from "infra/bff/bff.ts";
 import { walk } from "@std/fs/walk";
@@ -23,11 +6,6 @@ import { basename, dirname, extname, join } from "@std/path";
 import { globToRegExp } from "@std/path";
 import { exists } from "@std/fs/exists";
 import { getLogger } from "packages/logger.ts";
-
-// 1) Import the Python and tiktoken modules directly here:
-import { python } from "@denosaurs/python";
-const tiktoken = python.import("tiktoken");
-const encoding = tiktoken.get_encoding("cl100k_base");
 
 const logger = getLogger(import.meta);
 
@@ -44,29 +22,65 @@ interface LlmOptions {
 }
 
 /**
- * Helper functions previously in TiktokenResource
+ * Lazily load & cache the Python-based `tiktoken` encoding object.
  */
-function encodeText(text: string): number[] {
-  // tiktoken.encode() returns an iterator-like object;
-  // convert to array, then map to Number just to be safe.
-  return Array.from(encoding.encode(text)).map(Number);
+// deno-lint-ignore no-explicit-any
+let _encoding: any; // storing the tiktoken encoding object
+let _pythonEnvSet = false; // so we only set env once
+
+async function ensurePythonEnv() {
+  if (_pythonEnvSet) return;
+
+  // 1) run your one-line Python to get the library directory
+  // Using the new Deno.Command API
+  const cmd = new Deno.Command("python", {
+    args: ["-c", 'import sysconfig; print(sysconfig.get_config_var("LIBDIR"))'],
+    stdout: "piped",
+    stderr: "piped",
+  });
+
+  const { code, stdout, stderr } = await cmd.output();
+  if (code !== 0) {
+    const err = new TextDecoder().decode(stderr);
+    throw new Error(`Failed to retrieve LIBDIR from Python: ${err}`);
+  }
+  const libDir = new TextDecoder().decode(stdout).trim();
+  const soPath = `${libDir}/libpython3.so`;
+
+  // 2) set the env var for denosaurs/python
+  Deno.env.set("DENO_PYTHON_PATH", soPath);
+
+  _pythonEnvSet = true;
 }
 
-// function decodeTokens(tokens: number[]): string {
-//   // tiktoken.decode() returns a Uint8Array-like object; convert to string
-//   const decoded = String(encoding.decode(tokens));
-//   // Optionally remove leading/trailing quotes
-//   return decoded.replace(/^"|"$/g, "");
-// }
+async function getEncoding() {
+  if (!_encoding) {
+    // Make sure the environment is configured *before* we import the python module
+    await ensurePythonEnv();
 
-function countTokens(text: string): number {
-  return encodeText(text).length;
+    // Dynamically import the python & tiktoken
+    const { python } = await import("@denosaurs/python");
+    const tiktoken = python.import("tiktoken");
+    _encoding = tiktoken.get_encoding("cl100k_base");
+  }
+  return _encoding;
 }
 
 /**
- * Main command called by bff.
- * Usage example:
- *   bff llm path/to/folder -e .ts -e .md --ignore "*.test.*" -c -n
+ * Helper functions for encoding/decoding text
+ */
+async function encodeText(text: string): Promise<number[]> {
+  const encoding = await getEncoding();
+  // encoding.encode() returns something iterable; convert it to an array
+  return Array.from(encoding.encode(text)).map(Number);
+}
+
+async function countTokens(text: string): Promise<number> {
+  return (await encodeText(text)).length;
+}
+
+/**
+ * Main command: bff llm
  */
 export async function llm(args: string[]): Promise<number> {
   try {
@@ -82,7 +96,6 @@ export async function llm(args: string[]): Promise<number> {
       });
     }
 
-    // Define a simple “writer” function that either writes to stdout or a file.
     const writer = async (line: string) => {
       if (outputFileHandle) {
         await outputFileHandle.write(new TextEncoder().encode(line + "\n"));
@@ -91,12 +104,11 @@ export async function llm(args: string[]): Promise<number> {
       }
     };
 
-    // If using XML-ish mode, start with <documents>.
+    // If cxml mode, open the <documents> tag
     if (opts.cxml) {
       await writer("<documents>");
     }
 
-    // Collect .gitignore patterns globally
     const globalGitignorePatterns = new Set<string>();
     if (!opts.ignoreGitignore) {
       for (const p of opts.paths) {
@@ -104,7 +116,7 @@ export async function llm(args: string[]): Promise<number> {
       }
     }
 
-    // Process paths
+    // Process all requested paths
     let docIndex = 1;
     for (const p of opts.paths) {
       docIndex = await processPath(
@@ -116,7 +128,7 @@ export async function llm(args: string[]): Promise<number> {
       );
     }
 
-    // Close XML-ish
+    // close cxml
     if (opts.cxml) {
       await writer("</documents>");
     }
@@ -125,23 +137,24 @@ export async function llm(args: string[]): Promise<number> {
       outputFileHandle.close();
     }
 
-    // Count total tokens in the final output
-    const allContent = await Deno.readTextFile(
-      opts.outputFile ?? "build/llm.txt",
-    );
-    const totalTokens = countTokens(allContent);
+    // If no output file was specified, there's nothing to count tokens on
+    if (!opts.outputFile) {
+      logger.warn("No --output file specified; skipping token count.");
+      return 0;
+    }
+
+    // Count total tokens
+    const allContent = await Deno.readTextFile(opts.outputFile);
+    const totalTokens = await countTokens(allContent);
     logger.warn(`Total tokens: ${totalTokens}`);
 
     return 0;
-  } catch (error) {
-    logger.error("bff llm: Error", error);
+  } catch (err) {
+    logger.error("bff llm: Error", err);
     return 1;
   }
 }
 
-/**
- * Parse the command-line arguments in a simple, manual way.
- */
 function parseArgs(args: string[]): LlmOptions {
   const opts: LlmOptions = {
     paths: [],
@@ -159,58 +172,44 @@ function parseArgs(args: string[]): LlmOptions {
     const arg = args[i];
     switch (arg) {
       case "-e":
-      case "--extension": {
+      case "--extension":
         i++;
-        if (i < args.length) {
-          opts.extensions.push(args[i]);
-        }
+        if (i < args.length) opts.extensions.push(args[i]);
         break;
-      }
-      case "--include-hidden": {
+      case "--include-hidden":
         opts.includeHidden = true;
         break;
-      }
-      case "--ignore-files-only": {
+      case "--ignore-files-only":
         opts.ignoreFilesOnly = true;
         break;
-      }
-      case "--ignore-gitignore": {
+      case "--ignore-gitignore":
         opts.ignoreGitignore = true;
         break;
-      }
-      case "--ignore": {
+      case "--ignore":
         i++;
-        if (i < args.length) {
-          opts.ignorePatterns.push(args[i]);
-        }
+        if (i < args.length) opts.ignorePatterns.push(args[i]);
         break;
-      }
       case "-o":
-      case "--output": {
+      case "--output":
         i++;
-        if (i < args.length) {
-          opts.outputFile = args[i];
-        }
+        if (i < args.length) opts.outputFile = args[i];
         break;
-      }
       case "-c":
-      case "--cxml": {
+      case "--cxml":
         opts.cxml = true;
         break;
-      }
       case "-n":
-      case "--line-numbers": {
+      case "--line-numbers":
         opts.lineNumbers = true;
         break;
-      }
-      default: {
+      default:
         opts.paths.push(arg);
         break;
-      }
     }
     i++;
   }
 
+  // default path is "."
   if (opts.paths.length === 0) {
     opts.paths = ["."];
   }
@@ -218,10 +217,6 @@ function parseArgs(args: string[]): LlmOptions {
   return opts;
 }
 
-/**
- * Recursively collects patterns from .gitignore files, starting at `startPath`
- * and walking upward.
- */
 async function collectGitignorePatterns(
   startPath: string,
   patternSet: Set<string>,
@@ -241,24 +236,16 @@ async function collectGitignorePatterns(
       }
     }
     const parent = dirname(currentDir);
-    if (parent === currentDir) {
-      break;
-    }
+    if (parent === currentDir) break;
     currentDir = parent;
   }
 }
 
-/**
- * Return true if the path is a directory.
- */
 async function isDirectory(p: string): Promise<boolean> {
   const info = await Deno.stat(p);
   return info.isDirectory;
 }
 
-/**
- * Process a path (file or directory). If directory, walk it.
- */
 async function processPath(
   startPath: string,
   opts: LlmOptions,
@@ -267,8 +254,8 @@ async function processPath(
   initialDocIndex: number,
 ): Promise<number> {
   let docIndex = initialDocIndex;
-  const isDir = await isDirectory(startPath);
-  if (!isDir) {
+  const dirCheck = await isDirectory(startPath);
+  if (!dirCheck) {
     return await outputOneFile(startPath, writer, opts, docIndex);
   }
 
@@ -281,26 +268,20 @@ async function processPath(
   ) {
     const filename = basename(entry.path);
 
-    // 1) If ignoring hidden
-    if (!opts.includeHidden && filename.startsWith(".")) {
-      continue;
-    }
-    // 2) If ignoring patterns
+    // 1) skip hidden files unless --include-hidden
+    if (!opts.includeHidden && filename.startsWith(".")) continue;
+    // 2) skip if pattern matched
     if (shouldIgnore(entry.path, opts.ignorePatterns, opts.ignoreFilesOnly)) {
       continue;
     }
-    // 3) If ignoring .gitignore
+    // 3) skip if matches .gitignore
     if (
       !opts.ignoreGitignore && matchesGitignore(entry.path, gitignorePatterns)
-    ) {
-      continue;
-    }
-    // 4) If extension is not in allowed list
+    ) continue;
+    // 4) skip if extension not in list
     if (opts.extensions.length > 0) {
       const fext = extname(entry.path);
-      if (!opts.extensions.includes(fext)) {
-        continue;
-      }
+      if (!opts.extensions.includes(fext)) continue;
     }
 
     docIndex = await outputOneFile(entry.path, writer, opts, docIndex);
@@ -317,22 +298,20 @@ async function isBinaryFile(filePath: string): Promise<boolean> {
     file.close();
     if (bytesRead === null) return false;
 
+    // quick heuristic
     const slice = buffer.slice(0, bytesRead);
     let suspiciousBytes = 0;
     for (const byte of slice) {
       if (byte === 0) return true; // definitely binary
       if (byte < 7 || (byte > 14 && byte < 32)) suspiciousBytes++;
     }
-    // If over 30% is unusual ASCII, likely binary
-    return (suspiciousBytes / bytesRead) > 0.3;
+    // if over 30% is unusual ASCII, likely binary
+    return suspiciousBytes / bytesRead > 0.3;
   } catch {
     return false;
   }
 }
 
-/**
- * Output a single file's content in either default or cxml mode.
- */
 async function outputOneFile(
   filePath: string,
   writer: (line: string) => Promise<void>,
@@ -364,7 +343,7 @@ async function outputOneFile(
     return docIndex + 1;
   }
 
-  // Otherwise, default format
+  // otherwise, default “---” style
   await writer(filePath);
   await writer("---");
   if (opts.lineNumbers) {
@@ -374,6 +353,7 @@ async function outputOneFile(
   }
   await writer("---");
   await writer("");
+
   return docIndex;
 }
 
@@ -395,7 +375,7 @@ function matchesGitignore(filePath: string, patternSet: Set<string>): boolean {
   const name = basename(filePath);
   for (const pat of patternSet) {
     const reg = globToRegExp(pat, { extended: true, globstar: true });
-    // Check both the filename and the entire path
+    // check name or full path
     if (reg.test(name) || reg.test(filePath)) {
       return true;
     }
@@ -411,7 +391,7 @@ function addLineNumbers(content: string): string {
     .join("\n");
 }
 
-// Finally, register the "llm" command.
+// Finally, register the command
 register(
   "llm",
   "Outputs files in a prompt-friendly format (like files-to-prompt-cli).",
