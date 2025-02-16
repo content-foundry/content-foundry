@@ -127,28 +127,85 @@ register(
 
       logger.log("GitHub auth status:", authStatus);
       if (!authStatus) {
+        // Decide which port to use
+        const REPLIT_PID2 = Deno.env.get("REPLIT_PID2") ?? "";
+        const REPLIT_SESSION = Deno.env.get("REPLIT_SESSION") ?? "";
+        let port = "8283";
+        let token;
+
+        if (REPLIT_PID2 === "true") {
+          port = "8284";
+        }
+
+        // Fetch token from localhost
+        try {
+          const url = `http://localhost:${port}/${REPLIT_SESSION}/github/token`;
+          const response = await fetch(url);
+
+          // If the request is not OK, just print empty string
+          if (!response.ok) {
+            console.log("");
+            Deno.exit(0);
+          }
+
+          // Parse the JSON and extract the "token" field
+          const data = await response.json();
+          if (data && typeof data.token === "string") {
+            // console.log(data.token);
+            token = data.token;
+          } else {
+            console.log("");
+          }
+        } catch (_error) {
+          // On any error, print empty string
+          console.log("");
+        }
         logger.log(`Not authenticated. ${authStatus} Let's log in.`);
         // Setup GitHub auth first
         const ghCommand = new Deno.Command("gh", {
           args: [
             "auth",
             "login",
-            "--hostname",
-            "github.com",
-            "--web",
-            "--git-protocol",
-            "https",
+            "--with-token",
           ],
           stdin: "piped",
         });
         const ghProcess = ghCommand.spawn();
         const writer = ghProcess.stdin.getWriter();
-        await writer.write(new TextEncoder().encode("y\n"));
+        await writer.write(new TextEncoder().encode(token));
         await writer.close();
         await ghProcess.status;
       }
 
       logger.log("Starting Postgres, Jupyter, and Sapling web interface...");
+
+      // Get user info from GitHub API
+      const userInfoRaw = await runShellCommandWithOutput([
+        "gh",
+        "api",
+        "user",
+      ]);
+      
+      const userEmailRaw = await runShellCommandWithOutput([
+        "gh",
+        "api",
+        "user/emails",
+        "--jq",
+        ".[0].email"
+      ]);
+
+      const userInfo = JSON.parse(userInfoRaw);
+      const userName = userInfo.name || userInfo.login;
+      const userEmail = userEmailRaw.trim();
+
+      // Configure Sapling username
+      await runShellCommand([
+        "sl",
+        "config",
+        "--user",
+        "ui.username",
+        `${userName} <${userEmail}>`,
+      ]);
 
       // Kill any existing Jupyter or Sapling processes
       try {
@@ -278,6 +335,7 @@ register(
         ]);
 
         logger.info("All dev tools (Sapling, Jupyter) are ready!");
+        Deno.exit();
         return 0;
       } catch (error) {
         logger.error("Failed to start development tools:", error);
