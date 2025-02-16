@@ -144,29 +144,29 @@ register(
 
           // If the request is not OK, just print empty string
           if (!response.ok) {
-            console.log("");
             Deno.exit(0);
           }
 
           // Parse the JSON and extract the "token" field
           const data = await response.json();
           if (data && typeof data.token === "string") {
-            // console.log(data.token);
             token = data.token;
-          } else {
-            console.log("");
           }
         } catch (_error) {
           // On any error, print empty string
-          console.log("");
         }
-        logger.log(`Not authenticated. ${authStatus} Let's log in.`);
+        logger.info(`Not authenticated. ${authStatus} Let's log in.`);
+        logger.warn(
+          "The login prompt is for the gh app, but we are only requesting public_repo scope.",
+        );
         // Setup GitHub auth first
         const ghCommand = new Deno.Command("gh", {
           args: [
             "auth",
             "login",
-            "--with-token",
+            // "--with-token",
+            "--scopes",
+            "public_repo",
           ],
           stdin: "piped",
         });
@@ -177,7 +177,7 @@ register(
         await ghProcess.status;
       }
 
-      logger.log("Starting Postgres, Jupyter, and Sapling web interface...");
+      logger.log("Starting Jupyter, and Sapling web interface...");
 
       // Get user info from GitHub API
       const userInfoRaw = await runShellCommandWithOutput([
@@ -185,18 +185,18 @@ register(
         "api",
         "user",
       ]);
-      
-      const userEmailRaw = await runShellCommandWithOutput([
-        "gh",
-        "api",
-        "user/emails",
-        "--jq",
-        ".[0].email"
-      ]);
+
+      // const userEmailRaw = await runShellCommandWithOutput([
+      //   "gh",
+      //   "api",
+      //   "user/emails",
+      //   "--jq",
+      //   ".[0].email",
+      // ]);
 
       const userInfo = JSON.parse(userInfoRaw);
       const userName = userInfo.name || userInfo.login;
-      const userEmail = userEmailRaw.trim();
+      const userEmail = `${userInfo.login}@users.noreply.github.com`;
 
       // Configure Sapling username
       await runShellCommand([
