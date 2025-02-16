@@ -1,10 +1,33 @@
-// ./infra/bff/friends/llm.bff.ts
+/**
+ * 1) Before we import @denosaurs/python, run a Python command to discover the
+ *    correct LIBDIR, then set DENO_PYTHON_PATH accordingly.
+ */
+const cmd = new Deno.Command("python", {
+  args: [
+    "-c",
+    "import sysconfig; print(sysconfig.get_config_var('LIBDIR'))",
+  ],
+  stdout: "piped",
+  stderr: "piped",
+});
+
+const { stdout } = await cmd.output();
+const output = new TextDecoder().decode(stdout).trim();
+
+// This sets the environment variable at runtime:
+Deno.env.set("DENO_PYTHON_PATH", `${output}/libpython3.so`);
+
 import { register } from "infra/bff/bff.ts";
 import { walk } from "@std/fs/walk";
 import { basename, dirname, extname, join } from "@std/path";
 import { globToRegExp } from "@std/path";
 import { exists } from "@std/fs/exists";
 import { getLogger } from "packages/logger.ts";
+
+// 1) Import the Python and tiktoken modules directly here:
+import { python } from "@denosaurs/python";
+const tiktoken = python.import("tiktoken");
+const encoding = tiktoken.get_encoding("cl100k_base");
 
 const logger = getLogger(import.meta);
 
@@ -21,6 +44,26 @@ interface LlmOptions {
 }
 
 /**
+ * Helper functions previously in TiktokenResource
+ */
+function encodeText(text: string): number[] {
+  // tiktoken.encode() returns an iterator-like object;
+  // convert to array, then map to Number just to be safe.
+  return Array.from(encoding.encode(text)).map(Number);
+}
+
+// function decodeTokens(tokens: number[]): string {
+//   // tiktoken.decode() returns a Uint8Array-like object; convert to string
+//   const decoded = String(encoding.decode(tokens));
+//   // Optionally remove leading/trailing quotes
+//   return decoded.replace(/^"|"$/g, "");
+// }
+
+function countTokens(text: string): number {
+  return encodeText(text).length;
+}
+
+/**
  * Main command called by bff.
  * Usage example:
  *   bff llm path/to/folder -e .ts -e .md --ignore "*.test.*" -c -n
@@ -29,9 +72,9 @@ export async function llm(args: string[]): Promise<number> {
   try {
     const opts = parseArgs(args);
 
-    // If an output file is specified, we’ll create/overwrite it.
     let outputFileHandle: Deno.FsFile | undefined;
     if (opts.outputFile) {
+      logger.info(`Writing to ${opts.outputFile}`);
       outputFileHandle = await Deno.open(opts.outputFile, {
         write: true,
         create: true,
@@ -39,7 +82,7 @@ export async function llm(args: string[]): Promise<number> {
       });
     }
 
-    // Define a simple “writer” function that either writes to stdout or the file.
+    // Define a simple “writer” function that either writes to stdout or a file.
     const writer = async (line: string) => {
       if (outputFileHandle) {
         await outputFileHandle.write(new TextEncoder().encode(line + "\n"));
@@ -48,35 +91,32 @@ export async function llm(args: string[]): Promise<number> {
       }
     };
 
-    // If using XML-ish mode for Claude, add <documents> tag at the start.
+    // If using XML-ish mode, start with <documents>.
     if (opts.cxml) {
       await writer("<documents>");
     }
 
-    // Collect .gitignore patterns globally (if `--ignore-gitignore` is not set).
+    // Collect .gitignore patterns globally
     const globalGitignorePatterns = new Set<string>();
     if (!opts.ignoreGitignore) {
       for (const p of opts.paths) {
-        // If p is a directory, look for .gitignore inside it (and recursively up).
         await collectGitignorePatterns(p, globalGitignorePatterns);
       }
     }
 
-    // Process all specified paths in the same manner.
+    // Process paths
     let docIndex = 1;
     for (const p of opts.paths) {
-      await processPath(
+      docIndex = await processPath(
         p,
         opts,
         globalGitignorePatterns,
         writer,
         docIndex,
-      ).then((nextIndex) => {
-        docIndex = nextIndex; // keep incrementing index across multiple paths
-      });
+      );
     }
 
-    // If using XML-ish mode for Claude, close the </documents> tag.
+    // Close XML-ish
     if (opts.cxml) {
       await writer("</documents>");
     }
@@ -84,6 +124,13 @@ export async function llm(args: string[]): Promise<number> {
     if (outputFileHandle) {
       outputFileHandle.close();
     }
+
+    // Count total tokens in the final output
+    const allContent = await Deno.readTextFile(
+      opts.outputFile ?? "build/llm.txt",
+    );
+    const totalTokens = countTokens(allContent);
+    logger.warn(`Total tokens: ${totalTokens}`);
 
     return 0;
   } catch (error) {
@@ -94,7 +141,6 @@ export async function llm(args: string[]): Promise<number> {
 
 /**
  * Parse the command-line arguments in a simple, manual way.
- * (Feel free to adjust to your liking; BFF is just raw Deno.args after `bff llm`.)
  */
 function parseArgs(args: string[]): LlmOptions {
   const opts: LlmOptions = {
@@ -108,12 +154,9 @@ function parseArgs(args: string[]): LlmOptions {
     lineNumbers: false,
   };
 
-  // We'll do a basic manual parse. More robust solutions might use a library like std/flags,
-  // but let's keep it straightforward for BFF usage.
   let i = 0;
   while (i < args.length) {
     const arg = args[i];
-
     switch (arg) {
       case "-e":
       case "--extension": {
@@ -161,16 +204,13 @@ function parseArgs(args: string[]): LlmOptions {
         break;
       }
       default: {
-        // If it doesn't match a known flag, consider it a path.
         opts.paths.push(arg);
         break;
       }
     }
-
     i++;
   }
 
-  // If the user didn’t provide any paths, default to current directory.
   if (opts.paths.length === 0) {
     opts.paths = ["."];
   }
@@ -186,7 +226,6 @@ async function collectGitignorePatterns(
   startPath: string,
   patternSet: Set<string>,
 ): Promise<void> {
-  // If startPath is a file, use its directory.
   let currentDir = (await isDirectory(startPath))
     ? startPath
     : dirname(startPath);
@@ -194,7 +233,6 @@ async function collectGitignorePatterns(
   while (true) {
     const gitignorePath = join(currentDir, ".gitignore");
     if (await exists(gitignorePath)) {
-      // read all lines
       const content = await Deno.readTextFile(gitignorePath);
       for (const line of content.split("\n")) {
         const trimmed = line.trim();
@@ -202,17 +240,16 @@ async function collectGitignorePatterns(
         patternSet.add(trimmed);
       }
     }
-
     const parent = dirname(currentDir);
     if (parent === currentDir) {
-      break; // root reached
+      break;
     }
     currentDir = parent;
   }
 }
 
 /**
- * Return true if the path is a directory, false if file, or error if missing.
+ * Return true if the path is a directory.
  */
 async function isDirectory(p: string): Promise<boolean> {
   const info = await Deno.stat(p);
@@ -230,14 +267,11 @@ async function processPath(
   initialDocIndex: number,
 ): Promise<number> {
   let docIndex = initialDocIndex;
-
   const isDir = await isDirectory(startPath);
   if (!isDir) {
-    docIndex = await outputOneFile(startPath, writer, opts, docIndex);
-    return docIndex;
+    return await outputOneFile(startPath, writer, opts, docIndex);
   }
 
-  // It's a directory, so let's walk it:
   for await (
     const entry of walk(startPath, {
       maxDepth: Infinity,
@@ -245,28 +279,23 @@ async function processPath(
       includeDirs: false,
     })
   ) {
-    const _rel = entry.path.slice(startPath.length).replace(/^\/+/, "");
     const filename = basename(entry.path);
 
-    // 1) If ignoring hidden files
+    // 1) If ignoring hidden
     if (!opts.includeHidden && filename.startsWith(".")) {
       continue;
     }
-
-    // 2) If ignoring patterns (like *.test.*, etc.)
+    // 2) If ignoring patterns
     if (shouldIgnore(entry.path, opts.ignorePatterns, opts.ignoreFilesOnly)) {
       continue;
     }
-
-    // 3) If .gitignore is to be respected, see if it matches any pattern
+    // 3) If ignoring .gitignore
     if (
-      !opts.ignoreGitignore &&
-      matchesGitignore(entry.path, startPath, gitignorePatterns)
+      !opts.ignoreGitignore && matchesGitignore(entry.path, gitignorePatterns)
     ) {
       continue;
     }
-
-    // 4) If extensions are set, skip if not in the set
+    // 4) If extension is not in allowed list
     if (opts.extensions.length > 0) {
       const fext = extname(entry.path);
       if (!opts.extensions.includes(fext)) {
@@ -274,46 +303,35 @@ async function processPath(
       }
     }
 
-    // Now output the file
     docIndex = await outputOneFile(entry.path, writer, opts, docIndex);
   }
 
   return docIndex;
 }
 
-/**
- * Check if a file appears to be binary by examining its first few bytes.
- * Returns true if the file seems to be binary, false if it looks like text.
- */
 async function isBinaryFile(filePath: string): Promise<boolean> {
   try {
-    // Read first 512 bytes
     const file = await Deno.open(filePath);
     const buffer = new Uint8Array(512);
     const bytesRead = await file.read(buffer);
     file.close();
+    if (bytesRead === null) return false;
 
-    if (bytesRead === null) return false; // Empty file, treat as text
-
-    // Check the actual bytes read
     const slice = buffer.slice(0, bytesRead);
-
-    // Look for null bytes or high concentration of non-printable chars
     let suspiciousBytes = 0;
     for (const byte of slice) {
-      if (byte === 0) return true; // Null byte -> definitely binary
+      if (byte === 0) return true; // definitely binary
       if (byte < 7 || (byte > 14 && byte < 32)) suspiciousBytes++;
     }
-
-    // If more than 30% non-printable chars, likely binary
+    // If over 30% is unusual ASCII, likely binary
     return (suspiciousBytes / bytesRead) > 0.3;
   } catch {
-    return false; // If can't read file, treat as text (let downstream handle it)
+    return false;
   }
 }
 
 /**
- * Output a single file’s content, either in default or XML-ish mode.
+ * Output a single file's content in either default or cxml mode.
  */
 async function outputOneFile(
   filePath: string,
@@ -321,16 +339,15 @@ async function outputOneFile(
   opts: LlmOptions,
   docIndex: number,
 ): Promise<number> {
-  // First check if it's a binary file
   if (await isBinaryFile(filePath)) {
-    return docIndex; // Skip binary files silently
+    return docIndex; // skip
   }
 
   let content: string;
   try {
     content = await Deno.readTextFile(filePath);
   } catch {
-    return docIndex; // skip unreadable files
+    return docIndex;
   }
 
   if (opts.cxml) {
@@ -338,8 +355,7 @@ async function outputOneFile(
     await writer(`<source>${filePath}</source>`);
     await writer(`<document_content>`);
     if (opts.lineNumbers) {
-      const numbered = addLineNumbers(content);
-      await writer(numbered);
+      await writer(addLineNumbers(content));
     } else {
       await writer(content);
     }
@@ -348,57 +364,38 @@ async function outputOneFile(
     return docIndex + 1;
   }
 
-  // Otherwise, default output style
+  // Otherwise, default format
   await writer(filePath);
   await writer("---");
   if (opts.lineNumbers) {
-    const numbered = addLineNumbers(content);
-    await writer(numbered);
+    await writer(addLineNumbers(content));
   } else {
     await writer(content);
   }
   await writer("---");
-  await writer(""); // blank line
+  await writer("");
   return docIndex;
 }
 
-/**
- * Checks if the file should be ignored based on patterns.
- * If --ignore-files-only is set, we do not exclude directories from these patterns, etc.
- */
 function shouldIgnore(
   filePath: string,
   ignorePatterns: string[],
   _ignoreFilesOnly: boolean,
 ): boolean {
   for (const pattern of ignorePatterns) {
-    // Convert the user pattern into a regex
     const reg = globToRegExp(pattern, { extended: true, globstar: true });
     if (reg.test(basename(filePath))) {
-      // If ignoring only files, see if the path is a file
-      // but we typically skip it if it's matched.
       return true;
     }
   }
   return false;
 }
 
-/**
- * Checks if filePath matches any patterns from .gitignore.
- * Typically .gitignore patterns are relative to the repo root or the .gitignore location.
- * We do a simplistic approach: if the basename matches, we skip.
- * For real correctness, you’d interpret each .gitignore pattern relative to its containing directory.
- */
-function matchesGitignore(
-  filePath: string,
-  _rootDir: string,
-  patternSet: Set<string>,
-): boolean {
-  // For simplicity, just check if the file’s name or path matches any pattern.
+function matchesGitignore(filePath: string, patternSet: Set<string>): boolean {
   const name = basename(filePath);
   for (const pat of patternSet) {
     const reg = globToRegExp(pat, { extended: true, globstar: true });
-    // You could also do something like checking the relative path from the .gitignore's folder.
+    // Check both the filename and the entire path
     if (reg.test(name) || reg.test(filePath)) {
       return true;
     }
@@ -406,19 +403,15 @@ function matchesGitignore(
   return false;
 }
 
-/**
- * Adds line numbers to each line of the file content.
- */
 function addLineNumbers(content: string): string {
   const lines = content.split("\n");
   const pad = String(lines.length).length;
-  return lines.map((line, i) => {
-    const lineNum = (i + 1).toString().padStart(pad, " ");
-    return `${lineNum}  ${line}`;
-  }).join("\n");
+  return lines
+    .map((line, i) => `${(i + 1).toString().padStart(pad, " ")}  ${line}`)
+    .join("\n");
 }
 
-// Finally, register the new friend for "bff llm" usage:
+// Finally, register the "llm" command.
 register(
   "llm",
   "Outputs files in a prompt-friendly format (like files-to-prompt-cli).",
