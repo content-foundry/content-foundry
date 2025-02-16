@@ -1,4 +1,4 @@
-import { register } from "infra/bff/bff.ts";
+// import { register } from "infra/bff/bff.ts";
 import {
   runShellCommand as defaultRunShellCommand,
   runShellCommandWithOutput as defaultRunShellCommandWithOutput,
@@ -60,11 +60,11 @@ export function mergeStackBffCommand(): Promise<number> {
 }
 
 // Finally, we register the BffCommand
-register(
-  "mergeStack",
-  "Merge current PR and close stacked PRs",
-  mergeStackBffCommand,
-);
+// register(
+//   "mergeStack",
+//   "Merge current PR and close stacked PRs",
+//   mergeStackBffCommand,
+// );
 
 /**
  * Helper to fetch the current PR # or null if none.
