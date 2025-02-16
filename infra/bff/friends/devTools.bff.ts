@@ -90,7 +90,7 @@ async function stopSapling() {
 async function startTools() {
   logger.info("Starting Tools...");
   try {
-    const cmd = ["deno", "run", "--allow-net=0.0.0.0,localhost,127.0.0.1", "--allow-env", "./packages/web/tools.tsx"];
+    const cmd = ["./packages/web/tools.tsx"];
     await runShellCommand(cmd);
     logger.info("Tools started successfully");
     return 0;
@@ -158,6 +158,9 @@ register(
     "Run development tools (Postgres, Sapling web interface, Jupyter notebook)",
     async (options: string[]) => {
       const isDebug = options.includes("--debug");
+      // Start Tools first
+      const toolsPromise = startTools();
+
       // Check GitHub auth status first
       const authStatus = await runShellCommandWithOutput([
         "gh",
@@ -209,43 +212,66 @@ register(
             "public_repo",
           ],
           stdin: "piped",
+          stdout: "piped",
+          stderr: "piped",
         });
         const ghProcess = ghCommand.spawn();
-        const writer = ghProcess.stdin.getWriter();
-        await writer.write(new TextEncoder().encode(token));
-        await writer.close();
+        
+        // Watch stdout for the code
+        // 1) Read from stdout as you already do
+        if (ghProcess.stdout) {
+          (async () => {
+            const decoder = new TextDecoder();
+            for await (const chunk of ghProcess.stdout) {
+              const output = decoder.decode(chunk);
+              // If GH ever prints anything to stdout you care about, parse it here
+              // e.g. logger.info("gh (stdout): ", output);
+            }
+          })();
+        }
+
+        // 2) Also read from stderr
+        if (ghProcess.stderr) {
+          (async () => {
+            const decoder = new TextDecoder();
+            for await (const chunk of ghProcess.stderr) {
+              const output = decoder.decode(chunk);
+
+              // GH writes the one-time code lines to stderr. Something like:
+              //   ! First copy your one-time code: 1234-ABCD
+              //   Open this URL ...
+              if (output.includes("First copy your one-time code:")) {
+                logger.info("found code!", output);
+
+                // For example, parse out the code with a regex:
+                const match = output.match(/First copy your one-time code:\s*(\S+)/);
+                if (match) {
+                  const code = match[1];
+                  logger.info("Parsed code:", code);
+                  // Then write it somewhere, e.g.
+                  await Deno.writeTextFile("./tmp/ghcode", code);
+                }
+              }
+
+              // You might also want to log or parse other lines
+              logger.debug("gh (stderr):", output);
+            }
+          })();
+        }
+
+        // // 3) If you’re trying to supply some token or answer to gh’s stdin:
+        // const writer = ghProcess.stdin.getWriter();
+        // // If you don't actually need to pass anything in, you can skip this altogether
+        // await writer.write(new TextEncoder().encode("some input\n"));
+        // await writer.close();
+
+        // 4) Await the command’s exit
         await ghProcess.status;
+        await Deno.remove("./tmp/ghcode");
       }
 
-      logger.log("Starting Jupyter, and Sapling web interface...");
+      logger.log("Starting Jupyter and Sapling web interface...");
 
-      // Get user info from GitHub API
-      const userInfoRaw = await runShellCommandWithOutput([
-        "gh",
-        "api",
-        "user",
-      ]);
-
-      // const userEmailRaw = await runShellCommandWithOutput([
-      //   "gh",
-      //   "api",
-      //   "user/emails",
-      //   "--jq",
-      //   ".[0].email",
-      // ]);
-
-      const userInfo = JSON.parse(userInfoRaw);
-      const userName = userInfo.name || userInfo.login;
-      const userEmail = `${userInfo.login}@users.noreply.github.com`;
-
-      // Configure Sapling username
-      await runShellCommand([
-        "sl",
-        "config",
-        "--user",
-        "ui.username",
-        `${userName} <${userEmail}>`,
-      ]);
 
       // Kill any existing Jupyter or Sapling processes
       try {
@@ -377,65 +403,21 @@ register(
         runningProcesses.push(jupyterProc);
 
         // Wait for all services to become available
-        // Start Tools
-      logger.info("Starting Tools...");
-      const toolsProc = new Deno.Command("./packages/web/tools.tsx", {
-        args: [],
-        stdin: "null",
-        stdout: "piped",
-        stderr: "piped",
-      }).spawn();
+        // Tools server is already started
 
-      // Handle Tools logs
-      const toolsWriter = isDebug ? {
-        write: async (chunk: Uint8Array) => {
-          await Deno.stdout.write(chunk);
-          return;
+        await Promise.all([
+          waitForPort(3011, "Sapling"),
+          waitForPort(8888, "Jupyter"),
+          waitForPort(9999, "Tools"),
+        ]);
+
+        logger.info("All dev tools (Sapling, Jupyter, Tools) are ready!");
+
+        if (isDebug) {
+          // Keep the process running in debug mode
+          await new Promise(() => {});
         }
-      } : (await Deno.open("./tmp/tools.log", {
-        write: true,
-        create: true,
-        truncate: true,
-      })).writable.getWriter();
-
-      if (toolsProc.stdout) {
-        (async () => {
-          try {
-            for await (const chunk of toolsProc.stdout) {
-              await toolsWriter.write(chunk);
-            }
-          } catch (err) {
-            logger.error("Error writing Tools stdout:", err);
-          }
-        })();
-      }
-
-      if (toolsProc.stderr) {
-        (async () => {
-          try {
-            for await (const chunk of toolsProc.stderr) {
-              await toolsWriter.write(chunk);
-            }
-          } catch (err) {
-            logger.error("Error writing Tools stderr:", err);
-          }
-        })();
-      }
-      runningProcesses.push(toolsProc);
-
-      await Promise.all([
-        waitForPort(3011, "Sapling"),
-        waitForPort(8888, "Jupyter"),
-        waitForPort(9999, "Tools"),
-      ]);
-
-      logger.info("All dev tools (Sapling, Jupyter, Tools) are ready!");
-      
-      if (isDebug) {
-        // Keep the process running in debug mode
-        await new Promise(() => {});
-      }
-      return 0;
+        return 0;
       } catch (error) {
         logger.error("Failed to start development tools:", error);
         return 1;
