@@ -52,7 +52,6 @@ export function AppEnvironmentProvider(
     ...appEnvironment
   }: React.PropsWithChildren<ServerProps>,
 ) {
-
   const { posthogKey } = appEnvironment;
   const isographEnvironment = isographServerEnvironment ?? getEnvironment();
 
