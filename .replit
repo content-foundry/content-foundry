@@ -1,3 +1,4 @@
+
 entrypoint = "README.md"
 modules = ["postgresql-16"]
 
@@ -7,7 +8,7 @@ channel = "unstable"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "bff build"]
-run = ["sh", "-c", "./build/web"]
+run = ["sh", "-c", "PORT=9999 ./build/web"]
 
 [languages.deno]
 pattern = "**/*.{ts,js,tsx,jsx,json,jsonc,md,mdx}"
@@ -19,63 +20,51 @@ lint = true
 config = "./deno.jsonc"
 
 [workflows]
-runButton = "Run app"
+runButton = "Run for development"
 
 [[workflows.workflow]]
-name = "Run app"
-author = 33272860
+name = "BFF build and run"
 mode = "sequential"
+author = 33272860
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "bff build || (sleep 20 || exit 1)"
+task = "workflow.run"
+args = "Bff Build"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "./build/web || (sleep 10 || exit 1)"
+task = "workflow.run"
+args = "Run Web"
 
 [[workflows.workflow]]
-name = "Dev tools"
+name = "Run for development"
+author = 33272860
 mode = "parallel"
-author = 33272860
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "sl web -f --no-open"
+task = "workflow.run"
+args = "BFF build and run"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "deno jupyter --install && jupyter notebook --config ./infra/jupyter/config.py"
+task = "workflow.run"
+args = "Run dev tools"
 
 [[workflows.workflow]]
-name = "Commit"
+name = "---------------------------"
 mode = "sequential"
-author = 33272860
+author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bff commit"
+args = "echo \"this is a separator\""
 
-[[ports]]
-localPort = 3011
-externalPort = 3001
-
-[[ports]]
-localPort = 5432
-externalPort = 3002
-
-[[ports]]
-localPort = 8000
-externalPort = 80
-
-[[ports]]
-localPort = 8888
-externalPort = 3000
+[[workflows.workflow]]
+name = "Run dev tools"
+mode = "parallel"
+author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "./build/web"
-waitForPort = 8000
+args = "bff devTools --debug"
 
 [[workflows.workflow]]
 name = "Project"
@@ -96,6 +85,39 @@ agentRequireRestartOnSave = false
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "deno test --allow-write --allow-read infra/bff/friends/__tests__/llm.test.ts"
+
+[[workflows.workflow]]
+name = "Run Web"
+mode = "sequential"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./build/web"
+
+[[workflows.workflow]]
+name = "Bff Build"
+mode = "sequential"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bff build"
+
+[[ports]]
+localPort = 3011
+externalPort = 3001
+
+[[ports]]
+localPort = 8000
+
+[[ports]]
+localPort = 8888
+externalPort = 3000
+
+[[ports]]
+localPort = 9999
+externalPort = 80
 
 [objectStorage]
 defaultBucketID = "replit-objstore-606cdad4-5695-4398-ba16-1878dd101ab7"

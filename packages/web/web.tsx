@@ -66,46 +66,7 @@ export type Handler = (
 
 const routes = new Map<string, Handler>();
 
-if (getConfigurationVariable("BF_ENV") === DeploymentEnvs.DEVELOPMENT) {
-  logger.info("Starting in development mode");
-  // backend tool commands
-  addTools(routes);
-  for (const entry of toolRoutes.entries()) {
-    const [path, { Component }] = entry;
-
-    const nextUrl = renderToString(React.createElement(Component));
-    routes.set(path, async function ToolRoute(_req, routeParams) {
-      const ENVIRONMENT = {
-        nextUrl,
-        routeParams,
-      };
-      const extensionPath = import.meta.resolve(
-        "packages/extension/extension.js",
-      );
-      const extensionCode = await Deno.readTextFile(
-        new URL(extensionPath),
-      );
-      return new Response(
-        `
-        <!DOCTYPE html>
-        <body>
-          <div class="updatable">
-          not yet
-          </div>
-          <script>
-          window.ENVIRONMENT = ${JSON.stringify(ENVIRONMENT)};
-          </script>
-          <script type="module">
-          ${extensionCode}
-          </script>
-        </body>
-        </html>
-      `,
-        { headers: { "content-type": "text/html" } },
-      );
-    });
-  }
-} else {
+if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
   // remove UI route from non dev environments
   appRoutes.delete("/ui");
 }

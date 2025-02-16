@@ -87,6 +87,32 @@ async function stopSapling() {
   }
 }
 
+async function startTools() {
+  logger.info("Starting Tools...");
+  try {
+    const cmd = ["deno", "run", "--allow-net=0.0.0.0,localhost,127.0.0.1", "--allow-env", "./packages/web/tools.tsx"];
+    await runShellCommand(cmd);
+    logger.info("Tools started successfully");
+    return 0;
+  } catch (error) {
+    logger.error("Failed to start Tools:", error);
+    return 1;
+  }
+}
+
+async function stopTools() {
+  logger.info("Stopping Tools...");
+  try {
+    // Find and kill the process running on port 9999
+    await runShellCommand(["pkill", "-f", "tools.tsx"]);
+    logger.info("Tools stopped");
+    return 0;
+  } catch {
+    logger.info("No Tools process found");
+    return 0;
+  }
+}
+
 // Register "devToolStop" / "devToolsStop" commands
 ["devToolStop", "devToolsStop"].forEach((commandName) => {
   register(
@@ -95,10 +121,23 @@ async function stopSapling() {
     async () => {
       await stopJupyter();
       await stopSapling();
+      await stopTools();
       return 0;
     },
   );
 });
+
+register(
+  "devToolStartTools",
+  "Start Tools web interface",
+  startTools,
+);
+
+register(
+  "devToolStopTools",
+  "Stop Tools web interface",
+  stopTools,
+);
 
 register(
   "devToolStopJupyter",
@@ -117,7 +156,8 @@ register(
   register(
     commandName,
     "Run development tools (Postgres, Sapling web interface, Jupyter notebook)",
-    async () => {
+    async (options: string[]) => {
+      const isDebug = options.includes("--debug");
       // Check GitHub auth status first
       const authStatus = await runShellCommandWithOutput([
         "gh",
@@ -233,19 +273,23 @@ register(
 
         logger.info("Starting Sapling web interface...");
         const saplingProc = new Deno.Command("sl", {
-          args: ["web", "-f", "--no-open"],
+          args: ["web", "--foreground", "--no-open"],
           stdin: "null",
           stdout: "piped",
           stderr: "piped",
         }).spawn();
 
-        // Write Sapling logs to file
-        const saplingLogFile = await Deno.open("./tmp/sapling.log", {
+        // Handle Sapling logs
+        const saplingWriter = isDebug ? {
+          write: async (chunk: Uint8Array) => {
+            await Deno.stdout.write(chunk);
+            return;
+          }
+        } : (await Deno.open("./tmp/sapling.log", {
           write: true,
           create: true,
           truncate: true,
-        });
-        const saplingWriter = saplingLogFile.writable.getWriter();
+        })).writable.getWriter();
 
         // Handle stdout and stderr asynchronously
         if (saplingProc.stdout) {
@@ -294,13 +338,17 @@ register(
           stderr: "piped",
         }).spawn();
 
-        // Write Jupyter logs to file
-        const jupyterLogFile = await Deno.open("./tmp/jupyter.log", {
+        // Handle Jupyter logs
+        const jupyterWriter = isDebug ? {
+          write: async (chunk: Uint8Array) => {
+            await Deno.stdout.write(chunk);
+            return;
+          }
+        } : (await Deno.open("./tmp/jupyter.log", {
           write: true,
           create: true,
           truncate: true,
-        });
-        const jupyterWriter = jupyterLogFile.writable.getWriter();
+        })).writable.getWriter();
 
         // Handle Jupyter logs asynchronously
         if (jupyterProc.stdout) {
@@ -329,14 +377,65 @@ register(
         runningProcesses.push(jupyterProc);
 
         // Wait for all services to become available
-        await Promise.all([
-          waitForPort(3011, "Sapling"),
-          waitForPort(8888, "Jupyter"),
-        ]);
+        // Start Tools
+      logger.info("Starting Tools...");
+      const toolsProc = new Deno.Command("./packages/web/tools.tsx", {
+        args: [],
+        stdin: "null",
+        stdout: "piped",
+        stderr: "piped",
+      }).spawn();
 
-        logger.info("All dev tools (Sapling, Jupyter) are ready!");
-        Deno.exit();
-        return 0;
+      // Handle Tools logs
+      const toolsWriter = isDebug ? {
+        write: async (chunk: Uint8Array) => {
+          await Deno.stdout.write(chunk);
+          return;
+        }
+      } : (await Deno.open("./tmp/tools.log", {
+        write: true,
+        create: true,
+        truncate: true,
+      })).writable.getWriter();
+
+      if (toolsProc.stdout) {
+        (async () => {
+          try {
+            for await (const chunk of toolsProc.stdout) {
+              await toolsWriter.write(chunk);
+            }
+          } catch (err) {
+            logger.error("Error writing Tools stdout:", err);
+          }
+        })();
+      }
+
+      if (toolsProc.stderr) {
+        (async () => {
+          try {
+            for await (const chunk of toolsProc.stderr) {
+              await toolsWriter.write(chunk);
+            }
+          } catch (err) {
+            logger.error("Error writing Tools stderr:", err);
+          }
+        })();
+      }
+      runningProcesses.push(toolsProc);
+
+      await Promise.all([
+        waitForPort(3011, "Sapling"),
+        waitForPort(8888, "Jupyter"),
+        waitForPort(9999, "Tools"),
+      ]);
+
+      logger.info("All dev tools (Sapling, Jupyter, Tools) are ready!");
+      
+      if (isDebug) {
+        // Keep the process running in debug mode
+        await new Promise(() => {});
+      }
+      return 0;
       } catch (error) {
         logger.error("Failed to start development tools:", error);
         return 1;
