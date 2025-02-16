@@ -29,7 +29,6 @@ export class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
     return { hasError: true, error };
   }
 
-
   // Optionally log to PostHog
   override componentDidCatch(error: Error, info: unknown) {
     // You could also import posthog at the top, but here's a dynamic import to avoid overhead:

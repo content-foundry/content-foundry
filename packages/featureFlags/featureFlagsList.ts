@@ -1,48 +1,52 @@
 /**
- * This file is used to define the features and their variants.
- *
- * The `featureFlags` object is used to define the features that are
- * either on or off. The `featureVariants` object is used to define
- * the features that have multiple variants.
- *
- * Important: This is a file used both on clients and servers. Do not
- * import anything that is not available on both.
- *
- * To use feature flags, define the "key" in either object, and then
- * add the respective related item in posthog.
+ * This file is used to define local fallback for features and their variants.
+ * PostHog is used as the source of truth if available, but if offline or uninitialized,
+ * these default definitions apply. Keep everything alphabetized, and if you add a
+ * new feature-flag, add it to both the `featureFlagsEnabledUnfrozen` or
+ * `featureFlagsVariantUnfrozen` (depending on boolean vs. variant).
  */
+
+//
+// 1) Type definitions
+//
 export type FeatureFlagsEnabled = typeof featureFlagsEnabled;
 export type FeatureFlagsVariant = typeof featureFlagsVariant;
+
 export type FeatureFlagVariant<T extends keyof FeatureFlagsVariant> =
   FeatureFlagsVariant[T];
 export type FeatureFlagEnabled<T extends keyof FeatureFlagsEnabled> =
   FeatureFlagsEnabled[T];
 
-/**
- * For ease of pasting into posthog, make it be "real json" including
- * quoted string keys.
- *
- * Also, please keep them alphabetized.
- */
-const featureFlagsVariantUnfrozen = {};
+//
+// 2) Default variants (multi-valued flags)
+//
+const featureFlagsVariantUnfrozen = {
+  // For example, if you want to store text or multiple states
+  // "example_variant_flag": {
+  //   "experimentGroupA": "someValue",
+  //   "experimentGroupB": "otherValue"
+  // }
+};
+
 export const featureFlagsVariant = Object.freeze(featureFlagsVariantUnfrozen);
 
-/**
- * Gating flags are how we separate subscriptions. These should
- * be set to false, and relate to each tier. Server side, we enable
- * and disable gating, using posthog properties right now.
- */
+//
+// 3) Default booleans
+//
+// "Gating" flags are how we separate subscription tiers, e.g. gating_starter, gating_basic, gating_pro
+// so that we can use them with posthog user properties.
 const gatingFlags = {
   gating_starter: false,
   gating_basic: false,
   gating_pro: false,
 };
 
-// Keep alphabetized please!
 const featureFlagsEnabledUnfrozen = {
+  // Example boolean flags, keep alphabetical:
   enable_demo_button: true,
   enable_login_form: false,
-  ...gatingFlags, // should always be last so they don't accidentally get overwritten
+
+  ...gatingFlags,
 };
 
 export const featureFlagsEnabled = Object.freeze(featureFlagsEnabledUnfrozen);
