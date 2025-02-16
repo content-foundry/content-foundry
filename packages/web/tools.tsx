@@ -29,6 +29,7 @@ for (const entry of toolRoutes.entries()) {
     const extensionCode = await Deno.readTextFile(
       new URL(extensionPath),
     );
+
     return new Response(
       `
       <!DOCTYPE html>
@@ -51,7 +52,6 @@ for (const entry of toolRoutes.entries()) {
 }
 
 function matchRoute(pathWithParams: string): [Handler, Record<string, string>] {
-
   const match = matchRouteWithParams(pathWithParams);
   const matchedHandler = routes.get(match.pathTemplate);
   const routeParams = match.routeParams;
@@ -63,16 +63,39 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
   const url = new URL(req.url);
   url.hostname = "localhost"; // replace with the hostname of the target server
   url.port = "8000"; // replace with the port of the target server
-  const response = await fetch(url.toString(), {
-    method: req.method,
-    headers: req.headers,
-    body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
-  });
-  return response;
+  try {
+    const response = await fetch(url.toString(), {
+      method: req.method,
+      headers: req.headers,
+      body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+    });
+    logger.info(response)
+    return response;
+  } catch (_) {
+    return defaultRoute(req);
+  }
 };
 
-const defaultRoute: Handler = () => {
-  return new Response("yo.")
+const defaultRoute = async (req: Request) => {
+  let githubCode = "";
+  try {
+    githubCode = await Deno.readTextFile("./tmp/ghcode");
+  } catch {
+    // File doesn't exist, ignore
+  }
+
+  const githubCodeHtml = githubCode ? `
+    <div style="position: fixed; top: 10px; right: 10px; background: #f0f0f0; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <p>GitHub Device Code: <strong>${githubCode}</strong></p>
+      <a href="https://github.com/login/device" target="_blank" style="color: #0366d6; text-decoration: none;">
+        Click here to complete GitHub login
+      </a>
+    </div>
+  ` : '';
+
+  return new Response(githubCodeHtml, {
+    headers: { "content-type": "text/html" },
+  })
 }
 
 const port = 9999;
