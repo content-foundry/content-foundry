@@ -19,6 +19,8 @@ import { BfDsFullPageSpinner } from "packages/bfDs/components/BfDsSpinner.tsx";
 import { getLogger } from "packages/logger.ts";
 const logger = getLogger(import.meta);
 
+import { usePostHog } from "posthog-js/react";
+
 export const registeredRoutes = new Set<string>();
 export const dynamicRoutes = new Set<string>();
 
@@ -39,18 +41,6 @@ function addRoute(path: string) {
     routePath = routePath.slice(0, -1);
   }
   registeredRoutes.add(routePath);
-}
-
-export function addAllRoutes() {
-  appRoutes.forEach((_value, key) => {
-    addRoute(key);
-  });
-  isographAppRoutes.forEach((_value, key) => {
-    addRoute(key);
-  });
-  logger.debug(
-    `Initialized all routes. Registered: ${registeredRoutes.size}, Dynamic: ${dynamicRoutes.size}`,
-  );
 }
 
 type MatchedRoute = {
@@ -82,62 +72,64 @@ export function matchRouteWithParams(
     `matchRouteWithParams: path: ${path}, pathsToMatch: ${pathsToMatch}`,
   );
 
-  const match = pathsToMatch.map((pathTemplate) => {
-    logger.debug(`matchRouteWithParams: pathTemplate: ${pathTemplate}`);
-    const pathTemplateParts = pathTemplate.split("/");
-    const currentPathParts = path.split("/");
+  const match = pathsToMatch
+    .map((pathTemplate) => {
+      logger.debug(`matchRouteWithParams: pathTemplate: ${pathTemplate}`);
+      const pathTemplateParts = pathTemplate.split("/");
+      const currentPathParts = path.split("/");
 
-    // Check if path parts length matches (accounting for optional parameters)
-    if (
-      !pathTemplateParts.some((p) => p.endsWith("?")) &&
-      pathTemplateParts.length !== currentPathParts.length
-    ) {
-      return defaultParams;
-    }
-
-    const params = pathTemplateParts.reduce((acc, part, i) => {
-      if (part.startsWith(":")) {
-        const paramName = part.endsWith("?")
-          ? part.slice(1, -1)
-          : part.slice(1);
-        acc[paramName] = currentPathParts[i] || null;
-      }
-      return acc;
-    }, {} as Record<string, string | null>);
-
-    logger.debug("params before checking match:", params);
-
-    for (let i = 0; i < pathTemplateParts.length; i++) {
-      // Skip if part is a parameter
-      if (pathTemplateParts[i].startsWith(":")) {
-        if (!currentPathParts[i] && !pathTemplateParts[i].endsWith("?")) {
-          return defaultParams;
-        }
-        logger.debug(
-          "part is a parameter",
-          pathTemplateParts[i],
-          currentPathParts[i] ?? "undefined",
-        );
-      } else if (pathTemplateParts[i] !== currentPathParts[i]) {
-        logger.debug(
-          "part mismatch",
-          pathTemplateParts[i],
-          currentPathParts[i],
-        );
+      // Check if path parts length matches (accounting for optional parameters)
+      if (
+        !pathTemplateParts.some((p) => p.endsWith("?")) &&
+        pathTemplateParts.length !== currentPathParts.length
+      ) {
         return defaultParams;
       }
-    }
 
-    const route = appRoutes.get(pathTemplate);
-    return {
-      match: true,
-      params,
-      route,
-      queryParams,
-      routeParams: params,
-      pathTemplate,
-    };
-  }).find((route) => route.match === true);
+      const params = pathTemplateParts.reduce((acc, part, i) => {
+        if (part.startsWith(":")) {
+          const paramName = part.endsWith("?")
+            ? part.slice(1, -1)
+            : part.slice(1);
+          acc[paramName] = currentPathParts[i] || null;
+        }
+        return acc;
+      }, {} as Record<string, string | null>);
+
+      logger.debug("params before checking match:", params);
+
+      for (let i = 0; i < pathTemplateParts.length; i++) {
+        // Skip if part is a parameter
+        if (pathTemplateParts[i].startsWith(":")) {
+          if (!currentPathParts[i] && !pathTemplateParts[i].endsWith("?")) {
+            return defaultParams;
+          }
+          logger.debug(
+            "part is a parameter",
+            pathTemplateParts[i],
+            currentPathParts[i] ?? "undefined",
+          );
+        } else if (pathTemplateParts[i] !== currentPathParts[i]) {
+          logger.debug(
+            "part mismatch",
+            pathTemplateParts[i],
+            currentPathParts[i],
+          );
+          return defaultParams;
+        }
+      }
+
+      const route = appRoutes.get(pathTemplate);
+      return {
+        match: true,
+        params,
+        route,
+        queryParams,
+        routeParams: params,
+        pathTemplate,
+      };
+    })
+    .find((route) => route.match === true);
 
   logger.debug("match result:", match);
   return match ?? defaultParams;
@@ -167,6 +159,18 @@ export type RouterProviderProps = {
   initialPath: string;
 };
 
+export function addAllRoutes() {
+  appRoutes.forEach((_value, key) => {
+    addRoute(key);
+  });
+  isographAppRoutes.forEach((_value, key) => {
+    addRoute(key);
+  });
+  logger.debug(
+    `Initialized all routes. Registered: ${registeredRoutes.size}, Dynamic: ${dynamicRoutes.size}`,
+  );
+}
+
 export function RouterProvider(
   { routeParams, queryParams, initialPath, children }: React.PropsWithChildren<
     RouterProviderProps
@@ -180,6 +184,8 @@ export function RouterProvider(
     NextHeader: null as ComponentWithHeader | null,
   }), [initialPath, routeParams, queryParams]);
 
+  const { posthog } = usePostHog();
+
   const [state, setState] = useState(initialState);
 
   const updateState = useCallback((path: string) => {
@@ -191,24 +197,34 @@ export function RouterProvider(
       queryParams: nextMatch.queryParams,
       NextHeader: NextHeader ?? state.NextHeader,
     });
-  }, [setState]);
+  }, [setState, state.NextHeader]);
 
   useEffect(() => {
     const handlePopState = () => {
       logger.debug("Detected browser navigation via popstate.");
       updateState(globalThis.location.pathname);
+      // also track a pageview
+      if (posthog) {
+        posthog.capture("$pageview", {
+          path: globalThis.location.pathname,
+        });
+      }
     };
     globalThis.addEventListener("popstate", handlePopState);
     return () => {
       globalThis.removeEventListener("popstate", handlePopState);
     };
-  }, [updateState]);
+  }, [updateState, posthog]);
 
   const navigate = (path: string) => {
     startTransition(() => {
       globalThis.history.pushState(null, "", path);
       logger.debug(`Pushing new state to history: ${path}`);
       updateState(path);
+      // Track a page view
+      if (posthog) {
+        posthog.capture("$pageview", { path });
+      }
     });
   };
 
@@ -222,7 +238,7 @@ export function RouterProvider(
       const dynamicHeaderTags = globalThis.document?.querySelectorAll(
         "head > .dynamic",
       );
-      dynamicHeaderTags.forEach((tag) => tag.remove());
+      dynamicHeaderTags?.forEach((tag) => tag.remove());
     }
     if (portalElement) {
       Array.from(portalElement.children).forEach((child) => {
