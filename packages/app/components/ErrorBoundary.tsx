@@ -17,6 +17,7 @@ export class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
     error: undefined,
   };
   override props: ErrorProps;
+
   constructor(props: ErrorProps) {
     super(props);
     this.props = props;
@@ -28,14 +29,25 @@ export class ErrorBoundary extends React.Component<ErrorProps, ErrorState> {
     return { hasError: true, error };
   }
 
-  override componentDidCatch() {
-    // TODO log error to posthog
-    // logError(error, info);
+
+  // Optionally log to PostHog
+  override componentDidCatch(error: Error, info: unknown) {
+    // You could also import posthog at the top, but here's a dynamic import to avoid overhead:
+    try {
+      import("posthog-js").then(({ posthog }) => {
+        posthog.capture("client-error", {
+          error: error?.message,
+          stack: error?.stack,
+          info,
+        });
+      });
+    } catch (_) {
+      // If posthog import fails, do nothing
+    }
   }
 
   override render() {
     if (this.state.hasError) {
-      // e.g. <ErrorBoundary fallback={(error) => <ErrorPage error={error} />}>
       if (typeof this.props.fallback === "function") {
         return this.props.fallback(this.state.error);
       }
