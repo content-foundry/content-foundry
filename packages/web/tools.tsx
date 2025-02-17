@@ -60,19 +60,27 @@ function matchRoute(pathWithParams: string): [Handler, Record<string, string>] {
 }
 
 const proxyRoute: Handler = async (req: Request): Promise<Response> => {
-  const url = new URL(req.url);
-  url.hostname = "localhost"; // replace with the hostname of the target server
-  url.port = "8000"; // replace with the port of the target server
+  // Check if GitHub code file exists
   try {
-    const response = await fetch(url.toString(), {
-      method: req.method,
-      headers: req.headers,
-      body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
-    });
-    logger.info(response)
-    return response;
-  } catch (_) {
+    await Deno.readTextFile("./tmp/ghcode");
+    // If the file exists, return the default route response
     return defaultRoute(req);
+  } catch {
+    // File doesn't exist, proceed with proxy
+    const url = new URL(req.url);
+    url.hostname = "localhost"; // replace with the hostname of the target server
+    url.port = "8000"; // replace with the port of the target server
+    try {
+      const response = await fetch(url.toString(), {
+        method: req.method,
+        headers: req.headers,
+        body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+      });
+      logger.info(response);
+      return response;
+    } catch (_) {
+      return defaultRoute(req);
+    }
   }
 };
 
