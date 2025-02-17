@@ -21,9 +21,10 @@
     "packages/": "./packages/",
     "util/": "./util/",
     "posthog-js/react": "./node_modules/posthog-js/react/dist/esm/index.js",
-    "react/jsx-runtime": "npm:react/jsx-runtime",
+    "react/": "npm:react/",
     "content/": "./content/",
-    "build/content/": "./build/content/"
+    "build/content/": "./build/content/",
+    "static/": "./static/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
@@ -49,7 +50,7 @@
   "exclude": [
     ".cache",
     "build",
-    "static",
+    "static/build",
     "**/__TEMPLATE__.*"
   ],
   "lint": {
