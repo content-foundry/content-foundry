@@ -6,6 +6,7 @@ import {
   objectType,
   queryField,
   stringArg,
+  nullable
 } from "nexus";
 import { graphqlNode } from "packages/graphql/types/graphqlBfNode.ts";
 import { getLogger } from "packages/logger.ts";
@@ -20,6 +21,7 @@ import { BfBlog } from "packages/bfDb/models/BfBlog.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { graphqlBfDocsType } from "packages/graphql/types/graphqlBfDocs.ts";
 import { BfDocs } from "packages/bfDb/models/BfDocs.ts";
+import { graphqlBfStoryBank } from "packages/graphql/types/graphqlBfStoryBank.ts";
 
 const logger = getLogger(import.meta);
 
@@ -39,6 +41,21 @@ export const graphqlBfCurrentViewerType = interfaceType({
       resolve: async (_parent, _args, ctx) => {
         const docs = await ctx.findX(BfDocs, "the-docs" as BfGid);
         return docs.toGraphql();
+      },
+    });
+    t.field("storyBank", {
+      type: graphqlBfStoryBank,
+      resolve: async (parent, _args, ctx) => {
+        // #NOCOMMIT find the storybank somehow magically
+        const returnNull = false;
+        if (returnNull) {
+          return null;
+        }
+        return {
+          __typename: "BfStoryBank",
+          id: "storybank1" as BfGid,
+          voiceProfile: "I like to move it move it.",
+        }
       },
     });
   },
