@@ -1,1 +1,2 @@
-fix jupyter notebook creation to not be insane
+- [ ] add error boundary to html rendering
+- [ ] make an esbuild loader
