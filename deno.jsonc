@@ -23,7 +23,8 @@
     "posthog-js/react": "./node_modules/posthog-js/react/dist/esm/index.js",
     "react/jsx-runtime": "npm:react/jsx-runtime",
     "content/": "./content/",
-    "build/content/": "./build/content/"
+    "build/content/": "./build/content/",
+    "static/": "./static/",
   },
   "compilerOptions": {
     "jsx": "react-jsx",
