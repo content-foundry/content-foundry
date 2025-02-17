@@ -77,6 +77,7 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
         body: req.method !== "GET" && req.method !== "HEAD"
           ? req.body
           : undefined,
+        redirect: "manual",
       });
       logger.info(response);
       return response;
