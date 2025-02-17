@@ -20,7 +20,7 @@ lint = true
 config = "./deno.jsonc"
 
 [workflows]
-runButton = "Run for development"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "BFF build and run"
@@ -75,6 +75,10 @@ author = "agent"
 task = "workflow.run"
 args = "Test Runner"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Tools Server"
+
 [[workflows.workflow]]
 name = "Test Runner"
 author = "agent"
@@ -103,6 +107,21 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "bff build"
+
+[[workflows.workflow]]
+name = "Tools Server"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "chmod +x ./packages/web/tools.tsx && ./packages/web/tools.tsx"
+waitForPort = 9999
 
 [[ports]]
 localPort = 3011
