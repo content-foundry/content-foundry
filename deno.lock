@@ -53,6 +53,7 @@
     "npm:@peculiar/asn1-schema@^2.3.8": "2.3.15",
     "npm:@peculiar/asn1-x509@^2.3.8": "2.3.15",
     "npm:@replit/extensions@^1.10.0": "1.10.0",
+    "npm:@simplewebauthn/browser@^13.1.0": "13.1.0",
     "npm:@types/jsonwebtoken@^9.0.8": "9.0.8",
     "npm:@types/node@^22.10.7": "22.10.7",
     "npm:@types/react-dom@19": "19.0.3_@types+react@19.0.7",
@@ -1001,6 +1002,9 @@
       "dependencies": [
         "@sentry/core"
       ]
+    },
+    "@simplewebauthn/browser@13.1.0": {
+      "integrity": "sha512-WuHZ/PYvyPJ9nxSzgHtOEjogBhwJfC8xzYkPC+rR/+8chl/ft4ngjiK8kSU5HtRJfczupyOh33b25TjYbvwAcg=="
     },
     "@types/acorn@4.0.6": {
       "integrity": "sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==",
@@ -2755,6 +2759,7 @@
         "npm:@mdx-js/mdx@^3.1.0",
         "npm:@neondatabase/serverless@~0.10.4",
         "npm:@replit/extensions@^1.10.0",
+        "npm:@simplewebauthn/browser@^13.1.0",
         "npm:@types/jsonwebtoken@^9.0.8",
         "npm:@types/node@^22.10.7",
         "npm:@types/react-dom@19",
