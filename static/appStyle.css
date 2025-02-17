@@ -1,6 +1,8 @@
 .appPage {
   height: 100vh;
-  background: var(--pageBackground) url(/static/assets/images/bf-symbol-angle-right_bw.jpg) no-repeat 0% 100% / auto 110%;
+  background: var(--pageBackground)
+    url(/static/assets/images/bf-symbol-angle-right_bw.jpg) no-repeat 0% 100% /
+    auto 110%;
   background-blend-mode: multiply;
 }
 .appHeader {
@@ -40,7 +42,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}/* ContentOS */
+} /* ContentOS */
 .page {
   height: 100vh;
   display: flex;
@@ -51,12 +53,11 @@
   padding: 12px;
 }
 
-
 /* VoiceSetup */
 .voice-container {
   display: flex;
   justify-content: center;
-  flex:1;
+  flex: 1;
   align-items: center;
 }
 
@@ -86,13 +87,12 @@
   padding: 15px;
   background-color: var(--text015);
 }
-.voice-section-voice-style.highlight{
+.voice-section-voice-style.highlight {
   background-color: var(--fourtharyColor015);
 }
 
-
 /* Editor */
-.editor-container{
+.editor-container {
   background-color: var(--background);
   height: 100vh;
 }
@@ -100,9 +100,9 @@
   border-bottom: 1px solid var(--border);
   padding-bottom: 10px;
 }
-.left-side-bar{
+.left-side-bar {
   min-width: 300px;
-  flex:0;
+  flex: 0;
   border-right: 1px solid var(--border);
   height: 100%;
   box-sizing: border-box;
@@ -118,26 +118,25 @@
   flex-direction: column;
   gap: 8px;
 }
-.editor-workspace{
+.editor-workspace {
   overflow-y: auto;
   flex: 1;
   padding: 24px;
 }
-.text-editor{
-  flex:1;
+.text-editor {
+  flex: 1;
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
 }
-.right-side-bar{
+.right-side-bar {
   min-width: 300px;
-  flex:0;
+  flex: 0;
   border-left: 1px solid var(--border);
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
 }
-
 
 /* Revisions */
 .revision {

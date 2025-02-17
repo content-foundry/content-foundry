@@ -159,7 +159,7 @@ register(
     async (options: string[]) => {
       const isDebug = options.includes("--debug");
       // Start Tools first
-      const toolsPromise = startTools();
+      startTools();
 
       // Check GitHub auth status first
       const authStatus = await runShellCommandWithOutput([
@@ -170,34 +170,6 @@ register(
 
       logger.log("GitHub auth status:", authStatus);
       if (!authStatus) {
-        // Decide which port to use
-        const REPLIT_PID2 = Deno.env.get("REPLIT_PID2") ?? "";
-        const REPLIT_SESSION = Deno.env.get("REPLIT_SESSION") ?? "";
-        let port = "8283";
-        let token;
-
-        if (REPLIT_PID2 === "true") {
-          port = "8284";
-        }
-
-        // Fetch token from localhost
-        try {
-          const url = `http://localhost:${port}/${REPLIT_SESSION}/github/token`;
-          const response = await fetch(url);
-
-          // If the request is not OK, just print empty string
-          if (!response.ok) {
-            Deno.exit(0);
-          }
-
-          // Parse the JSON and extract the "token" field
-          const data = await response.json();
-          if (data && typeof data.token === "string") {
-            token = data.token;
-          }
-        } catch (_error) {
-          // On any error, print empty string
-        }
         logger.info(`Not authenticated. ${authStatus} Let's log in.`);
         logger.warn(
           "The login prompt is for the gh app, but we are only requesting public_repo scope.",
@@ -216,19 +188,6 @@ register(
           stderr: "piped",
         });
         const ghProcess = ghCommand.spawn();
-        
-        // Watch stdout for the code
-        // 1) Read from stdout as you already do
-        if (ghProcess.stdout) {
-          (async () => {
-            const decoder = new TextDecoder();
-            for await (const chunk of ghProcess.stdout) {
-              const output = decoder.decode(chunk);
-              // If GH ever prints anything to stdout you care about, parse it here
-              // e.g. logger.info("gh (stdout): ", output);
-            }
-          })();
-        }
 
         // 2) Also read from stderr
         if (ghProcess.stderr) {
@@ -244,12 +203,14 @@ register(
                 logger.info("found code!", output);
 
                 // For example, parse out the code with a regex:
-                const match = output.match(/First copy your one-time code:\s*(\S+)/);
+                const match = output.match(
+                  /First copy your one-time code:\s*(\S+)/,
+                );
                 if (match) {
                   const code = match[1];
                   logger.info("Parsed code:", code);
                   // Then write it somewhere, e.g.
-                  await Deno.mkdir("./tmp", { recursive: true })
+                  await Deno.mkdir("./tmp", { recursive: true });
                   await Deno.writeTextFile("./tmp/ghcode", code);
                 }
               }
@@ -272,7 +233,6 @@ register(
       }
 
       logger.log("Starting Jupyter and Sapling web interface...");
-
 
       // Kill any existing Jupyter or Sapling processes
       try {
@@ -307,16 +267,18 @@ register(
         }).spawn();
 
         // Handle Sapling logs
-        const saplingWriter = isDebug ? {
-          write: async (chunk: Uint8Array) => {
-            await Deno.stdout.write(chunk);
-            return;
+        const saplingWriter = isDebug
+          ? {
+            write: async (chunk: Uint8Array) => {
+              await Deno.stdout.write(chunk);
+              return;
+            },
           }
-        } : (await Deno.open("./tmp/sapling.log", {
-          write: true,
-          create: true,
-          truncate: true,
-        })).writable.getWriter();
+          : (await Deno.open("./tmp/sapling.log", {
+            write: true,
+            create: true,
+            truncate: true,
+          })).writable.getWriter();
 
         // Handle stdout and stderr asynchronously
         if (saplingProc.stdout) {
@@ -366,16 +328,18 @@ register(
         }).spawn();
 
         // Handle Jupyter logs
-        const jupyterWriter = isDebug ? {
-          write: async (chunk: Uint8Array) => {
-            await Deno.stdout.write(chunk);
-            return;
+        const jupyterWriter = isDebug
+          ? {
+            write: async (chunk: Uint8Array) => {
+              await Deno.stdout.write(chunk);
+              return;
+            },
           }
-        } : (await Deno.open("./tmp/jupyter.log", {
-          write: true,
-          create: true,
-          truncate: true,
-        })).writable.getWriter();
+          : (await Deno.open("./tmp/jupyter.log", {
+            write: true,
+            create: true,
+            truncate: true,
+          })).writable.getWriter();
 
         // Handle Jupyter logs asynchronously
         if (jupyterProc.stdout) {

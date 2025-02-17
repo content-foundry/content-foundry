@@ -11,10 +11,15 @@
 }
 
 .landing-page-header {
-  background: linear-gradient(135deg, var(--primaryColor) -40%, var(--transparentSecondary) 10%, transparent 20%), 
-    linear-gradient(-135deg, var(--fourtharyColor) -50%, transparent 20%), 
-    linear-gradient(45deg, var(--transparentDark), 
-    var(--transparentDark));
+  background:
+    linear-gradient(
+      135deg,
+      var(--primaryColor) -40%,
+      var(--transparentSecondary) 10%,
+      transparent 20%
+    ),
+    linear-gradient(-135deg, var(--fourtharyColor) -50%, transparent 20%),
+    linear-gradient(45deg, var(--transparentDark), var(--transparentDark));
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -228,9 +233,7 @@ video.landing-page-hero-video {
   align-content: space-evenly;
 }
 
-#clips-column-two {
-
-}
+#clips-column-two {}
 
 #video1 {
   transform: translateX(-33%);
@@ -242,9 +245,7 @@ video.landing-page-hero-video {
   transform: translateY(-20%);
 }
 
-#video3 {
-
-}
+#video3 {}
 
 .landing-page-mission-section {
   display: flex;
@@ -328,16 +329,14 @@ video.landing-page-hero-video {
 }
 
 .text-brand-gold {
-  color: var(--primaryColor)
+  color: var(--primaryColor);
 }
 
 .text-tertiary {
-  color: var(--tertiary)
+  color: var(--tertiary);
 }
 
-.landing-page-set-up-meeting-text {
-
-}
+.landing-page-set-up-meeting-text {}
 
 .landing-page-set-up-meeting-headline {
   font-size: 40px;
@@ -347,7 +346,7 @@ video.landing-page-hero-video {
 .landing-page-set-up-meeting-cta {
   margin-top: 4px;
   text-align: right;
-  font-size: .7em;
+  font-size: 0.7em;
 }
 
 .landing-page-bottom-logo {
@@ -357,7 +356,8 @@ video.landing-page-hero-video {
 
 .landing-page-footer {
   padding: 20px;
-  background: var(--background) linear-gradient(-10deg, var(--primaryColor) -70%, transparent 30%);
+  background: var(--background)
+    linear-gradient(-10deg, var(--primaryColor) -70%, transparent 30%);
 }
 .landing-page-footer .flexColumn {
   gap: 1.3vw;
@@ -453,7 +453,7 @@ video.landing-page-hero-video {
   align-items: center;
   justify-content: center;
 }
-@media(max-width: 600px) {
+@media (max-width: 600px) {
   .how-we-work .step.flexRow {
     padding-right: 24px;
   }
@@ -560,22 +560,26 @@ video.landing-page-hero-video {
   align-items: center;
 }
 .hscroll-chrome-likes {
-  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-heart.png) no-repeat top center/contain;
+  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-heart.png)
+    no-repeat top center/contain;
   width: 18px;
   padding-top: 18px;
 }
 .hscroll-chrome-comments {
-  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-comment.png) no-repeat top center/contain;
+  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-comment.png)
+    no-repeat top center/contain;
   width: 18px;
   padding-top: 18px;
 }
 .hscroll-chrome-share {
-  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-share.png) no-repeat top center/contain;
+  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-share.png)
+    no-repeat top center/contain;
   width: 18px;
   padding-top: 18px;
 }
 .hscroll-chrome-kebab {
-  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-kebab.png) no-repeat top center/contain;
+  background: url(https://bf-static-assets.s3.amazonaws.com/ig/chrome/ig-kebab.png)
+    no-repeat top center/contain;
   width: 18px;
   padding-top: 18px;
 }
@@ -599,12 +603,20 @@ video.landing-page-hero-video {
   align-items: center;
   justify-content: center;
   gap: 5vh;
-  background: linear-gradient(in oklch -330deg, var(--fourtharyColor) -20%, var(--tertiaryColorDark));
+  background: linear-gradient(
+    in oklch -330deg,
+    var(--fourtharyColor) -20%,
+    var(--tertiaryColorDark)
+  );
   border-radius: 15px;
   padding: 5vh;
 }
 .testimonial.rowReverse-column {
-  background: linear-gradient(in oklch -30deg, var(--fourtharyColor) -20%, var(--tertiaryColorDark));
+  background: linear-gradient(
+    in oklch -30deg,
+    var(--fourtharyColor) -20%,
+    var(--tertiaryColorDark)
+  );
 }
 
 .testimonial-headshot {
@@ -667,7 +679,7 @@ video.landing-page-hero-video {
   font-size: 2em;
 }
 
-@media(max-width: 1300px) {
+@media (max-width: 1300px) {
   .landing-page-block {
     margin: auto;
   }
@@ -678,8 +690,7 @@ video.landing-page-hero-video {
   #video2 {
     align-self: auto;
   }
-  .landing-page-clips {
-  }
+  .landing-page-clips {}
   .landing-page-clips-container {
     padding-left: 450px;
     overflow: scroll;
@@ -691,7 +702,7 @@ video.landing-page-hero-video {
     box-sizing: border-box;
     justify-content: start;
     padding-left: 105px;
-    padding-right:105px;
+    padding-right: 105px;
   }
   .landing-page-mission-image {
     width: 40vw;
@@ -707,7 +718,7 @@ video.landing-page-hero-video {
   }
 }
 
-@media(max-width: 600px) {
+@media (max-width: 600px) {
   .landing-page-header {
     padding: 0 12px;
     height: 32px;
@@ -742,21 +753,25 @@ video.landing-page-hero-video {
   }
 
   .landing-page-footer {
-    background: var(--background) radial-gradient(ellipse at center bottom, var(--primaryColor) -80%, transparent 40%);
+    background: var(--background)
+      radial-gradient(
+        ellipse at center bottom,
+        var(--primaryColor) -80%,
+        transparent 40%
+      );
   }
   .landing-page-footer .flexColumn {
     align-items: center;
   }
 }
 
-@media(min-width: 500px) and (max-width: 1300px) {
+@media (min-width: 500px) and (max-width: 1300px) {
   .landing-page-clips-container {
     justify-content: center;
   }
 }
 
-@media(max-width: 900px) {
-
+@media (max-width: 900px) {
   .landing-page-mission-image {
     width: 80vw;
   }
@@ -764,4 +779,3 @@ video.landing-page-hero-video {
     height: calc(100% - 32px); /* header height is 32px */
   }
 }
-

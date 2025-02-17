@@ -20,7 +20,7 @@ lint = true
 config = "./deno.jsonc"
 
 [workflows]
-runButton = "Project"
+runButton = "Run for development"
 
 [[workflows.workflow]]
 name = "BFF build and run"
