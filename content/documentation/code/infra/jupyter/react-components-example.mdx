@@ -1,0 +1,13 @@
+import { useState } from "react";
+import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
+export function ExampleComponentMdx() {
+  const [val, setVal] = useState(0);
+  return (
+    <BfDsButton
+      text={`Clicked ${val} times`}
+      onClick={() => setVal(val + 1)}
+    />
+  );
+}
+
+omg mdx
