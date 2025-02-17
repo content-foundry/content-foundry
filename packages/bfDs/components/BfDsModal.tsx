@@ -5,7 +5,6 @@ import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { classnames } from "lib/classnames.ts";
 import { useClickOutside } from "packages/app/hooks/useClickOutside.ts";
 import { useBfDs } from "packages/bfDs/hooks/useBfDs.tsx";
-// import { useBfDs } from "packages/bfDs/hooks/useBfDs.tsx";
 
 const { useEffect, useRef, useState, forwardRef, useImperativeHandle } = React;
 
@@ -95,9 +94,6 @@ export const BfDsModal = forwardRef<ModalHandles, ModalOptions>(
     const [inDom, setInDom] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     let domTimer: number;
-    if (!inDom) {
-      return;
-    }
 
     useEffect(() => {
       clearTimeout(domTimer);
@@ -144,46 +140,48 @@ export const BfDsModal = forwardRef<ModalHandles, ModalOptions>(
       { show },
     ]);
 
-    return createPortal(
-      <div
-        className={modalClasses}
-        style={styles.modalBase}
-      >
+    return inDom
+      ? createPortal(
         <div
-          className="modal"
-          ref={modalRef}
-          style={{ ...styles.modal, ...xstyle }}
+          className={modalClasses}
+          style={styles.modalBase}
         >
-          {header != null && (
-            <div style={styles.header}>
-              {header}
+          <div
+            className="modal"
+            ref={modalRef}
+            style={{ ...styles.modal, ...xstyle }}
+          >
+            {header != null && (
+              <div style={styles.header}>
+                {header}
+              </div>
+            )}
+            {onClose != null && (
+              <div style={styles.close}>
+                <BfDsButton
+                  iconLeft="cross"
+                  kind="overlay"
+                  onClick={() => {
+                    handleClose();
+                  }}
+                  testId="button-close-modal"
+                />
+              </div>
+            )}
+            <div style={{ ...styles.content, ...contentXstyle }}>
+              {children}
             </div>
-          )}
-          {onClose != null && (
-            <div style={styles.close}>
-              <BfDsButton
-                iconLeft="cross"
-                kind="overlay"
-                onClick={() => {
-                  handleClose();
-                }}
-                testId="button-close-modal"
-              />
-            </div>
-          )}
-          <div style={{ ...styles.content, ...contentXstyle }}>
-            {children}
+            {onSave != null && (
+              <div style={styles.footer}>
+                <BfDsButton text="Cancel" kind="outline" onClick={onClose} />
+                <BfDsButton text="Save" kind="primary" onClick={onSave} />
+              </div>
+            )}
           </div>
-          {onSave != null && (
-            <div style={styles.footer}>
-              <BfDsButton text="Cancel" kind="outline" onClick={onClose} />
-              <BfDsButton text="Save" kind="primary" onClick={onSave} />
-            </div>
-          )}
-        </div>
-      </div>,
-      document.getElementById("modal-root") as Element,
-    );
+        </div>,
+        document.getElementById("modal-root") as Element,
+      )
+      : null;
   },
 );
 
