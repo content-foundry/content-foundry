@@ -13,7 +13,8 @@ export const EntrypointTwitter = iso(`
     }
   }
 `)(function EntrypointTwitter({ data }): RouteEntrypoint {
-  const Body = data?.me?.asBfCurrentViewerLoggedIn?.TwitterIdeator;
+  const Body = data?.me?.asBfCurrentViewerLoggedIn?.TwitterIdeator ??
+    (() => null);
   // a future api suggestion:
   // if (Body == null) {
   //   return { redirectToLogin: true };
