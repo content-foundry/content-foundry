@@ -269,8 +269,10 @@ async function pythonHandler(req: Request) {
   return pythonResponse;
 }
 
+const port = Number(Deno.env.get("WEB_PORT") ?? 8000);
+
 if (import.meta.main) {
-  Deno.serve(async (req) => {
+  Deno.serve({ port }, async (req) => {
     const incomingUrl = new URL(req.url);
     if (incomingUrl.pathname.startsWith(pythonPrefix)) {
       return pythonHandler(req);
