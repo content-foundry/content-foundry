@@ -52,10 +52,12 @@ export class BfBlogPost extends BfNodeBase<BfBlogPostProps> {
       if (entry.isFile) {
         let addableText = "";
         let props: BlogPostFrontmatter = {};
-        const id = entry.path.split(
-          import.meta.resolve("content/blog/").replace("file://", ""),
-        )[1] as BfGid;
-        if (entry.path.endsWith(".md")) {
+        // Remove the extension from the ID
+        const id = entry.path
+          .split(import.meta.resolve("content/blog/").replace("file://", ""))[1]
+          .replace(/\.(md|mdx)$/, "") as BfGid;
+
+        if (entry.path.endsWith(".md") || entry.path.endsWith(".mdx")) {
           const text = await Deno.readTextFile(entry.path);
           addableText = text;
           if (text.startsWith("---")) {
@@ -79,9 +81,6 @@ export class BfBlogPost extends BfNodeBase<BfBlogPostProps> {
         this._postsCache.set(id, post);
         logger.debug(`Added post to cache with ID: ${id}`);
       }
-      // if (entry.isFile && entry.path.endsWith(".ipynb")) {
-
-      // }
     }
     return this._postsCache;
   }
