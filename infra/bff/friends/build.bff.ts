@@ -26,6 +26,7 @@ const allowedEnvironmentVariables = [
   "TERM",
   "TF_BUILD",
   "USER",
+  "WEB_PORT",
   "WS_NO_BUFFER_UTIL",
 ];
 
