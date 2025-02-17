@@ -249,6 +249,7 @@ register(
                   const code = match[1];
                   logger.info("Parsed code:", code);
                   // Then write it somewhere, e.g.
+                  await Deno.mkdir("./tmp", { recursive: true })
                   await Deno.writeTextFile("./tmp/ghcode", code);
                 }
               }
