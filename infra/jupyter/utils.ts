@@ -1,0 +1,85 @@
+import { getLogger } from "packages/logger.ts";
+import * as OriginalReact from "react";
+import * as ReactDOMServer from "react-dom/server";
+import { BaseComponent } from "infra/jupyter/BaseComponent.tsx";
+import { build } from "infra/appBuild/appBuild.ts";
+
+const logger = getLogger(import.meta);
+
+export async function importReactComponentForJupyter(filePath: string) {
+  const module = await import(filePath);
+  const returnableModule = {};
+  Object.entries(module).forEach(([name, module]) => {
+    module.originalPath = filePath;
+    returnableModule[name] = module;
+  });
+  return returnableModule;
+}
+
+function createElement(type, props, ...children) {
+  const originalElement = OriginalReact.createElement(type, props, ...children);
+
+  const hackedElement = {
+    ...originalElement,
+    [Deno.jupyter.$display]: async () => {
+      const slimBuildLogger = getLogger("infra/build/slimBuild.ts");
+      slimBuildLogger.setLevel(logger.levels.WARN);
+
+      try {
+        const hydrateModuleText = await Deno.readTextFile(
+          new URL("./rehydrate.ts", import.meta.url),
+        );
+
+        const hydrateModuleTextPrependedWithOtherModule =
+          `import { ${type.name} as MainComponent } from "${type.originalPath}";\n${hydrateModuleText}`;
+
+        const tempFolder = import.meta.resolve("static/build/jupyter").replace(
+          "file://",
+          "",
+        );
+        await Deno.mkdir(tempFolder, { recursive: true });
+        const tempFile = `${tempFolder}/tmp.tsx`;
+        await Deno.writeTextFile(
+          tempFile,
+          hydrateModuleTextPrependedWithOtherModule,
+        );
+
+        const output = await build({
+          entryPoints: [tempFile],
+          bundle: true,
+          write: false,
+          format: "esm",
+        });
+
+        const outputFiles = output.outputFiles ?? [];
+        const { text: sourceModuleText } = outputFiles[0];
+
+        const baseElement = OriginalReact.createElement(
+          BaseComponent,
+          { environment: props, sourceModuleText },
+          originalElement,
+        );
+
+        const html = ReactDOMServer.renderToStaticMarkup(baseElement);
+        const iframeHtml = `<iframe srcdoc="${
+          html.replaceAll(/"/g, "&#34;")
+        }" style="border: none; width: 100%; height: 500px;"></iframe>`;
+
+        return {
+          "text/html": iframeHtml,
+          "text/plain": "Jupyter React Component",
+        };
+      } catch (error) {
+        logger.error("Error in Jupyter display:", error);
+        return {
+          "text/plain": `Error: ${error.message}`,
+        };
+      }
+    },
+  };
+  return hackedElement;
+}
+
+const React = { ...OriginalReact, createElement };
+
+export { React };
