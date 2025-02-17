@@ -4,7 +4,7 @@ import { getLogger } from "packages/logger.ts";
 import { toolRoutes } from "packages/app/routes.ts";
 import { addTools } from "infra/bff/tools.ts";
 import type { Handler } from "packages/web/web.tsx";
-import { renderToReadableStream, renderToString } from "react-dom/server";
+import { renderToString } from "react-dom/server";
 import * as React from "react";
 import { matchRouteWithParams } from "packages/app/contexts/RouterContext.tsx";
 
@@ -74,7 +74,9 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
       const response = await fetch(url.toString(), {
         method: req.method,
         headers: req.headers,
-        body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+        body: req.method !== "GET" && req.method !== "HEAD"
+          ? req.body
+          : undefined,
       });
       logger.info(response);
       return response;
@@ -84,7 +86,7 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
   }
 };
 
-const defaultRoute = async (req: Request) => {
+const defaultRoute = async () => {
   let githubCode = "";
   try {
     githubCode = await Deno.readTextFile("./tmp/ghcode");
@@ -92,7 +94,8 @@ const defaultRoute = async (req: Request) => {
     // File doesn't exist, ignore
   }
 
-  const githubCodeHtml = githubCode ? `
+  const githubCodeHtml = githubCode
+    ? `
     <div style="position: fixed; top: 10px; right: 10px; background: #f0f0f0; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
       <p>GitHub Device Code: <strong>${githubCode}</strong></p>
       <button onclick="navigator.clipboard.writeText('${githubCode}').then(() => alert('Code copied!'));" style="margin: 10px 0; padding: 5px 10px; border-radius: 3px; border: 1px solid #ccc; cursor: pointer;">
@@ -102,17 +105,18 @@ const defaultRoute = async (req: Request) => {
         Click here to complete GitHub login
       </a>
     </div>
-  ` : '';
+  `
+    : "";
 
   return new Response(githubCodeHtml, {
     headers: { "content-type": "text/html" },
-  })
-}
+  });
+};
 
 const port = 9999;
 
 if (import.meta.main) {
-  Deno.serve({port}, async (req) => {
+  Deno.serve({ port }, async (req) => {
     const timer = performance.now();
     try {
       const incomingUrl = new URL(req.url);
