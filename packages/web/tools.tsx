@@ -87,6 +87,9 @@ const defaultRoute = async (req: Request) => {
   const githubCodeHtml = githubCode ? `
     <div style="position: fixed; top: 10px; right: 10px; background: #f0f0f0; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
       <p>GitHub Device Code: <strong>${githubCode}</strong></p>
+      <button onclick="navigator.clipboard.writeText('${githubCode}').then(() => alert('Code copied!'));" style="margin: 10px 0; padding: 5px 10px; border-radius: 3px; border: 1px solid #ccc; cursor: pointer;">
+        Click to Copy Code
+      </button><br>
       <a href="https://github.com/login/device" target="_blank" style="color: #0366d6; text-decoration: none;">
         Click here to complete GitHub login
       </a>
