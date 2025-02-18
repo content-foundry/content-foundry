@@ -1,6 +1,11 @@
+
 name: CI
 on:
   - pull_request
+
+env:
+  INFRA_PATH: ${{ env.INFRA_BIN_PATH }}:${{ env.FLAKE_PATH }}
+  SYSTEM_PATH: /usr/bin:/bin
 
 jobs:
   build:
@@ -35,8 +40,12 @@ jobs:
         run: |
           echo "These environment variables are now available:"
           env | grep -E "^(DENO_|OTEL_|BF_ENV|REPLIT_)"
+          which git
         env:
-          PATH: "/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:${{ env.FLAKE_PATH }}:${{ env.PATH }}"
+          PATH: ${{ env.SYSTEM_PATH }}:${{ env.INFRA_PATH }}
 
-      # - name: Run CI in nix
-      #   run: nix develop --impure .#default --command "./infra/bin/bff ci"
+      - name: Run CI in nix
+        run: nix develop --impure .#default --command "../../infra/bin/bff ci"
+        env:
+          PATH: ${{ env.SYSTEM_PATH }}:${{ env.INFRA_PATH }}
+
