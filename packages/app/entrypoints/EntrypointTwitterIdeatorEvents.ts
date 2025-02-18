@@ -24,7 +24,7 @@ export const EntrypointTwitterIdeatorEvents = iso(`
     let Body;
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => data?.me?.organization?.__typename;
+    Body ??= () => `${data?.me?.organization?.__typename}™`;
 
     // a future api suggestion:
     // if (Body == null) {
