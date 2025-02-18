@@ -11,6 +11,20 @@ export default async function ciCommand(options: string[]): Promise<number> {
   logger.info("Running CI checks...");
   let hasErrors = false;
 
+  // Install dependencies
+  logger.info("Installing dependencies...");
+  const installResult = await runShellCommand(
+    ["deno", "install"],
+    undefined,
+    {},
+    true,
+    true
+  );
+  if (installResult !== 0) {
+    logger.error("Failed to install dependencies");
+    return installResult;
+  }
+
   const shouldFix = options.includes("--fix") || options.includes("-f");
 
   if (shouldFix) {
