@@ -11,10 +11,6 @@ const queryText = 'query EntrypointTwitterIdeatorVoice  {\
     ... on BfCurrentViewerLoggedIn {\
       id,\
       __typename,\
-      storyBank {\
-        id,\
-        __typename,\
-      },\
     },\
   },\
 }';
@@ -51,24 +47,6 @@ const normalizationAst: NormalizationAst = {
               kind: "Scalar",
               fieldName: "__typename",
               arguments: null,
-            },
-            {
-              kind: "Linked",
-              fieldName: "storyBank",
-              arguments: null,
-              concreteType: "BfStoryBank",
-              selections: [
-                {
-                  kind: "Scalar",
-                  fieldName: "id",
-                  arguments: null,
-                },
-                {
-                  kind: "Scalar",
-                  fieldName: "__typename",
-                  arguments: null,
-                },
-              ],
             },
           ],
         },

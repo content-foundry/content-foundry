@@ -2,9 +2,7 @@ import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 
 export const EditVoice = iso(`
   field BfCurrentViewerLoggedIn.EditVoice @component {
-     storyBank {
        __typename
-     }
      
 
   }

@@ -11,19 +11,14 @@ export const EntrypointTwitterIdeator = iso(`
   # field Query.EntrypointTwitterIdeator($eventSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
-        storyBank {
-          twitterVoiceProps {
-            __typename
-          }
-        }
+        __typename
       }
     }
   }
 `)(function EntrypointTwitterIdeator({ data, parameters }): RouteEntrypoint {
   const { twitterSubpage } = parameters;
   const { navigate } = useRouter();
-  const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.storyBank
-    ?.twitterVoiceProps;
+  const hasVoice = !!data?.me?.asBfCurrentViewerLoggedIn;
   useEffect(() => {
     if (hasVoice) {
       navigate("/twitter/events");

@@ -1,5 +1,5 @@
 
-export type Query__EntrypointTwitterIdeator__param = {
+export type Query__EntrypointTwitterIdeatorWorkshop__param = {
   readonly data: {
     readonly me: ({
       /**
