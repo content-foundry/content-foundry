@@ -31,6 +31,17 @@ export default async function ciCommand(options: string[]): Promise<number> {
     }
   }
 
+  // Run build after fix
+  logger.info("Running build...");
+  const buildResult = await runShellCommand(
+    ["bff", "build"],
+    undefined,
+    {},
+    true,
+    true,
+  );
+  if (buildResult !== 0) hasErrors = true;
+
   // Run deno lint
   const lintResult = await runShellCommand(
     ["deno", "lint"],
@@ -63,6 +74,7 @@ export default async function ciCommand(options: string[]): Promise<number> {
 
   // Output summary
   logger.info("\n📊 CI Checks Summary:");
+  logger.info(`Build: ${buildResult === 0 ? "✅" : "❌"}`);
   logger.info(`Lint:   ${lintResult === 0 ? "✅" : "❌"}`);
   logger.info(`Tests:  ${testResult === 0 ? "✅" : "❌"}`);
   logger.info(`Format: ${fmtResult === 0 ? "✅" : "❌"}`);
