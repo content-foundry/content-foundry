@@ -1,3 +1,4 @@
+import { type BfOrganization__IdentityEditor__output_type } from '../../BfOrganization/IdentityEditor/output_type.ts';
 
 export type Query__EntrypointTwitterIdeatorVoice__param = {
   readonly data: {
@@ -6,7 +7,9 @@ export type Query__EntrypointTwitterIdeatorVoice__param = {
 A client pointer for the BfCurrentViewerLoggedIn type.
       */
       readonly asBfCurrentViewerLoggedIn: ({
-        readonly __typename: string,
+        readonly organization: ({
+          readonly IdentityEditor: BfOrganization__IdentityEditor__output_type,
+        } | null),
       } | null),
     } | null),
   },

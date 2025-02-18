@@ -18,14 +18,18 @@ export const EntrypointTwitterIdeatorEvents = iso(`
   }
 `)(
   function EntrypointTwitterIdeatorEvents(
-    { parameters },
+    { data },
   ): RouteEntrypoint {
-    const { _twitterSubpage } = parameters;
-    let Body;  // Changed from const to let
+    // deno-lint-ignore prefer-const
+    let Body;
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => null;
+    Body ??= () => `${data?.me?.organization?.__typename}™`;
 
+    // a future api suggestion:
+    // if (Body == null) {
+    //   return { redirectToLogin: true };
+    // }
     return { Body, title: "Twitter Voice" };
   },
 );

@@ -18,7 +18,7 @@ async function runLlmAndCapture(args: string[]): Promise<string[]> {
       lines.push(msgs.map(String).join(" "));
     };
 
-    await llm(args);
+    await llm(args.concat(["--std-out"]));
   } finally {
     // restore
     bffLlmLogger.info = originalInfo;
@@ -239,6 +239,23 @@ Deno.test("llm - ignoring binary files", async () => {
       !joinedOutput.includes("binary.bin"),
       "Binary file should not be listed",
     );
+  } finally {
+    await emptyDir(testDir);
+  }
+});
+
+Deno.test("llm - stdout option", async () => {
+  const testDir = await Deno.makeTempDir({ prefix: "llm_test_" });
+
+  try {
+    const testFile = join(testDir, "test.txt");
+    await Deno.writeTextFile(testFile, "Content for stdout test");
+
+    const output = await runLlmAndCapture([testDir, "--std-out"]);
+    const joinedOutput = output.join("\n");
+
+    assertStringIncludes(joinedOutput, "Content for stdout test");
+    assertStringIncludes(joinedOutput, testFile);
   } finally {
     await emptyDir(testDir);
   }

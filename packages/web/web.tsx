@@ -1,4 +1,4 @@
-#! /usr/bin/env -S deno run --allow-net=localhost:8000 --allow-env 
+#! /usr/bin/env -S deno run --allow-net=localhost:8000 --allow-env
 
 import React from "react";
 import { renderToReadableStream } from "react-dom/server";
@@ -37,6 +37,7 @@ function IsographHeaderComponent(
   const title = result.title;
   return <title className="dynamic">{title}</title>;
 }
+
 function getIsographHeaderComponent(
   environment: ServerProps,
   // deno-lint-ignore no-explicit-any
@@ -64,11 +65,12 @@ export type Handler = (
 
 const routes = new Map<string, Handler>();
 
+// Optionally remove UI route from non-dev environments
 if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
-  // remove UI route from non dev environments
   appRoutes.delete("/ui");
 }
 
+// Register each app route in the routes Map
 for (const entry of appRoutes.entries()) {
   const [path, { Component: { HeaderComponent: RouteHeaderComponent } }] =
     entry;
@@ -77,6 +79,7 @@ for (const entry of appRoutes.entries()) {
     const initialPath = reqUrl.pathname;
     const queryParams = Object.fromEntries(reqUrl.searchParams.entries());
     const isographServerEnvironment = await getIsographEnvironment(request);
+
     const clientEnvironment = {
       initialPath,
       queryParams,
@@ -91,14 +94,15 @@ for (const entry of appRoutes.entries()) {
       isographServerEnvironment,
     };
 
-    const HeaderComponent = RouteHeaderComponent ??
-      AppRoot.HeaderComponent;
+    const HeaderComponent = RouteHeaderComponent ?? AppRoot.HeaderComponent;
     const headerElement = React.createElement(HeaderComponent);
+
     const appElement = React.createElement(
       ClientRoot,
       serverEnvironment,
       React.createElement(AppRoot),
     );
+
     const element = React.createElement(
       ServerRenderedPage,
       { headerElement, environment: clientEnvironment },
@@ -106,13 +110,13 @@ for (const entry of appRoutes.entries()) {
     );
 
     const stream = await renderToReadableStream(element);
-    return new Response(
-      stream,
-      { headers: { "content-type": "text/html; charset=utf-8" } },
-    );
+    return new Response(stream, {
+      headers: { "content-type": "text/html; charset=utf-8" },
+    });
   });
 }
 
+// Register isograph routes
 for (const [path, entrypoint] of isographAppRoutes.entries()) {
   logger.debug(`Registering ${path}`, entrypoint);
   routes.set(path, async function AppRoute(request, routeParams) {
@@ -122,6 +126,7 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
     const isographServerEnvironment = await getIsographEnvironment(request);
     logger.debug("path", path);
     logger.debug("entrypoint", entrypoint);
+
     const clientEnvironment = {
       initialPath,
       queryParams,
@@ -136,11 +141,11 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
       isographServerEnvironment,
     };
 
+    // Because this route is isograph-based, we dynamically generate a header component
     const HeaderComponent = getIsographHeaderComponent(
       serverEnvironment,
       entrypoint,
     );
-
     const headerElement = React.createElement(HeaderComponent);
 
     const appElement = React.createElement(
@@ -148,6 +153,7 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
       serverEnvironment,
       React.createElement(AppRoot),
     );
+
     const element = React.createElement(
       ServerRenderedPage,
       { headerElement, environment: clientEnvironment },
@@ -155,13 +161,13 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
     );
 
     const stream = await renderToReadableStream(element);
-    return new Response(
-      stream,
-      { headers: { "content-type": "text/html; charset=utf-8" } },
-    );
+    return new Response(stream, {
+      headers: { "content-type": "text/html; charset=utf-8" },
+    });
   });
 }
 
+// Serve static files
 routes.set("/static/:filename+", function staticHandler(req) {
   return serveDir(req, {
     headers: [
@@ -171,7 +177,10 @@ routes.set("/static/:filename+", function staticHandler(req) {
   });
 });
 
+// GraphQL handler
 routes.set("/graphql", graphQLHandler);
+
+// Example for handling form uploads with AssemblyAI
 routes.set("/assemblyai", async (req) => {
   try {
     const formData = await req.formData();
@@ -185,10 +194,7 @@ routes.set("/assemblyai", async (req) => {
       apiKey: getConfigurationVariable("ASSEMBLY_AI_KEY") as string,
     });
 
-    const data = {
-      audio: file,
-    };
-
+    const data = { audio: file };
     const transcript = await client.transcripts.transcribe(data);
     const words = transcript.words;
 
@@ -201,6 +207,7 @@ routes.set("/assemblyai", async (req) => {
   }
 });
 
+// Simple logout route that clears cookies
 routes.set("/logout", function logoutHandler() {
   const headers = new Headers();
   headers.set("location", "/");
@@ -218,69 +225,68 @@ routes.set("/logout", function logoutHandler() {
   });
 });
 
+// Fallback default route
 function defaultRoute() {
-  return new Response("Not found", { status: 404 });
+  logger.setLevel(logger.levels.DEBUG);
+  return new Response("Not found™", { status: 404 });
 }
 
-function matchRoute(pathWithParams: string): [Handler, Record<string, string>] {
-  // this is a hack. Static is a backend only route, similar to graphql,
-  // but we have to pull the filename. Slicing off the first chunk is a fast
-  // way to get the filename.
-  if (pathWithParams.startsWith("/static/")) {
-    const staticHandler = routes.get("/static/:filename+");
-    return [staticHandler || defaultRoute, {
-      filename: pathWithParams.slice(8),
-    }];
-  }
-
+/**
+ * If there's a mismatch in trailing slash (e.g. user typed "/foo" but route is "/foo/"),
+ * `matchRouteWithParams` sets `needsRedirect=true` and `redirectTo="/foo/"`.
+ */
+function matchRoute(
+  pathWithParams: string,
+): [Handler, Record<string, string>, boolean, string?] {
   const match = matchRouteWithParams(pathWithParams);
-  const matchedHandler = routes.get(match.pathTemplate);
+  const matchedHandler = routes.get(match.pathTemplate) || defaultRoute;
   const routeParams = match.routeParams;
-
-  logger.debug(matchedHandler);
-
-  return [matchedHandler || defaultRoute, routeParams];
+  const needsRedirect = match.needsRedirect;
+  const redirectTo = match.redirectTo;
+  return [matchedHandler, routeParams, needsRedirect, redirectTo];
 }
 
 logger.info("Ready to serve");
 
-const pythonPrefix = "/python";
-async function pythonHandler(req: Request) {
-  const pythonPort = Deno.env.get("PYTHON_PORT") ?? "3333";
-  const incomingUrl = new URL(req.url);
-  const path = incomingUrl.pathname.replace(pythonPrefix, "");
-  const pythonUrl = new URL(
-    `http://0.0.0.0:${pythonPort}${path}${incomingUrl.search}`,
-  );
-
-  const pythonReq = new Request(pythonUrl.toString(), {
-    method: req.method,
-    headers: req.headers,
-    body: req.body,
+const staticPrefix = "/static";
+function staticHandler(req: Request) {
+  return serveDir(req, {
+    headers: [
+      "Cache-Control: public, must-revalidate",
+      "ETag: true",
+    ],
   });
-
-  const pythonResponse = await fetch(pythonReq);
-  if (!pythonResponse.ok) {
-    logger.error("Python server response not ok:", pythonResponse.status);
-    return new Response("Python server error", { status: 500 });
-  }
-  return pythonResponse;
 }
 
+// Use the port from environment or default 8000
 const port = Number(Deno.env.get("WEB_PORT") ?? 8000);
 
 if (import.meta.main) {
   Deno.serve({ port }, async (req) => {
     const incomingUrl = new URL(req.url);
-    if (incomingUrl.pathname.startsWith(pythonPrefix)) {
-      return pythonHandler(req);
+
+    if (incomingUrl.pathname.startsWith(staticPrefix)) {
+      return staticHandler(req);
     }
+
     const timer = performance.now();
-
     try {
-      const [matchedHandler, routeParams] = matchRoute(incomingUrl.pathname);
-      const res = await matchedHandler(req, routeParams);
+      // Keep the query string, so we pass "pathname + search" to matchRoute
+      const pathWithParams = incomingUrl.pathname + incomingUrl.search;
+      const [handler, routeParams, needsRedirect, redirectTo] = matchRoute(
+        pathWithParams,
+      );
 
+      if (needsRedirect && redirectTo) {
+        // Canonicalize trailing slash mismatch with a permanent redirect
+        // (could use 302 if you prefer)
+        const redirectUrl = new URL(redirectTo, req.url);
+        return Response.redirect(redirectUrl, 301);
+      }
+
+      const res = await handler(req, routeParams);
+
+      // Optionally set security headers, etc.
       // if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
       //   res.headers.set("X-Frame-Options", "DENY");
       //   res.headers.set(
@@ -288,21 +294,20 @@ if (import.meta.main) {
       //     "frame-ancestors 'self' replit.dev",
       //   );
       // }
+
       const perf = performance.now() - timer;
       const perfInMs = Math.round(perf);
       logger.info(
         `[${
           new Date().toISOString()
         }] [${req.method}] ${res.status} ${incomingUrl} ${
-          req.headers.get("content-type")
+          req.headers.get("content-type") ?? ""
         } (${perfInMs}ms)`,
       );
 
       return res;
     } catch (err) {
-      // Log the error. If it's a disconnect, this helps track it.
       logger.error("Error handling request:", err);
-      // Return a safe fallback response.
       return new Response("Internal Server Error", { status: 500 });
     }
   });

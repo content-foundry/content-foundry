@@ -28,110 +28,173 @@ export const dynamicRoutes = new Set<string>();
  * @example
  * addRoute("/projects/:projectId?");
  * addRoute("/projects");
- * addRoute("/")
- * addRoute("/signup/:plan?")
+ * addRoute("/");
+ * addRoute("/signup/:plan?/");
+ *
+ * Note: we no longer remove trailing slash from 'path'.
+ * We store it exactly as the user wrote, so we know if
+ * the canonical route has a slash or not.
  */
 function addRoute(path: string) {
-  let routePath = path;
-  if (routePath.includes(":")) {
+  if (path.includes(":")) {
     dynamicRoutes.add(path);
-    routePath = routePath.split(":")[0];
+  } else {
+    registeredRoutes.add(path);
   }
-  if (routePath.endsWith("/")) {
-    routePath = routePath.slice(0, -1);
-  }
-  registeredRoutes.add(routePath);
 }
 
 type MatchedRoute = {
   match: boolean;
-  params: Record<string, string>;
+  params: Record<string, string | null>;
   queryParams: Record<string, string>;
   routeParams: Record<string, string>;
   route?: RouteGuts;
   pathTemplate: string;
+  /** Whether the user's request had a trailing slash mismatch vs the canonical route. */
+  needsRedirect: boolean;
+  /** If you want to store the exact path to which you'd redirect, you can do it here. */
+  redirectTo?: string;
 };
 
+/**
+ * Utility function:
+ * - strips trailing slash from the given path unless it's literally "/"
+ * - returns both the "trimmed" string plus a boolean indicating whether
+ *   the original string ended with slash (and wasn't just "/").
+ */
+function trimTrailingSlash(path: string) {
+  if (path === "/") {
+    return { trimmed: "/", endedWithSlash: false };
+  }
+  if (path.endsWith("/")) {
+    return {
+      trimmed: path.slice(0, -1),
+      endedWithSlash: true,
+    };
+  }
+  return { trimmed: path, endedWithSlash: false };
+}
+
+/**
+ * Attempt to match pathRaw (like "/projects/123/") against:
+ * - either the explicitly passed pathTemplate
+ * - or all dynamicRoutes if none is provided
+ *
+ * We'll do "loose" matching ignoring trailing slash for param extraction,
+ * but also track whether the user actually ended with a slash vs whether
+ * the canonical pathTemplate ends with a slash. If there's a mismatch,
+ * we set 'needsRedirect' so the caller can do a 301/302 to fix the URL.
+ */
 export function matchRouteWithParams(
   pathRaw = "",
   pathTemplate?: string,
 ): MatchedRoute {
-  const [path, search] = pathRaw.split("?");
+  const [rawPath, search] = pathRaw.split("?");
   const searchParams = new URLSearchParams(search);
   const queryParams = Object.fromEntries(searchParams.entries());
-  const defaultParams = {
+
+  // parse the user's raw path, ignoring trailing slash for matching
+  const { trimmed: userPath, endedWithSlash: userSlash } = trimTrailingSlash(
+    rawPath,
+  );
+
+  const defaultParams: MatchedRoute = {
     match: false,
     params: {},
     queryParams,
-    route: appRoutes.get(path),
+    route: appRoutes.get(rawPath), // fallback in case there's no dynamic match
     routeParams: {},
-    pathTemplate: pathTemplate ?? path,
+    pathTemplate: pathTemplate ?? rawPath,
+    needsRedirect: false,
   };
-  const pathsToMatch = pathTemplate ? [pathTemplate] : Array(...dynamicRoutes);
+
+  const pathsToCheck = pathTemplate
+    ? [pathTemplate]
+    : Array.from(dynamicRoutes);
+
   logger.debug(
-    `matchRouteWithParams: path: ${path}, pathsToMatch: ${pathsToMatch}`,
+    `matchRouteWithParams: userPath="${userPath}", userSlash=${userSlash}, pathsToCheck: ${pathsToCheck}`,
   );
 
-  const match = pathsToMatch
-    .map((pathTemplate) => {
-      logger.debug(`matchRouteWithParams: pathTemplate: ${pathTemplate}`);
-      const pathTemplateParts = pathTemplate.split("/");
-      const currentPathParts = path.split("/");
+  const match = pathsToCheck
+    .map((template) => {
+      const { trimmed: templatePath, endedWithSlash: templateSlash } =
+        trimTrailingSlash(template);
 
-      // Check if path parts length matches (accounting for optional parameters)
-      if (
-        !pathTemplateParts.some((p) => p.endsWith("?")) &&
-        pathTemplateParts.length !== currentPathParts.length
-      ) {
+      // Split into segments
+      const templateParts = templatePath.split("/");
+      const userParts = userPath.split("/");
+
+      const noOptionalParam = !templateParts.some((p) => p.endsWith("?"));
+
+      // If neither route segment uses an optional param, length must match
+      if (noOptionalParam && templateParts.length !== userParts.length) {
         return defaultParams;
       }
 
-      const params = pathTemplateParts.reduce((acc, part, i) => {
+      // Gather param values
+      const params = templateParts.reduce((acc, part, i) => {
         if (part.startsWith(":")) {
-          const paramName = part.endsWith("?")
-            ? part.slice(1, -1)
-            : part.slice(1);
-          acc[paramName] = currentPathParts[i] || null;
+          const isOptional = part.endsWith("?");
+          const paramName = isOptional
+            ? part.slice(1, -1) // strip leading ":" and trailing "?"
+            : part.slice(1); // strip just the leading ":"
+
+          acc[paramName] = userParts[i] || null;
         }
         return acc;
       }, {} as Record<string, string | null>);
 
-      logger.debug("params before checking match:", params);
+      // Ensure each static segment matches
+      for (let i = 0; i < templateParts.length; i++) {
+        const segment = templateParts[i];
 
-      for (let i = 0; i < pathTemplateParts.length; i++) {
-        // Skip if part is a parameter
-        if (pathTemplateParts[i].startsWith(":")) {
-          if (!currentPathParts[i] && !pathTemplateParts[i].endsWith("?")) {
+        // Skip param segments
+        if (segment.startsWith(":")) {
+          // If param is optional but userParts[i] is missing, that’s still okay
+          if (!userParts[i] && !segment.endsWith("?")) {
             return defaultParams;
           }
-          logger.debug(
-            "part is a parameter",
-            pathTemplateParts[i],
-            currentPathParts[i] ?? "undefined",
-          );
-        } else if (pathTemplateParts[i] !== currentPathParts[i]) {
-          logger.debug(
-            "part mismatch",
-            pathTemplateParts[i],
-            currentPathParts[i],
-          );
+          continue;
+        }
+        // Must match exactly for static segments
+        if (segment !== userParts[i]) {
           return defaultParams;
         }
       }
 
-      const route = appRoutes.get(pathTemplate);
+      // If we get here, we have a match
+      const route = appRoutes.get(template);
+      const routeParams = params as Record<string, string>;
+
+      // ** Improved trailing-slash check here **
+      const mismatch = templateSlash !== userSlash;
+      let redir: string | undefined;
+
+      if (mismatch) {
+        // If the route template wants a slash (templateSlash === true)
+        // but the user did not type one, we add it.
+        // Otherwise, remove it.
+        const correctedBase = templateSlash
+          ? userPath + "/" // add trailing slash
+          : userPath; // or remove trailing slash (already removed above)
+
+        redir = correctedBase + (search ? `?${search}` : "");
+      }
+
       return {
         match: true,
-        params,
-        route,
+        params: params as Record<string, string>,
         queryParams,
-        routeParams: params,
-        pathTemplate,
+        route,
+        routeParams,
+        pathTemplate: template,
+        needsRedirect: mismatch,
+        redirectTo: mismatch ? redir : undefined,
       };
     })
-    .find((route) => route.match === true);
+    .find((m) => m.match === true);
 
-  logger.debug("match result:", match);
   return match ?? defaultParams;
 }
 
@@ -162,6 +225,7 @@ export type RouterProviderProps = {
 };
 
 export function addAllRoutes() {
+  // We'll store them exactly as declared
   appRoutes.forEach((_value, key) => {
     addRoute(key);
   });
@@ -174,9 +238,12 @@ export function addAllRoutes() {
 }
 
 export function RouterProvider(
-  { routeParams, queryParams, initialPath, children }: React.PropsWithChildren<
-    RouterProviderProps
-  >,
+  {
+    routeParams,
+    queryParams,
+    initialPath,
+    children,
+  }: React.PropsWithChildren<RouterProviderProps>,
 ) {
   const [isPending, startTransition] = useTransition();
   const initialState = useMemo(() => ({
@@ -187,19 +254,19 @@ export function RouterProvider(
   }), [initialPath, routeParams, queryParams]);
 
   const { posthog } = usePostHog();
-
   const [state, setState] = useState(initialState);
 
   const updateState = useCallback((path: string) => {
     const nextMatch = matchRouteWithParams(path);
-    const NextHeader = nextMatch.route?.Component.HeaderComponent;
-    setState({
+    setState((prevState) => ({
+      ...prevState,
       currentPath: path,
       routeParams: nextMatch.routeParams,
       queryParams: nextMatch.queryParams,
-      NextHeader: NextHeader ?? state.NextHeader,
-    });
-  }, [setState, state.NextHeader]);
+      NextHeader: nextMatch.route?.Component.HeaderComponent ??
+        prevState.NextHeader,
+    }));
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -222,8 +289,15 @@ export function RouterProvider(
     startTransition(() => {
       globalThis.history.pushState(null, "", path);
       logger.debug(`Pushing new state to history: ${path}`);
-      updateState(path);
-      // Track a page view
+      const nextMatch = matchRouteWithParams(path);
+      setState((prevState) => ({
+        ...prevState,
+        currentPath: path,
+        routeParams: nextMatch.routeParams,
+        queryParams: nextMatch.queryParams,
+        NextHeader: nextMatch.route?.Component.HeaderComponent ??
+          prevState.NextHeader,
+      }));
       if (posthog) {
         posthog.capture("$pageview", { path });
       }
@@ -234,8 +308,15 @@ export function RouterProvider(
     startTransition(() => {
       globalThis.history.replaceState(null, "", path);
       logger.debug(`Replacing state in history: ${path}`);
-      updateState(path);
-      // Track a page view
+      const nextMatch = matchRouteWithParams(path);
+      setState((prevState) => ({
+        ...prevState,
+        currentPath: path,
+        routeParams: nextMatch.routeParams,
+        queryParams: nextMatch.queryParams,
+        NextHeader: nextMatch.route?.Component.HeaderComponent ??
+          prevState.NextHeader,
+      }));
       if (posthog) {
         posthog.capture("$pageview", { path });
       }
@@ -246,6 +327,8 @@ export function RouterProvider(
   addAllRoutes();
 
   const portalElement = globalThis.document?.querySelector("#staging-root");
+
+  // fix the "NextHeader" re-set to avoid overwriting new route state
   useEffect(() => {
     const NextHeader = state.NextHeader;
     if (NextHeader) {
@@ -260,8 +343,12 @@ export function RouterProvider(
         document.head.appendChild(clonedChild);
       });
     }
-    setState({ ...state, NextHeader: null });
-  }, [state.NextHeader]);
+    // Use functional setState to avoid clobbering new route changes
+    setState((prevState) => ({
+      ...prevState,
+      NextHeader: null,
+    }));
+  }, [state.NextHeader, portalElement]);
 
   const NextHeader = state.NextHeader;
   return (

@@ -21,6 +21,7 @@ import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentV
 import { type BfDocs__DocsList__param } from './BfDocs/DocsList/param_type.ts';
 import { type BfDocs__DocsPostList__param } from './BfDocs/DocsPostList/param_type.ts';
 import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
+import { type BfOrganization__IdentityEditor__param } from './BfOrganization/IdentityEditor/param_type.ts';
 import { type Mutation__CheckEmail__param } from './Mutation/CheckEmail/param_type.ts';
 import { type Mutation__GetLoginOptions__param } from './Mutation/GetLoginOptions/param_type.ts';
 import { type Mutation__LoginAsDemoPerson__param } from './Mutation/LoginAsDemoPerson/param_type.ts';
@@ -176,6 +177,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfDocsPost.DocsPostListItem', T>
 ): IdentityWithParamComponent<BfDocsPost__DocsPostListItem__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.IdentityEditor', T>
+): IdentityWithParamComponent<BfOrganization__IdentityEditor__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.CheckEmail', T>

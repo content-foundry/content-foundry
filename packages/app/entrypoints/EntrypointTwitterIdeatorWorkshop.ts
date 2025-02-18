@@ -18,11 +18,9 @@ export const EntrypointTwitterIdeatorWorkshop = iso(`
     }
   }
 `)(
-  function EntrypointTwitterIdeatorWorkshop(
-    { parameters },
-  ): RouteEntrypoint {
-    const { _twitterSubpage } = parameters;
-    let Body;  // Changed from const to let
+  function EntrypointTwitterIdeatorWorkshop(): RouteEntrypoint {
+    // deno-lint-ignore prefer-const
+    let Body;
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
     Body ??= () => null;

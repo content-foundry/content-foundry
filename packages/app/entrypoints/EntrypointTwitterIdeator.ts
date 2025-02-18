@@ -11,14 +11,18 @@ export const EntrypointTwitterIdeator = iso(`
   # field Query.EntrypointTwitterIdeator($eventSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
-        __typename
+        organization {
+          identity {
+            tbd
+          }
+        }
       }
     }
   }
-`)(function EntrypointTwitterIdeator({ data, parameters }): RouteEntrypoint {
-  const { _twitterSubpage } = parameters;
+`)(function EntrypointTwitterIdeator({ data }): RouteEntrypoint {
   const { replace } = useRouter();
-  const hasVoice = !!data?.me?.asBfCurrentViewerLoggedIn;
+  const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.organization?.identity
+    ?.tbd;
   useEffect(() => {
     if (hasVoice) {
       replace("/twitter/events");
