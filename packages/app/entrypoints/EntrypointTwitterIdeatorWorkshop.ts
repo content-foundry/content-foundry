@@ -5,7 +5,7 @@ import { getLogger } from "packages/logger.ts";
 const logger = getLogger(import.meta);
 
 enum SubPages {
-  EVENTS = "events",
+  EVENTS = "events"
 }
 
 export const EntrypointTwitterIdeatorWorkshop = iso(`
@@ -17,20 +17,17 @@ export const EntrypointTwitterIdeatorWorkshop = iso(`
       }
     }
   }
-`)(
-  function EntrypointTwitterIdeatorWorkshop(
-    { data, parameters },
-  ): RouteEntrypoint {
-    const { twitterSubpage } = parameters;
-    let Body;
+`)(function EntrypointTwitterIdeatorWorkshop({ data, parameters }): RouteEntrypoint {
+  const { twitterSubpage } = parameters;
+  let Body;
 
-    // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => null;
-
-    // a future api suggestion:
-    // if (Body == null) {
-    //   return { redirectToLogin: true };
-    // }
-    return { Body, title: "Twitter Voice" };
-  },
-);
+  // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
+  Body ??= () => null;
+  
+  
+  // a future api suggestion:
+  // if (Body == null) {
+  //   return { redirectToLogin: true };
+  // }
+  return { Body, title: "Twitter Voice" };
+});

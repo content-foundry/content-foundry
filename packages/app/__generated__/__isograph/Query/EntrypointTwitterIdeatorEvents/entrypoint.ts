@@ -8,7 +8,7 @@ const queryText = 'query EntrypointTwitterIdeatorEvents  {\
   me {\
     __typename,\
     id,\
-    ... on BfCurrentViewerLoggedIn {\
+    organization {\
       id,\
       __typename,\
     },\
@@ -35,8 +35,10 @@ const normalizationAst: NormalizationAst = {
           arguments: null,
         },
         {
-          kind: "InlineFragment",
-          type: "BfCurrentViewerLoggedIn",
+          kind: "Linked",
+          fieldName: "organization",
+          arguments: null,
+          concreteType: "BfOrganization",
           selections: [
             {
               kind: "Scalar",
