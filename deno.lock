@@ -67,6 +67,7 @@
     "npm:graphql-yoga@^5.10.10": "5.10.10_graphql@16.10.0",
     "npm:graphql@^16.10.0": "16.10.0",
     "npm:jsonwebtoken@^9.0.2": "9.0.2",
+    "npm:livekit-client@^2.9.1": "2.9.1",
     "npm:loglevel-plugin-prefix@~0.8.4": "0.8.4",
     "npm:loglevel@^1.9.2": "1.9.2",
     "npm:marked@*": "15.0.6",
@@ -270,6 +271,9 @@
       "dependencies": [
         "regenerator-runtime@0.14.1"
       ]
+    },
+    "@bufbuild/protobuf@1.10.0": {
+      "integrity": "sha512-QDdVFLoN93Zjg36NoQPZfsVH9tZew7wKDKyV5qRdj8ntT4wQCOradQjRaTdwMhWUYsgKsvCINKKm87FdEk96Ag=="
     },
     "@codemirror/state@6.5.2": {
       "integrity": "sha512-FVqsPqtPWKVVL3dPSxy8wEF/ymIEuVzF1PK3VbUgrxXpJUSHQWWZz4JMToquRxnkw+36LTamCZG2iua2Ptq0fA==",
@@ -578,6 +582,15 @@
     },
     "@levischuck/tiny-cbor@0.2.2": {
       "integrity": "sha512-f5CnPw997Y2GQ8FAvtuVVC19FX8mwNNC+1XJcIi16n/LTJifKO6QBgGLgN3YEmqtGMk17SKSuoWES3imJVxAVw=="
+    },
+    "@livekit/mutex@1.1.1": {
+      "integrity": "sha512-EsshAucklmpuUAfkABPxJNhzj9v2sG7JuzFDL4ML1oJQSV14sqrpTYnsaOudMAw9yOaW53NU3QQTlUQoRs4czw=="
+    },
+    "@livekit/protocol@1.33.0": {
+      "integrity": "sha512-361mBlFgI3nvn8oSQIL38gDUBGbOSwsEOqPgX0c1Jwz75/sD/TTvPeAM4zAz6OrV5Q4vI4Ruswecnyv5SG4oig==",
+      "dependencies": [
+        "@bufbuild/protobuf"
+      ]
     },
     "@marijn/find-cluster-break@1.0.2": {
       "integrity": "sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g=="
@@ -1467,6 +1480,9 @@
     "event-target-shim@5.0.1": {
       "integrity": "sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ=="
     },
+    "events@3.3.0": {
+      "integrity": "sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q=="
+    },
     "extend@3.0.2": {
       "integrity": "sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g=="
     },
@@ -1717,6 +1733,20 @@
       "dependencies": [
         "jwa",
         "safe-buffer"
+      ]
+    },
+    "livekit-client@2.9.1": {
+      "integrity": "sha512-MqBxnOmkOB88+n2Whq2pgXVwevfJ+yhERNf0tZf/7RG1ZpCWF+pk7/muRVzZeCxal4fwGOB3Z3MIT0KBJoT0RQ==",
+      "dependencies": [
+        "@livekit/mutex",
+        "@livekit/protocol",
+        "events",
+        "loglevel",
+        "sdp-transform",
+        "ts-debounce",
+        "tslib",
+        "typed-emitter",
+        "webrtc-adapter"
       ]
     },
     "lodash.includes@4.3.0": {
@@ -2452,6 +2482,12 @@
         "rrweb-snapshot"
       ]
     },
+    "rxjs@7.8.1": {
+      "integrity": "sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==",
+      "dependencies": [
+        "tslib"
+      ]
+    },
     "safe-buffer@5.2.1": {
       "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ=="
     },
@@ -2466,6 +2502,12 @@
     },
     "scheduler@0.25.0": {
       "integrity": "sha512-xFVuu11jh+xcO7JOAGJNOXld8/TcEHK/4CituBUeUb5hqxJLj9YuemAEuvm9gQ/+pgXYfbQuqAkiYu+u7YEsNA=="
+    },
+    "sdp-transform@2.15.0": {
+      "integrity": "sha512-KrOH82c/W+GYQ0LHqtr3caRpM3ITglq3ljGUIb8LTki7ByacJZ9z+piSGiwZDsRyhQbYBOBJgr2k6X4BZXi3Kw=="
+    },
+    "sdp@3.2.0": {
+      "integrity": "sha512-d7wDPgDV3DDiqulJjKiV2865wKsJ34YI+NDREbm+FySq6WuKOikwyNQcm+doLAZ1O6ltdO0SeKle2xMpN3Brgw=="
     },
     "semver@7.7.1": {
       "integrity": "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="
@@ -2528,11 +2570,20 @@
     "trough@2.2.0": {
       "integrity": "sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw=="
     },
+    "ts-debounce@4.0.0": {
+      "integrity": "sha512-+1iDGY6NmOGidq7i7xZGA4cm8DAa6fqdYcvO5Z6yBevH++Bdo9Qt/mN0TzHUgcCcKv1gmh9+W5dHqz8pMWbCbg=="
+    },
     "tslib@2.8.1": {
       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
     },
     "type-fest@4.20.1": {
       "integrity": "sha512-R6wDsVsoS9xYOpy8vgeBlqpdOyzJ12HNfQhC/aAKWM3YoCV9TtunJzh/QpkMgeDhkoynDcw5f1y+qF9yc/HHyg=="
+    },
+    "typed-emitter@2.1.0": {
+      "integrity": "sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==",
+      "dependencies": [
+        "rxjs"
+      ]
     },
     "undici-types@5.26.5": {
       "integrity": "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="
@@ -2644,6 +2695,12 @@
     },
     "webidl-conversions@7.0.0": {
       "integrity": "sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g=="
+    },
+    "webrtc-adapter@9.0.1": {
+      "integrity": "sha512-1AQO+d4ElfVSXyzNVTOewgGT/tAomwwztX/6e3totvyyzXPvXIIuUUjAmyZGbKBKbZOXauuJooZm3g6IuFuiNQ==",
+      "dependencies": [
+        "sdp"
+      ]
     },
     "whatwg-encoding@3.1.1": {
       "integrity": "sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==",
@@ -2772,6 +2829,7 @@
         "npm:graphql-yoga@^5.10.10",
         "npm:graphql@^16.10.0",
         "npm:jsonwebtoken@^9.0.2",
+        "npm:livekit-client@^2.9.1",
         "npm:loglevel-plugin-prefix@~0.8.4",
         "npm:loglevel@^1.9.2",
         "npm:marked@^15.0.6",

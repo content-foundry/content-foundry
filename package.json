@@ -21,6 +21,7 @@
     "graphql-type-json": "^0.3.2",
     "graphql-yoga": "^5.10.10",
     "jsonwebtoken": "^9.0.2",
+    "livekit-client": "^2.9.1",
     "loglevel": "^1.9.2",
     "loglevel-plugin-prefix": "^0.8.4",
     "marked": "^15.0.6",
