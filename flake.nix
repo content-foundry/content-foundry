@@ -1,3 +1,4 @@
+
 {
   description = "Nix flake referencing replit.nix";
 
@@ -14,6 +15,9 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [ pkgs.git ] ++ replit.deps;
+        shellHook = ''
+          deno install
+        '';
       };
     };
 }
