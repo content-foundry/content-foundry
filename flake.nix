@@ -1,59 +1,19 @@
 {
+  description = "Nix flake referencing replit.nix";
+
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "nixpkgs/nixos-24.11";
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
   };
 
-  outputs = { self, nixpkgs, flake-utils, nixpkgs-unstable }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgsForSystem = nixpkgsSource:
-          let
-            filteredSrc = builtins.filterSource
-              (path: type: baseName: ! (builtins.match ".*/\\.sl" baseName != null))
-              ./.;
-
-            nixpkgsEnv = import nixpkgsSource {
-              inherit system filteredSrc;
-              config.allowUnfree = true;
-            };
-          in
-          nixpkgsEnv;
-
-        pkgs = pkgsForSystem nixpkgs;
-        unstablePkgs = pkgsForSystem nixpkgs-unstable;
-
-        sharedPackages = with pkgs; [
-          unstablePkgs.deno
-        ];
-
-        defaultPackages = with pkgs; [
-        ];
-
-        devShellPackages = with pkgs; [
-          sapling
-          gh
-          jq
-        ];
-
-        deployPackages = with pkgs; [
-        ];
-      in
-      rec {
-        packages.default = pkgs.buildEnv {
-          name = "defaultPackage";
-          paths = sharedPackages ++ defaultPackages;
-        };
-
-        packages.deploy = pkgs.buildEnv {
-          name = "deploy";
-          paths = deployPackages ++ sharedPackages;
-        };
-
-        devShells.default = pkgs.mkShell {
-          nativeBuildInputs = sharedPackages ++ devShellPackages ++ defaultPackages;
-        };
-      }
-    );
+  outputs = { self, nixpkgs, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      replit = import ./replit.nix { inherit pkgs; };
+    in
+    {
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = replit.deps;
+      };
+    };
 }
