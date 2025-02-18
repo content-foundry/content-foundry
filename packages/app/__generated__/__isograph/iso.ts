@@ -3,7 +3,6 @@ import { type BfBlog__BlogPostList__param } from './BfBlog/BlogPostList/param_ty
 import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostListItem/param_type.ts';
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
 import { type BfCurrentViewer__Docs__param } from './BfCurrentViewer/Docs/param_type.ts';
-import { type BfCurrentViewer__RedirectToLogin__param } from './BfCurrentViewer/RedirectToLogin/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep1/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep2/param_type.ts';
@@ -21,6 +20,7 @@ import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentV
 import { type BfDocs__DocsList__param } from './BfDocs/DocsList/param_type.ts';
 import { type BfDocs__DocsPostList__param } from './BfDocs/DocsPostList/param_type.ts';
 import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
+import { type BfStoryBank__CreateVoice__param } from './BfStoryBank/CreateVoice/param_type.ts';
 import { type Mutation__CheckEmail__param } from './Mutation/CheckEmail/param_type.ts';
 import { type Mutation__GetLoginOptions__param } from './Mutation/GetLoginOptions/param_type.ts';
 import { type Mutation__LoginAsDemoPerson__param } from './Mutation/LoginAsDemoPerson/param_type.ts';
@@ -101,10 +101,6 @@ export function iso<T>(
 ): IdentityWithParamComponent<BfCurrentViewer__Docs__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.RedirectToLogin', T>
-): IdentityWithParam<BfCurrentViewer__RedirectToLogin__param>;
-
-export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
 ): IdentityWithParamComponent<BfCurrentViewerLoggedIn__LoggedInView__param>;
 
@@ -171,6 +167,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfDocsPost.DocsPostListItem', T>
 ): IdentityWithParamComponent<BfDocsPost__DocsPostListItem__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfStoryBank.CreateVoice', T>
+): IdentityWithParamComponent<BfStoryBank__CreateVoice__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.CheckEmail', T>
