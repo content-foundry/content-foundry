@@ -3,6 +3,7 @@ import { type BfBlog__BlogPostList__param } from './BfBlog/BlogPostList/param_ty
 import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostListItem/param_type.ts';
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
 import { type BfCurrentViewer__Docs__param } from './BfCurrentViewer/Docs/param_type.ts';
+import { type BfCurrentViewer__RedirectToLogin__param } from './BfCurrentViewer/RedirectToLogin/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep1/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep2/param_type.ts';
@@ -27,14 +28,13 @@ import { type Mutation__Login__param } from './Mutation/Login/param_type.ts';
 import { type Mutation__Register__param } from './Mutation/Register/param_type.ts';
 import { type Mutation__RegistrationOptions__param } from './Mutation/RegistrationOptions/param_type.ts';
 import { type Mutation__SubmitYcForm__param } from './Mutation/SubmitYcForm/param_type.ts';
-import { type Query__ContentFoundryApp__param } from './Query/ContentFoundryApp/param_type.ts';
 import { type Query__ContentOS__param } from './Query/ContentOS/param_type.ts';
 import { type Query__EntrypointBlogPost__param } from './Query/EntrypointBlogPost/param_type.ts';
 import { type Query__EntrypointBlog__param } from './Query/EntrypointBlog/param_type.ts';
 import { type Query__EntrypointContentFoundryApp__param } from './Query/EntrypointContentFoundryApp/param_type.ts';
 import { type Query__EntrypointDocsPost__param } from './Query/EntrypointDocsPost/param_type.ts';
 import { type Query__EntrypointDocs__param } from './Query/EntrypointDocs/param_type.ts';
-import { type Query__EntrypointTwitter__param } from './Query/EntrypointTwitter/param_type.ts';
+import { type Query__EntrypointTwitterIdeator__param } from './Query/EntrypointTwitterIdeator/param_type.ts';
 
 // This is the type given to regular client fields.
 // This means that the type of the exported iso literal is exactly
@@ -99,6 +99,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.Docs', T>
 ): IdentityWithParamComponent<BfCurrentViewer__Docs__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.RedirectToLogin', T>
+): IdentityWithParam<BfCurrentViewer__RedirectToLogin__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
@@ -197,10 +201,6 @@ export function iso<T>(
 ): IdentityWithParam<Mutation__SubmitYcForm__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.ContentFoundryApp', T>
-): IdentityWithParamComponent<Query__ContentFoundryApp__param>;
-
-export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.ContentOS', T>
 ): IdentityWithParamComponent<Query__ContentOS__param>;
 
@@ -225,8 +225,8 @@ export function iso<T>(
 ): IdentityWithParam<Query__EntrypointDocs__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitter', T>
-): IdentityWithParam<Query__EntrypointTwitter__param>;
+  param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeator', T>
+): IdentityWithParam<Query__EntrypointTwitterIdeator__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CheckEmail', T>
@@ -277,7 +277,7 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitter', T>
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeator', T>
 ): void;
 
 export function iso(_isographLiteralText: string):

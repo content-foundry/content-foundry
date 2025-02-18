@@ -5,7 +5,6 @@ import readerResolver from './resolver_reader.ts';
 const nestedRefetchQueries: RefetchQueryNormalizationArtifactWrapper[] = [];
 
 const queryText = 'query EntrypointContentFoundryApp  {\
-  __typename,\
   me {\
     __typename,\
     id,\
@@ -23,11 +22,6 @@ const queryText = 'query EntrypointContentFoundryApp  {\
 const normalizationAst: NormalizationAst = {
   kind: "NormalizationAst",
   selections: [
-    {
-      kind: "Scalar",
-      fieldName: "__typename",
-      arguments: null,
-    },
     {
       kind: "Linked",
       fieldName: "me",
