@@ -35,8 +35,12 @@ jobs:
         run: |
           echo "These environment variables are now available:"
           env | grep -E "^(DENO_|OTEL_|BF_ENV|REPLIT_)"
+          which git
+          which bff
         env:
           PATH: "/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:${{ env.FLAKE_PATH }}:${{ env.PATH }}"
 
-      # - name: Run CI in nix
-      #   run: nix develop --impure .#default --command "./infra/bin/bff ci"
+      - name: Run CI in nix
+        run: nix develop --impure .#default --command "./infra/bin/bff ci"
+        env:
+          PATH: "/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:${{ env.FLAKE_PATH }}:${{ env.PATH }}"
