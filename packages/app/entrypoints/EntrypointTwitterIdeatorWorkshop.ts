@@ -22,7 +22,7 @@ export const EntrypointTwitterIdeatorWorkshop = iso(`
     { parameters },
   ): RouteEntrypoint {
     const { _twitterSubpage } = parameters;
-    let Body;  // Changed from const to let
+    let Body; // Changed from const to let
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
     Body ??= () => null;

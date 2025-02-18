@@ -6,7 +6,11 @@ export type Query__EntrypointTwitterIdeator__param = {
 A client pointer for the BfCurrentViewerLoggedIn type.
       */
       readonly asBfCurrentViewerLoggedIn: ({
-        readonly __typename: string,
+        readonly organization: ({
+          readonly identity: ({
+            readonly tbd: (string | null),
+          } | null),
+        } | null),
       } | null),
     } | null),
   },
