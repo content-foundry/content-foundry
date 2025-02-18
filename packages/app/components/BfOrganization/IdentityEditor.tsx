@@ -13,6 +13,6 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   function EntrypointTwitterIdeatorVoice(
     { data },
   ) {
-    return <div>{data.identity?.__typename}™</div>
+    return <div>{data.identity?.__typename}™</div>;
   },
 );

@@ -95,7 +95,7 @@ function backendNotRespondingPage(req: Request) {
   const retryParam = incomingUrl.searchParams.get("retry");
   const currentRetry = Math.min(
     retryParam ? parseInt(retryParam, 10) : baseRetry,
-    maxRetry
+    maxRetry,
   );
   const currentRetrySec = (currentRetry / 1000).toFixed(1);
 

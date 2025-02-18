@@ -21,7 +21,8 @@ export const EntrypointTwitterIdeator = iso(`
   }
 `)(function EntrypointTwitterIdeator({ data }): RouteEntrypoint {
   const { replace } = useRouter();
-  const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.organization?.identity?.tbd;
+  const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.organization?.identity
+    ?.tbd;
   useEffect(() => {
     if (hasVoice) {
       replace("/twitter/events");

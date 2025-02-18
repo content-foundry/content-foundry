@@ -19,6 +19,9 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   function EntrypointTwitterIdeatorVoice(
     { data },
   ): RouteEntrypoint {
-    return { Body: data?.me?.asBfCurrentViewerLoggedIn?.organization?.IdentityEditor, title: "Twitter Voice" };
+    return {
+      Body: data?.me?.asBfCurrentViewerLoggedIn?.organization?.IdentityEditor,
+      title: "Twitter Voice",
+    };
   },
 );
