@@ -17,14 +17,14 @@ export const EntrypointTwitterIdeator = iso(`
   }
 `)(function EntrypointTwitterIdeator({ data, parameters }): RouteEntrypoint {
   const { _twitterSubpage } = parameters;
-  const { navigate } = useRouter();
+  const { replace } = useRouter();
   const hasVoice = !!data?.me?.asBfCurrentViewerLoggedIn;
   useEffect(() => {
     if (hasVoice) {
-      navigate("/twitter/events");
+      replace("/twitter/events");
       return;
     }
-    navigate("/twitter/voice");
+    replace("/twitter/voice");
   }, []);
   return { Body: () => null, title: "Twitter Ideator™" };
 });
