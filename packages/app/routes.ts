@@ -33,7 +33,7 @@ export const appRoutes: RouteMap = new Map([
 export type IsographRoute = IsographEntrypoint<any, RouteEntrypoint>;
 
 export type RouteEntrypoint = {
-  Body: React.FC;
+  Body: React.FC | null | undefined;
   title: string;
 };
 
@@ -56,7 +56,6 @@ import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph
 import { PageMarketing } from "packages/app/pages/PageMarketing.tsx";
 
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
-  ["/login", entrypointApp],
   ["/twitter", entrypointTwitterIdeator],
   ["/twitter/voice", entrypointTwitterIdeatorVoice],
   ["/twitter/events/:eventSlug?", entrypointTwitterIdeatorEvents],
@@ -64,6 +63,7 @@ export const loggedInAppRoutes = new Map<string, IsographRoute>([
 ]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
+  ["/login", entrypointApp],
   ["/blog/:slug", entrypointBlogPost],
   ["/blog", entrypointBlog],
   ["/docs/:docsSlug", entrypointDocsPost],

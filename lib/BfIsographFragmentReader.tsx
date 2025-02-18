@@ -5,6 +5,7 @@ import type { FragmentReference } from "@isograph/react";
 import { useResult } from "@isograph/react";
 import type { RouteEntrypoint } from "packages/app/routes.ts";
 import { getLogger } from "packages/logger.ts";
+import { BfError } from "packages/BfError.ts";
 
 const _logger = getLogger(import.meta);
 
@@ -30,6 +31,10 @@ export function BfIsographFragmentReader<
     props.fragmentReference,
     props.networkRequestOptions,
   );
+
+  if (!Body) {
+    throw new BfError("Couldn't load a valid component");
+  }
 
   return <Body {...props.additionalProps} />;
 }

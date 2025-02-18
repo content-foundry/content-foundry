@@ -82,10 +82,63 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
       logger.info(response);
       return response;
     } catch (_) {
-      return defaultRoute(req);
+      // If the proxy doesn't respond, show "backend hasn't responded" page
+      return backendNotRespondingPage(req);
     }
   }
 };
+
+function backendNotRespondingPage(req: Request) {
+  const incomingUrl = new URL(req.url);
+  const baseRetry = 1000;
+  const maxRetry = 10000;
+  const retryParam = incomingUrl.searchParams.get("retry");
+  const currentRetry = Math.min(
+    retryParam ? parseInt(retryParam, 10) : baseRetry,
+    maxRetry
+  );
+  const currentRetrySec = (currentRetry / 1000).toFixed(1);
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <title>Backend not responding</title>
+    </head>
+    <body style="font-family: sans-serif; margin: 20px;">
+      <h3>Backend hasn't responded. Trying again in ${currentRetrySec}s...</h3>
+      <script>
+        (function() {
+          setTimeout(() => {
+            const url = new URL(window.location.href);
+            const path = url.pathname + url.search.replace(/[?&]retry=\d+/, '');
+            fetch(url.pathname)
+              .then(response => {
+                if (response.ok) {
+                  window.location.href = path;
+                } else {
+                  const nextRetry = Math.min(${currentRetry} * 1.5, ${maxRetry});
+                  const separator = path.includes('?') ? '&' : '?';
+                  window.location.href = path + separator + 'retry=' + nextRetry;
+                }
+              })
+              .catch(() => {
+                const nextRetry = Math.min(${currentRetry} * 1.5, ${maxRetry});
+                const separator = path.includes('?') ? '&' : '?';
+                window.location.href = path + separator + 'retry=' + nextRetry;
+              });
+          }, ${currentRetry});
+        })();
+      </script>
+    </body>
+    </html>
+  `;
+
+  return new Response(html, {
+    headers: { "content-type": "text/html" },
+  });
+}
 
 const defaultRoute = async () => {
   let githubCode = "";
