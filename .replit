@@ -3,7 +3,7 @@ entrypoint = "README.md"
 modules = ["postgresql-16"]
 
 [nix]
-channel = "unstable"
+channel = "stable-24_11"
 
 [deployment]
 deploymentTarget = "cloudrun"
