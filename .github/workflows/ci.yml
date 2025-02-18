@@ -1,0 +1,39 @@
+
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-24_11
+
+      - name: Parse .replit env and export to GitHub Actions
+        run: |
+          sudo apt-get update && sudo apt-get install -y python3-pip
+          pip3 install toml
+
+          python3 << 'EOF'
+          import toml
+          import os
+
+          data = toml.load(".replit")
+          env_data = data.get("env", {})
+
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              for key, value in env_data.items():
+                  f.write(f"{key}={value}\n")
+          EOF
+
+      - name: Debug environment
+        run: |
+          echo "These environment variables are now available:"
+          env | grep -E "^(DENO_|OTEL_|BF_ENV|REPLIT_)"
+        env:
+          PATH: "/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:${{ env.FLAKE_PATH }}:${{ env.PATH }}"
+      
+      - name: Nix develop
+        run: nix develop .#default --command "./infra/bin/bff ci"
