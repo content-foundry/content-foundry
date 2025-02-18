@@ -11,8 +11,8 @@ enum SubPages {
 export const EntrypointTwitterIdeatorEvents = iso(`
   field Query.EntrypointTwitterIdeatorEvents {
     me {
-      asBfCurrentViewerLoggedIn {
-        __typename
+      organization {
+       __typename
       }
     }
   }
@@ -24,7 +24,7 @@ export const EntrypointTwitterIdeatorEvents = iso(`
     let Body;
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => null;
+    Body ??= () => data?.me?.organization?.__typename;
 
     // a future api suggestion:
     // if (Body == null) {

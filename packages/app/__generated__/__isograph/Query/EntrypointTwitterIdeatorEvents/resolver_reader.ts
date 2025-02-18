@@ -2,7 +2,6 @@ import type { EagerReaderArtifact, ReaderAst } from '@isograph/react';
 import { Query__EntrypointTwitterIdeatorEvents__param } from './param_type.ts';
 import { Query__EntrypointTwitterIdeatorEvents__output_type } from './output_type.ts';
 import { EntrypointTwitterIdeatorEvents as resolver } from '../../../../entrypoints/EntrypointTwitterIdeatorEvents.ts';
-import BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader from '../../BfCurrentViewerLoggedIn/asBfCurrentViewerLoggedIn/resolver_reader.ts';
 
 const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorEvents__param> = [
   {
@@ -14,10 +13,10 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorEvents__param> = [
     selections: [
       {
         kind: "Linked",
-        fieldName: "asBfCurrentViewerLoggedIn",
+        fieldName: "organization",
         alias: null,
         arguments: null,
-        condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
+        condition: null,
         selections: [
           {
             kind: "Scalar",
