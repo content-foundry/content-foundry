@@ -1,6 +1,5 @@
 name: CI
-on:
-  - pull_request
+on: [push, pull_request]
 
 jobs:
   build:
@@ -22,21 +21,42 @@ jobs:
           python3 << 'EOF'
           import toml
           import os
-
           data = toml.load(".replit")
           env_data = data.get("env", {})
-
           with open(os.environ["GITHUB_ENV"], "a") as f:
               for key, value in env_data.items():
                   f.write(f"{key}={value}\n")
           EOF
 
+      - name: Set environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "ASSEMBLY_AI_KEY=${{ secrets.ASSEMBLY_AI_KEY }}" >> $GITHUB_ENV
+          echo "OPEN_AI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> $GITHUB_ENV
+          echo "OPEN_ROUTER_API_KEY=${{ secrets.OPEN_ROUTER_API_KEY }}" >> $GITHUB_ENV
+          echo "POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "INFRA_BIN_PATH=$GITHUB_WORKSPACE/infra/bin" >> $GITHUB_ENV
+          echo "PATH=/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:$PATH" >> $GITHUB_ENV
+
       - name: Debug environment
         run: |
-          echo "These environment variables are now available:"
-          env | grep -E "^(DENO_|OTEL_|BF_ENV|REPLIT_)"
-        env:
-          PATH: "/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:${{ env.FLAKE_PATH }}:${{ env.PATH }}"
+          echo "Environment variables in job:"
+          env | grep -E "DATABASE_URL|REPL_HOME|BF_ENV"
 
-      # - name: Run CI in nix
-      #   run: nix develop --impure .#default --command "./infra/bin/bff ci"
+      - name: Make bff executable
+        run: |
+          chmod +x infra/bin/bff
+          sudo ln -s "$PWD/infra/bin/bff" /usr/local/bin/bff
+
+      - name: Run CI in nix
+        run: |
+          nix develop . --command bash -c "
+            echo 'Inside nix develop:'
+            which bff || echo 'bff not found in PATH?'
+            echo $PATH
+            ls -la infra/bin/bff
+            ls -la infra/bin/
+
+            bff ci
+          "
