@@ -17,7 +17,9 @@ export class BfOrganization extends BfNode<Props> {
     return {
       __typename: this.name,
       id: "lol",
-      identity: {},
+      identity: {
+        // tbd: "rite"
+      },
       research: {},
       creation: {},
       distribution: {},

@@ -20,10 +20,28 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeator__param> = [
         condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
         selections: [
           {
-            kind: "Scalar",
-            fieldName: "__typename",
+            kind: "Linked",
+            fieldName: "organization",
             alias: null,
             arguments: null,
+            condition: null,
+            selections: [
+              {
+                kind: "Linked",
+                fieldName: "identity",
+                alias: null,
+                arguments: null,
+                condition: null,
+                selections: [
+                  {
+                    kind: "Scalar",
+                    fieldName: "tbd",
+                    alias: null,
+                    arguments: null,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

@@ -9,7 +9,9 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   # field Query.EntrypointTwitterIdeatorVoice($eventSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
-        __typename
+        organization {
+          IdentityEditor
+        }
       }
     }
   }
@@ -17,8 +19,6 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   function EntrypointTwitterIdeatorVoice(
     { data },
   ): RouteEntrypoint {
-    const Body = () => data?.me?.asBfCurrentViewerLoggedIn?.__typename;
-    if (!Body) throw new Error("Can't do my thing.");
-    return { Body, title: "Twitter Voice" };
+    return { Body: data?.me?.asBfCurrentViewerLoggedIn?.organization?.IdentityEditor, title: "Twitter Voice" };
   },
 );
