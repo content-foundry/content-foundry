@@ -6,7 +6,6 @@ import {
   matchRouteWithParams,
 } from "packages/app/contexts/RouterContext.tsx";
 
-
 Deno.test("matchRouteWithParams - dynamic route with optional param", () => {
   // For a route like "/blog/:slug?"
   const optionalRoute = "/blog/:slug?";
