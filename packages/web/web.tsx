@@ -108,7 +108,7 @@ for (const entry of appRoutes.entries()) {
     const stream = await renderToReadableStream(element);
     return new Response(
       stream,
-      { headers: { "content-type": "text/html" } },
+      { headers: { "content-type": "text/html; charset=utf-8" } },
     );
   });
 }
@@ -157,7 +157,7 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
     const stream = await renderToReadableStream(element);
     return new Response(
       stream,
-      { headers: { "content-type": "text/html" } },
+      { headers: { "content-type": "text/html; charset=utf-8" } },
     );
   });
 }
