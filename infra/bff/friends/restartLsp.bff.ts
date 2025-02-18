@@ -12,9 +12,9 @@ register(
       await runShellCommand(["pkill", "-f", "deno lsp"]);
       logger.info("LSP server killed successfully");
       return 0;
-    } catch (error) {
+    } catch {
       logger.info("No LSP process found");
       return 0;
     }
-  }
+  },
 );

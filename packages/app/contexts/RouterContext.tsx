@@ -140,6 +140,7 @@ type RouterContextType = {
   routeParams: Record<string, string | null>;
   queryParams: Record<string, string | null>;
   navigate: (path: string) => void;
+  replace: (path: string) => void;
 };
 
 const RouterContext = createContext<RouterContextType>({
@@ -147,6 +148,7 @@ const RouterContext = createContext<RouterContextType>({
   routeParams: {},
   queryParams: {},
   navigate: () => {},
+  replace: () => {},
 });
 
 export const useRouter = () => {
@@ -228,6 +230,18 @@ export function RouterProvider(
     });
   };
 
+  const replace = (path: string) => {
+    startTransition(() => {
+      globalThis.history.replaceState(null, "", path);
+      logger.debug(`Replacing state in history: ${path}`);
+      updateState(path);
+      // Track a page view
+      if (posthog) {
+        posthog.capture("$pageview", { path });
+      }
+    });
+  };
+
   // add all routes to the router context
   addAllRoutes();
 
@@ -255,6 +269,7 @@ export function RouterProvider(
       value={{
         ...state,
         navigate,
+        replace,
       }}
     >
       {portalElement && NextHeader &&

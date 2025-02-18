@@ -16,7 +16,7 @@ export const EntrypointTwitterIdeator = iso(`
     }
   }
 `)(function EntrypointTwitterIdeator({ data, parameters }): RouteEntrypoint {
-  const { twitterSubpage } = parameters;
+  const { _twitterSubpage } = parameters;
   const { navigate } = useRouter();
   const hasVoice = !!data?.me?.asBfCurrentViewerLoggedIn;
   useEffect(() => {

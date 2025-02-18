@@ -1,40 +1,39 @@
-
 import { objectType } from "nexus";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
 
 export const graphqlIdentityType = objectType({
   name: "Identity",
   definition(t) {
-    t.string("tbd")
-  }
+    t.string("tbd");
+  },
 });
 
 export const graphqlResearchType = objectType({
   name: "Research",
   definition(t) {
-    t.string("tbd")
-  }
+    t.string("tbd");
+  },
 });
 
 export const graphqlCreationType = objectType({
   name: "Creation",
   definition(t) {
-    t.string("tbd")
-  }
+    t.string("tbd");
+  },
 });
 
 export const graphqlDistributionType = objectType({
   name: "Distribution",
   definition(t) {
-    t.string("tbd")
-  }
+    t.string("tbd");
+  },
 });
 
 export const graphqlAnalyticsType = objectType({
   name: "Analytics",
   definition(t) {
-    t.string("tbd")
-  }
+    t.string("tbd");
+  },
 });
 
 export const graphqlBfOrganizationType = objectType({
@@ -56,5 +55,5 @@ export const graphqlBfOrganizationType = objectType({
     t.field("analytics", {
       type: graphqlAnalyticsType,
     });
-  }
+  },
 });
