@@ -43,7 +43,10 @@ export function AppRoot() {
 
     return (
       <ErrorBoundary fallback="Nope. you error">
-        <BfIsographFragmentReader fragmentReference={fragmentReference} key={currentPath}/>
+        <BfIsographFragmentReader
+          fragmentReference={fragmentReference}
+          key={currentPath}
+        />
       </ErrorBoundary>
     );
   }

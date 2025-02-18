@@ -15,7 +15,7 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   }
 `)(
   function EntrypointTwitterIdeatorVoice(
-    { data, parameters },
+    { data, _parameters },
   ): RouteEntrypoint {
     const Body = () => data?.me?.asBfCurrentViewerLoggedIn?.__typename;
     if (!Body) throw new Error("Can't do my thing.");

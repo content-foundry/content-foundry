@@ -4,9 +4,32 @@ import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
 
-export default async function ciCommand(_options: string[]): Promise<number> {
+export default async function ciCommand(options: string[]): Promise<number> {
+  // Clear console
+  // deno-lint-ignore no-console
+  console.clear();
   logger.info("Running CI checks...");
   let hasErrors = false;
+
+  const shouldFix = options.includes("--fix") || options.includes("-f");
+
+  if (shouldFix) {
+    // Run format first
+    logger.info("Running formatter...");
+    const formatResult = await runShellCommand(["bff", "f"]);
+    if (formatResult !== 0) {
+      logger.error("Format failed");
+      return formatResult;
+    }
+
+    // Run lint with fix
+    logger.info("Running linter with --fix...");
+    const lintFixResult = await runShellCommand(["bff", "lint", "--fix"]);
+    if (lintFixResult !== 0) {
+      logger.error("Lint fix failed");
+      return lintFixResult;
+    }
+  }
 
   // Run deno lint
   const lintResult = await runShellCommand(
