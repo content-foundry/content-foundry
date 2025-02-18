@@ -13,7 +13,8 @@ export const EntrypointContentFoundryApp = iso(`
     }
   }
 `)(function EntrypointContentFoundryApp({ data }): RouteEntrypoint {
-  const Body = data?.me?.asBfCurrentViewerLoggedIn?.LoggedInView ?? data?.me?.asBfCurrentViewerLoggedOut?.LoggedOutView;
+  const Body = data?.me?.asBfCurrentViewerLoggedIn?.LoggedInView ??
+    data?.me?.asBfCurrentViewerLoggedOut?.LoggedOutView;
   if (Body == null) {
     throw new Error("No Body found");
   }

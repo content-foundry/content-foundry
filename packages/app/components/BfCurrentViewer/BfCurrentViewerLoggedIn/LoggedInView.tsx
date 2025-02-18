@@ -6,6 +6,6 @@ export const LoggedInView = iso(`
     __typename
     
   }
-`)(function LoggedInView({ data }) {
+`)(function LoggedInView() {
   return <RouterLink to="/twitter">Go to twitter voice thing</RouterLink>;
 });

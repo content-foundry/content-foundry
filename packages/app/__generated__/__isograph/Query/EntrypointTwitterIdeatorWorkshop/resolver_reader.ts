@@ -1,10 +1,10 @@
 import type { EagerReaderArtifact, ReaderAst } from '@isograph/react';
-import { Query__EntrypointTwitterIdeatorVoice__param } from './param_type.ts';
-import { Query__EntrypointTwitterIdeatorVoice__output_type } from './output_type.ts';
-import { EntrypointTwitterIdeatorVoice as resolver } from '../../../../entrypoints/EntrypointTwitterIdeatorVoice.ts';
+import { Query__EntrypointTwitterIdeatorWorkshop__param } from './param_type.ts';
+import { Query__EntrypointTwitterIdeatorWorkshop__output_type } from './output_type.ts';
+import { EntrypointTwitterIdeatorWorkshop as resolver } from '../../../../entrypoints/EntrypointTwitterIdeatorWorkshop.ts';
 import BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader from '../../BfCurrentViewerLoggedIn/asBfCurrentViewerLoggedIn/resolver_reader.ts';
 
-const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorVoice__param> = [
+const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorWorkshop__param> = [
   {
     kind: "Linked",
     fieldName: "me",
@@ -32,8 +32,8 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorVoice__param> = [
 ];
 
 const artifact: EagerReaderArtifact<
-  Query__EntrypointTwitterIdeatorVoice__param,
-  Query__EntrypointTwitterIdeatorVoice__output_type
+  Query__EntrypointTwitterIdeatorWorkshop__param,
+  Query__EntrypointTwitterIdeatorWorkshop__output_type
 > = {
   kind: "EagerReaderArtifact",
   resolver,
