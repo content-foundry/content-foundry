@@ -3,6 +3,10 @@
 ### Do not make changes to this file directly
 
 
+type Analytics {
+  tbd: String
+}
+
 type BfBlog implements BfNode & Node {
   """Unique identifier for the resource"""
   id: ID!
@@ -67,6 +71,7 @@ interface BfCurrentViewer implements Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  organization: BfOrganization
 }
 
 type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
@@ -75,7 +80,7 @@ type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
 
   """Unique identifier for the resource"""
   id: ID!
-  storyBank: BfStoryBank
+  organization: BfOrganization
 }
 
 type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
@@ -84,6 +89,7 @@ type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  organization: BfOrganization
 }
 
 type BfDocs implements BfNode & Node {
@@ -149,21 +155,33 @@ interface BfNode implements Node {
   id: ID!
 }
 
+type BfOrganization implements BfNode & Node {
+  analytics: Analytics
+  creation: Creation
+  distribution: Distribution
+
+  """Unique identifier for the resource"""
+  id: ID!
+  identity: Identity
+  research: Research
+}
+
 type BfPerson implements BfNode & Node {
   """Unique identifier for the resource"""
   id: ID!
   name: String
 }
 
-type BfStoryBank implements BfNode & Node {
-  """Unique identifier for the resource"""
-  id: ID!
-  twitterVoiceProps: BfStoryBankTwitterVoiceProps
+type Creation {
+  tbd: String
 }
 
-type BfStoryBankTwitterVoiceProps {
-  celebrityVoices: [String]
-  description: String
+type Distribution {
+  tbd: String
+}
+
+type Identity {
+  tbd: String
 }
 
 scalar JSON
@@ -228,6 +246,10 @@ type RecommendationItem {
 type Recommendations {
   """A list of recommendations"""
   recommendations: [RecommendationItem]
+}
+
+type Research {
+  tbd: String
 }
 
 type YCRecommendationItem {

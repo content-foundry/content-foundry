@@ -11,6 +11,7 @@ import { Kind } from "graphql";
 
 export const graphqlJSONStringScalarType = scalarType({
   name: "JSONString",
+  asNexusMethod: "jsonString",
   description:
     "A scalar that only accepts a valid JSON string. It returns the same valid JSON string on output.",
   /**

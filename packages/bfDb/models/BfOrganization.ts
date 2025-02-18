@@ -1,15 +1,27 @@
-import { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
 import { getLogger } from "packages/logger.ts";
+import { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
+import type { JSONValue } from "packages/bfDb/bfDb.ts";
 
 const _logger = getLogger(import.meta);
 
-type BfOrganizationProps = {
-  name: string;
+type Props = {
+  identity: Record<string, JSONValue>;
+  research: Record<string, JSONValue>;
+  creation: Record<string, JSONValue>;
+  distribution: Record<string, JSONValue>;
+  analytics: Record<string, JSONValue>;
 };
 
-/**
- * @class BfOrganization
- * @description A BfOrganization is a collection of BfUsers, and is linked through BfAccount to BfUser.
- */
-export class BfOrganization extends BfNode<BfOrganizationProps> {
+export class BfOrganization extends BfNode<Props> {
+  static generateFakeOneForGraphql() {
+    return {
+      __typename: this.name,
+      id: "lol",
+      identity: {},
+      research: {},
+      creation: {},
+      distribution: {},
+      analytics: {},
+    };
+  }
 }

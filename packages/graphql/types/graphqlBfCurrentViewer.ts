@@ -20,7 +20,8 @@ import { BfBlog } from "packages/bfDb/models/BfBlog.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { graphqlBfDocsType } from "packages/graphql/types/graphqlBfDocs.ts";
 import { BfDocs } from "packages/bfDb/models/BfDocs.ts";
-import { graphqlBfStoryBankType } from "packages/graphql/types/graphqlBfStoryBank.ts";
+import { graphqlBfOrganizationType } from "packages/graphql/types/graphqlBfOrganization.ts";
+import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
 
 const logger = getLogger(import.meta);
 
@@ -42,6 +43,12 @@ export const graphqlBfCurrentViewerType = interfaceType({
         return docs.toGraphql();
       },
     });
+    t.field("organization", {
+      type: graphqlBfOrganizationType,
+      resolve: () => {
+        return BfOrganization.generateFakeOneForGraphql();
+      },
+    });
   },
 });
 
@@ -49,15 +56,6 @@ export const graphqlBfCurrentViewerLoggedInType = objectType({
   name: "BfCurrentViewerLoggedIn",
   definition(t) {
     t.implements(graphqlBfCurrentViewerType);
-    t.field("storyBank", {
-      type: graphqlBfStoryBankType,
-      resolve: async (_parent, _args, ctx) => {
-        return {
-          __typename: "BfStoryBank",
-          id: "lol",
-        }
-      }
-    })
   },
 });
 
