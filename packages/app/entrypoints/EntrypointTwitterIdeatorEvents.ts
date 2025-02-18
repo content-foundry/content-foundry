@@ -18,18 +18,14 @@ export const EntrypointTwitterIdeatorEvents = iso(`
   }
 `)(
   function EntrypointTwitterIdeatorEvents(
-    { data, parameters },
+    { parameters },
   ): RouteEntrypoint {
     const { _twitterSubpage } = parameters;
-    const Body = undefined;
+    let Body;  // Changed from const to let
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => `${data?.me?.organization?.__typename}™`;
+    Body ??= () => null;
 
-    // a future api suggestion:
-    // if (Body == null) {
-    //   return { redirectToLogin: true };
-    // }
     return { Body, title: "Twitter Voice" };
   },
 );
