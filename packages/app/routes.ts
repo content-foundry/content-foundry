@@ -24,6 +24,7 @@ export type RouteGuts = {
 export type RouteMap = Map<string, RouteGuts>;
 
 export const appRoutes: RouteMap = new Map([
+  ["/", { Component: PageMarketing }],
   ["/ui", { Component: PageUIDemo }],
   ["/fcp", { Component: FinalCutProXML }],
 ]);
@@ -52,8 +53,10 @@ import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Quer
 import entrypointTwitterIdeatorWorkshop from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts";
 import entrypointTwitterIdeatorEvents from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorEvents/entrypoint.ts";
 import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts";
+import { PageMarketing } from "packages/app/pages/PageMarketing.tsx";
 
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
+  ["/login", entrypointApp],
   ["/twitter", entrypointTwitterIdeator],
   ["/twitter/voice", entrypointTwitterIdeatorVoice],
   ["/twitter/events/:eventSlug?", entrypointTwitterIdeatorEvents],
@@ -61,7 +64,6 @@ export const loggedInAppRoutes = new Map<string, IsographRoute>([
 ]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
-  ["/", entrypointApp],
   ["/blog/:slug", entrypointBlogPost],
   ["/blog", entrypointBlog],
   ["/docs/:docsSlug", entrypointDocsPost],
