@@ -42,13 +42,16 @@ iso(`entrypoint Query.EntrypointContentFoundryApp`);
 iso(`entrypoint Query.EntrypointDocs`);
 iso(`entrypoint Query.EntrypointDocsPost`);
 iso(`entrypoint Query.EntrypointTwitterIdeator`);
+iso(`entrypoint Query.EntrypointTwitterIdeatorVoice`);
 
 import entrypointDocs from "packages/app/__generated__/__isograph/Query/EntrypointDocs/entrypoint.ts";
 import entrypointDocsPost from "packages/app/__generated__/__isograph/Query/EntrypointDocsPost/entrypoint.ts";
 import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts";
+import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts";
 
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
-  ["/twitter/:twitterSubpage?/:eventSlug?", entrypointTwitterIdeator],
+  ["/twitter", entrypointTwitterIdeator],
+  ["/twitter/voice", entrypointTwitterIdeatorVoice],
 ]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
