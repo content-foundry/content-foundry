@@ -27,10 +27,19 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeator__param> = [
             condition: null,
             selections: [
               {
-                kind: "Scalar",
-                fieldName: "__typename",
+                kind: "Linked",
+                fieldName: "twitterVoiceProps",
                 alias: null,
                 arguments: null,
+                condition: null,
+                selections: [
+                  {
+                    kind: "Scalar",
+                    fieldName: "__typename",
+                    alias: null,
+                    arguments: null,
+                  },
+                ],
               },
             ],
           },

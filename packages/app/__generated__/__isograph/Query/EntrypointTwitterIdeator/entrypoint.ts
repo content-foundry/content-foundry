@@ -13,7 +13,9 @@ const queryText = 'query EntrypointTwitterIdeator  {\
       __typename,\
       storyBank {\
         id,\
-        __typename,\
+        twitterVoiceProps {\
+          __typename,\
+        },\
       },\
     },\
   },\
@@ -64,9 +66,17 @@ const normalizationAst: NormalizationAst = {
                   arguments: null,
                 },
                 {
-                  kind: "Scalar",
-                  fieldName: "__typename",
+                  kind: "Linked",
+                  fieldName: "twitterVoiceProps",
                   arguments: null,
+                  concreteType: "BfStoryBankTwitterVoiceProps",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "__typename",
+                      arguments: null,
+                    },
+                  ],
                 },
               ],
             },

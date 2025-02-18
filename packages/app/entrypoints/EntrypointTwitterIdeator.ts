@@ -1,12 +1,10 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import type { RouteEntrypoint } from "packages/app/routes.ts";
 import { getLogger } from "packages/logger.ts";
+import { useRouter } from "packages/app/contexts/RouterContext.tsx";
+import { useEffect } from "react";
 
-const logger = getLogger(import.meta);
-
-enum SubPages {
-  EVENTS = "events"
-}
+const _logger = getLogger(import.meta);
 
 export const EntrypointTwitterIdeator = iso(`
   field Query.EntrypointTwitterIdeator {
@@ -14,26 +12,24 @@ export const EntrypointTwitterIdeator = iso(`
     me {
       asBfCurrentViewerLoggedIn {
         storyBank {
-          __typename
-          # TwitterIdeator_Workshopping
-          # twitterVoice(eventSlug: $eventSlug) {
-            # TwitterIdeator_CurrentEvents
-            # TwitterIdeator_CurrentEvent(slug: $eventSlug)
-          # }
-          # TwitterIdeator_CreateVoice
+          twitterVoiceProps {
+            __typename
+          }
         }
       }
     }
   }
 `)(function EntrypointTwitterIdeator({ data, parameters }): RouteEntrypoint {
-  logger.info("shitfuck", parameters)
   const { twitterSubpage } = parameters;
-  let Body = () => data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.__typename ?? "null";
-  
-  
-  // a future api suggestion:
-  // if (Body == null) {
-  //   return { redirectToLogin: true };
-  // }
-  return { Body, title: "Twitter Voice" };
+  const { navigate } = useRouter();
+  const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.storyBank
+    ?.twitterVoiceProps;
+  useEffect(() => {
+    if (hasVoice) {
+      navigate("/twitter/events");
+      return;
+    }
+    navigate("/twitter/voice");
+  }, []);
+  return { Body: () => null, title: "Twitter Ideator™" };
 });

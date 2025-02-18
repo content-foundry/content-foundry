@@ -7,7 +7,9 @@ A client pointer for the BfCurrentViewerLoggedIn type.
       */
       readonly asBfCurrentViewerLoggedIn: ({
         readonly storyBank: ({
-          readonly __typename: string,
+          readonly twitterVoiceProps: ({
+            readonly __typename: string,
+          } | null),
         } | null),
       } | null),
     } | null),
