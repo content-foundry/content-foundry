@@ -14,21 +14,22 @@ export const EntrypointTwitterIdeator = iso(`
     me {
       asBfCurrentViewerLoggedIn {
         storyBank {
-          __typename
-          # TwitterIdeator_Workshopping
+          # Workshopping
           # twitterVoice(eventSlug: $eventSlug) {
             # TwitterIdeator_CurrentEvents
             # TwitterIdeator_CurrentEvent(slug: $eventSlug)
           # }
-          # TwitterIdeator_CreateVoice
+          CreateVoice
         }
       }
     }
   }
 `)(function EntrypointTwitterIdeator({ data, parameters }): RouteEntrypoint {
-  logger.info("shitfuck", parameters)
   const { twitterSubpage } = parameters;
-  let Body = () => data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.__typename ?? "null";
+  let Body;
+
+  Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
+  Body ??= () => null;
   
   
   // a future api suggestion:
