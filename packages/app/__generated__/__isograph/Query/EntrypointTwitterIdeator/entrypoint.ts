@@ -1,16 +1,20 @@
 import type {IsographEntrypoint, NormalizationAst, RefetchQueryNormalizationArtifactWrapper} from '@isograph/react';
-import {Query__EntrypointTwitter__param} from './param_type.ts';
-import {Query__EntrypointTwitter__output_type} from './output_type.ts';
+import {Query__EntrypointTwitterIdeator__param} from './param_type.ts';
+import {Query__EntrypointTwitterIdeator__output_type} from './output_type.ts';
 import readerResolver from './resolver_reader.ts';
 const nestedRefetchQueries: RefetchQueryNormalizationArtifactWrapper[] = [];
 
-const queryText = 'query EntrypointTwitter  {\
+const queryText = 'query EntrypointTwitterIdeator  {\
   me {\
     __typename,\
     id,\
     ... on BfCurrentViewerLoggedIn {\
       id,\
       __typename,\
+      storyBank {\
+        id,\
+        __typename,\
+      },\
     },\
   },\
 }';
@@ -48,6 +52,24 @@ const normalizationAst: NormalizationAst = {
               fieldName: "__typename",
               arguments: null,
             },
+            {
+              kind: "Linked",
+              fieldName: "storyBank",
+              arguments: null,
+              concreteType: "BfStoryBank",
+              selections: [
+                {
+                  kind: "Scalar",
+                  fieldName: "id",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "__typename",
+                  arguments: null,
+                },
+              ],
+            },
           ],
         },
       ],
@@ -55,8 +77,8 @@ const normalizationAst: NormalizationAst = {
   ],
 };
 const artifact: IsographEntrypoint<
-  Query__EntrypointTwitter__param,
-  Query__EntrypointTwitter__output_type
+  Query__EntrypointTwitterIdeator__param,
+  Query__EntrypointTwitterIdeator__output_type
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

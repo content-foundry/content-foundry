@@ -41,22 +41,26 @@ iso(`entrypoint Query.EntrypointBlogPost`);
 iso(`entrypoint Query.EntrypointContentFoundryApp`);
 iso(`entrypoint Query.EntrypointDocs`);
 iso(`entrypoint Query.EntrypointDocsPost`);
-iso(`entrypoint Query.EntrypointTwitter`);
+iso(`entrypoint Query.EntrypointTwitterIdeator`);
 
 import entrypointDocs from "packages/app/__generated__/__isograph/Query/EntrypointDocs/entrypoint.ts";
 import entrypointDocsPost from "packages/app/__generated__/__isograph/Query/EntrypointDocsPost/entrypoint.ts";
-import entrypointTwitter from "packages/app/__generated__/__isograph/Query/EntrypointTwitter/entrypoint.ts";
+import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts";
+
+export const loggedInAppRoutes = new Map<string, IsographRoute>([
+  ["/twitter/:twitterSubpage?/:eventSlug?", entrypointTwitterIdeator],
+]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
   ["/", entrypointApp],
-  ["/twitter", entrypointTwitter],
-  ["/twitter/events", entrypointTwitter],
-  ["/twitter/events/:eventSlug", entrypointTwitter],
   ["/blog/:slug", entrypointBlogPost],
   ["/blog", entrypointBlog],
   ["/docs/:docsSlug", entrypointDocsPost],
   ["/docs", entrypointDocs],
+  ...loggedInAppRoutes
 ]);
+
+
 
 export const toolRoutes: RouteMap = new Map([
   ["/tools/jupyter-notebook", {

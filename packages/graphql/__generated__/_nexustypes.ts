@@ -102,6 +102,13 @@ export interface NexusGenObjects {
     id: string; // ID!
     name?: string | null; // String
   }
+  BfStoryBank: { // root type
+    id: string; // ID!
+  }
+  BfStoryBankTwitterVoiceProps: { // root type
+    celebrityVoices?: Array<string | null> | null; // [String]
+    description?: string | null; // String
+  }
   Mutation: {};
   PageInfo: { // root type
     endCursor?: string | null; // String
@@ -189,6 +196,7 @@ export interface NexusGenFieldTypes {
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
     docs: NexusGenRootTypes['BfDocs'] | null; // BfDocs
     id: string; // ID!
+    storyBank: NexusGenRootTypes['BfStoryBank'] | null; // BfStoryBank
   }
   BfCurrentViewerLoggedOut: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
@@ -224,6 +232,14 @@ export interface NexusGenFieldTypes {
   BfPerson: { // field return type
     id: string; // ID!
     name: string | null; // String
+  }
+  BfStoryBank: { // field return type
+    id: string; // ID!
+    twitterVoiceProps: NexusGenRootTypes['BfStoryBankTwitterVoiceProps'] | null; // BfStoryBankTwitterVoiceProps
+  }
+  BfStoryBankTwitterVoiceProps: { // field return type
+    celebrityVoices: Array<string | null> | null; // [String]
+    description: string | null; // String
   }
   Mutation: { // field return type
     checkEmail: boolean | null; // Boolean
@@ -321,6 +337,7 @@ export interface NexusGenFieldTypeNames {
     blog: 'BfBlog'
     docs: 'BfDocs'
     id: 'ID'
+    storyBank: 'BfStoryBank'
   }
   BfCurrentViewerLoggedOut: { // field return type name
     blog: 'BfBlog'
@@ -356,6 +373,14 @@ export interface NexusGenFieldTypeNames {
   BfPerson: { // field return type name
     id: 'ID'
     name: 'String'
+  }
+  BfStoryBank: { // field return type name
+    id: 'ID'
+    twitterVoiceProps: 'BfStoryBankTwitterVoiceProps'
+  }
+  BfStoryBankTwitterVoiceProps: { // field return type name
+    celebrityVoices: 'String'
+    description: 'String'
   }
   Mutation: { // field return type name
     checkEmail: 'Boolean'
@@ -478,8 +503,8 @@ export interface NexusGenArgTypes {
 
 export interface NexusGenAbstractTypeMembers {
   BfCurrentViewer: "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut"
-  BfNode: "BfBlog" | "BfBlogPost" | "BfDocs" | "BfDocsPost" | "BfPerson"
-  Node: "BfBlog" | "BfBlogPost" | "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut" | "BfDocs" | "BfDocsPost" | "BfPerson"
+  BfNode: "BfBlog" | "BfBlogPost" | "BfDocs" | "BfDocsPost" | "BfPerson" | "BfStoryBank"
+  Node: "BfBlog" | "BfBlogPost" | "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut" | "BfDocs" | "BfDocsPost" | "BfPerson" | "BfStoryBank"
 }
 
 export interface NexusGenTypeInterfaces {
@@ -490,6 +515,7 @@ export interface NexusGenTypeInterfaces {
   BfDocs: "BfNode" | "Node"
   BfDocsPost: "BfNode" | "Node"
   BfPerson: "BfNode" | "Node"
+  BfStoryBank: "BfNode" | "Node"
   BfCurrentViewer: "Node"
   BfNode: "Node"
 }

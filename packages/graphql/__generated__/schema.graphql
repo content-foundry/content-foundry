@@ -75,6 +75,7 @@ type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  storyBank: BfStoryBank
 }
 
 type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
@@ -152,6 +153,17 @@ type BfPerson implements BfNode & Node {
   """Unique identifier for the resource"""
   id: ID!
   name: String
+}
+
+type BfStoryBank implements BfNode & Node {
+  """Unique identifier for the resource"""
+  id: ID!
+  twitterVoiceProps: BfStoryBankTwitterVoiceProps
+}
+
+type BfStoryBankTwitterVoiceProps {
+  celebrityVoices: [String]
+  description: String
 }
 
 scalar JSON
