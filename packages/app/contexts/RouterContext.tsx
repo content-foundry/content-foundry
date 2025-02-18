@@ -45,7 +45,7 @@ function addRoute(path: string) {
 
 type MatchedRoute = {
   match: boolean;
-  params: Record<string, string>;
+  params: Record<string, string | null>;
   queryParams: Record<string, string>;
   routeParams: Record<string, string>;
   route?: RouteGuts;
@@ -94,7 +94,9 @@ export function matchRouteWithParams(
   const queryParams = Object.fromEntries(searchParams.entries());
 
   // parse the user's raw path, ignoring trailing slash for matching
-  const { trimmed: userPath, endedWithSlash: userSlash } = trimTrailingSlash(rawPath);
+  const { trimmed: userPath, endedWithSlash: userSlash } = trimTrailingSlash(
+    rawPath,
+  );
 
   const defaultParams: MatchedRoute = {
     match: false,
@@ -116,7 +118,8 @@ export function matchRouteWithParams(
 
   const match = pathsToCheck
     .map((template) => {
-      const { trimmed: templatePath, endedWithSlash: templateSlash } = trimTrailingSlash(template);
+      const { trimmed: templatePath, endedWithSlash: templateSlash } =
+        trimTrailingSlash(template);
 
       // Split into segments
       const templateParts = templatePath.split("/");
@@ -135,7 +138,7 @@ export function matchRouteWithParams(
           const isOptional = part.endsWith("?");
           const paramName = isOptional
             ? part.slice(1, -1) // strip leading ":" and trailing "?"
-            : part.slice(1);   // strip just the leading ":"
+            : part.slice(1); // strip just the leading ":"
 
           acc[paramName] = userParts[i] || null;
         }
@@ -174,7 +177,7 @@ export function matchRouteWithParams(
         // Otherwise, remove it.
         const correctedBase = templateSlash
           ? userPath + "/" // add trailing slash
-          : userPath;      // or remove trailing slash (already removed above)
+          : userPath; // or remove trailing slash (already removed above)
 
         redir = correctedBase + (search ? `?${search}` : "");
       }

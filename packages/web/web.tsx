@@ -60,7 +60,7 @@ export enum DeploymentEnvs {
 
 export type Handler = (
   request: Request,
-  routeParams: Record<string, string>
+  routeParams: Record<string, string>,
 ) => Promise<Response> | Response;
 
 const routes = new Map<string, Handler>();
@@ -72,7 +72,8 @@ if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
 
 // Register each app route in the routes Map
 for (const entry of appRoutes.entries()) {
-  const [path, { Component: { HeaderComponent: RouteHeaderComponent } }] = entry;
+  const [path, { Component: { HeaderComponent: RouteHeaderComponent } }] =
+    entry;
   routes.set(path, async function AppRoute(request, routeParams) {
     const reqUrl = new URL(request.url);
     const initialPath = reqUrl.pathname;
@@ -99,13 +100,13 @@ for (const entry of appRoutes.entries()) {
     const appElement = React.createElement(
       ClientRoot,
       serverEnvironment,
-      React.createElement(AppRoot)
+      React.createElement(AppRoot),
     );
 
     const element = React.createElement(
       ServerRenderedPage,
       { headerElement, environment: clientEnvironment },
-      appElement
+      appElement,
     );
 
     const stream = await renderToReadableStream(element);
@@ -141,19 +142,22 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
     };
 
     // Because this route is isograph-based, we dynamically generate a header component
-    const HeaderComponent = getIsographHeaderComponent(serverEnvironment, entrypoint);
+    const HeaderComponent = getIsographHeaderComponent(
+      serverEnvironment,
+      entrypoint,
+    );
     const headerElement = React.createElement(HeaderComponent);
 
     const appElement = React.createElement(
       ClientRoot,
       serverEnvironment,
-      React.createElement(AppRoot)
+      React.createElement(AppRoot),
     );
 
     const element = React.createElement(
       ServerRenderedPage,
       { headerElement, environment: clientEnvironment },
-      appElement
+      appElement,
     );
 
     const stream = await renderToReadableStream(element);
@@ -209,11 +213,11 @@ routes.set("/logout", function logoutHandler() {
   headers.set("location", "/");
   headers.set(
     "set-cookie",
-    "bfgat=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    "bfgat=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
   );
   headers.set(
     "set-cookie",
-    "bfgrt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    "bfgrt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
   );
   return new Response(null, {
     status: 302,
@@ -270,7 +274,7 @@ if (import.meta.main) {
       // Keep the query string, so we pass "pathname + search" to matchRoute
       const pathWithParams = incomingUrl.pathname + incomingUrl.search;
       const [handler, routeParams, needsRedirect, redirectTo] = matchRoute(
-        pathWithParams
+        pathWithParams,
       );
 
       if (needsRedirect && redirectTo) {
@@ -294,9 +298,11 @@ if (import.meta.main) {
       const perf = performance.now() - timer;
       const perfInMs = Math.round(perf);
       logger.info(
-        `[${new Date().toISOString()}] [${req.method}] ${res.status} ${incomingUrl} ${
+        `[${
+          new Date().toISOString()
+        }] [${req.method}] ${res.status} ${incomingUrl} ${
           req.headers.get("content-type") ?? ""
-        } (${perfInMs}ms)`
+        } (${perfInMs}ms)`,
       );
 
       return res;

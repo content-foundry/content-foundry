@@ -20,6 +20,7 @@ export const EntrypointTwitterIdeatorEvents = iso(`
   function EntrypointTwitterIdeatorEvents(
     { data },
   ): RouteEntrypoint {
+    // deno-lint-ignore prefer-const
     let Body;
 
     // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
