@@ -3,7 +3,6 @@ import { Query__EntrypointTwitterIdeator__param } from './param_type.ts';
 import { Query__EntrypointTwitterIdeator__output_type } from './output_type.ts';
 import { EntrypointTwitterIdeator as resolver } from '../../../../entrypoints/EntrypointTwitterIdeator.ts';
 import BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader from '../../BfCurrentViewerLoggedIn/asBfCurrentViewerLoggedIn/resolver_reader.ts';
-import BfStoryBank__CreateVoice__resolver_reader from '../../BfStoryBank/CreateVoice/resolver_reader.ts';
 
 const readerAst: ReaderAst<Query__EntrypointTwitterIdeator__param> = [
   {
@@ -28,17 +27,19 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeator__param> = [
             condition: null,
             selections: [
               {
-                kind: "Scalar",
-                fieldName: "__typename",
+                kind: "Linked",
+                fieldName: "twitterVoiceProps",
                 alias: null,
                 arguments: null,
-              },
-              {
-                kind: "Resolver",
-                alias: "CreateVoice",
-                arguments: null,
-                readerArtifact: BfStoryBank__CreateVoice__resolver_reader,
-                usedRefetchQueries: [],
+                condition: null,
+                selections: [
+                  {
+                    kind: "Scalar",
+                    fieldName: "__typename",
+                    alias: null,
+                    arguments: null,
+                  },
+                ],
               },
             ],
           },
