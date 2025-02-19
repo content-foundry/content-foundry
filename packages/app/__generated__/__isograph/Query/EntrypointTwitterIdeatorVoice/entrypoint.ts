@@ -14,7 +14,7 @@ const queryText = 'query EntrypointTwitterIdeatorVoice  {\
       organization {\
         id,\
         identity {\
-          __typename,\
+          voice,\
         },\
       },\
     },\
@@ -69,11 +69,11 @@ const normalizationAst: NormalizationAst = {
                   kind: "Linked",
                   fieldName: "identity",
                   arguments: null,
-                  concreteType: "Identity",
+                  concreteType: "BfOrganization_Identity",
                   selections: [
                     {
                       kind: "Scalar",
-                      fieldName: "__typename",
+                      fieldName: "voice",
                       arguments: null,
                     },
                   ],
