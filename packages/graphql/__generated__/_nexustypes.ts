@@ -9,9 +9,20 @@
 import type { Context } from "./../graphqlContext.ts"
 import type { GraphqlBfNode, GraphqlNode } from "./../types/graphqlBfNode.ts"
 import type { core, connectionPluginCore } from "nexus"
-
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A scalar that only accepts a valid JSON string. It returns the same valid JSON string on output.
+     */
+    jsonString<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "JSONString";
+  }
+}
 declare global {
   interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A scalar that only accepts a valid JSON string. It returns the same valid JSON string on output.
+     */
+    jsonString<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "JSONString";
     /**
      * Adds a Relay-style connection to the type, with numerous options for configuration
      *
@@ -46,6 +57,9 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Analytics: { // root type
+    tbd?: string | null; // String
+  }
   BfBlog: { // root type
     id: string; // ID!
     name?: string | null; // String
@@ -98,9 +112,31 @@ export interface NexusGenObjects {
     cursor: string; // String!
     node?: NexusGenRootTypes['BfDocsPost'] | null; // BfDocsPost
   }
+  BfOrganization: { // root type
+    analytics?: NexusGenRootTypes['Analytics'] | null; // Analytics
+    creation?: NexusGenRootTypes['Creation'] | null; // Creation
+    distribution?: NexusGenRootTypes['Distribution'] | null; // Distribution
+    id: string; // ID!
+    identity?: NexusGenRootTypes['BfOrganization_Identity'] | null; // BfOrganization_Identity
+    research?: NexusGenRootTypes['BfOrganization_Research'] | null; // BfOrganization_Research
+  }
+  BfOrganization_Identity: { // root type
+    twitter?: NexusGenRootTypes['Twitter'] | null; // Twitter
+    voice?: string | null; // String
+    voiceSummary?: string | null; // String
+  }
+  BfOrganization_Research: { // root type
+    topics?: Array<NexusGenRootTypes['ResearchTopic'] | null> | null; // [ResearchTopic]
+  }
   BfPerson: { // root type
     id: string; // ID!
     name?: string | null; // String
+  }
+  Creation: { // root type
+    tbd?: string | null; // String
+  }
+  Distribution: { // root type
+    tbd?: string | null; // String
   }
   Mutation: {};
   PageInfo: { // root type
@@ -118,6 +154,21 @@ export interface NexusGenObjects {
   }
   Recommendations: { // root type
     recommendations?: Array<NexusGenRootTypes['RecommendationItem'] | null> | null; // [RecommendationItem]
+  }
+  ResearchEntry: { // root type
+    name?: string | null; // String
+    summary?: string | null; // String
+    type?: string | null; // String
+    url?: string | null; // String
+  }
+  ResearchTopic: { // root type
+    entries?: Array<NexusGenRootTypes['ResearchEntry'] | null> | null; // [ResearchEntry]
+    name?: string | null; // String
+  }
+  Twitter: { // root type
+    handle?: string | null; // String
+    imgUrl?: string | null; // String
+    name?: string | null; // String
   }
   YCRecommendationItem: { // root type
     confidence?: number | null; // Float
@@ -159,6 +210,9 @@ export type NexusGenRootTypes = NexusGenInterfaces & NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  Analytics: { // field return type
+    tbd: string | null; // String
+  }
   BfBlog: { // field return type
     id: string; // ID!
     name: string | null; // String
@@ -189,11 +243,13 @@ export interface NexusGenFieldTypes {
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
     docs: NexusGenRootTypes['BfDocs'] | null; // BfDocs
     id: string; // ID!
+    organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
   BfCurrentViewerLoggedOut: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
     docs: NexusGenRootTypes['BfDocs'] | null; // BfDocs
     id: string; // ID!
+    organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
   BfDocs: { // field return type
     id: string; // ID!
@@ -221,9 +277,31 @@ export interface NexusGenFieldTypes {
     cursor: string; // String!
     node: NexusGenRootTypes['BfDocsPost'] | null; // BfDocsPost
   }
+  BfOrganization: { // field return type
+    analytics: NexusGenRootTypes['Analytics'] | null; // Analytics
+    creation: NexusGenRootTypes['Creation'] | null; // Creation
+    distribution: NexusGenRootTypes['Distribution'] | null; // Distribution
+    id: string; // ID!
+    identity: NexusGenRootTypes['BfOrganization_Identity'] | null; // BfOrganization_Identity
+    research: NexusGenRootTypes['BfOrganization_Research'] | null; // BfOrganization_Research
+  }
+  BfOrganization_Identity: { // field return type
+    twitter: NexusGenRootTypes['Twitter'] | null; // Twitter
+    voice: string | null; // String
+    voiceSummary: string | null; // String
+  }
+  BfOrganization_Research: { // field return type
+    topics: Array<NexusGenRootTypes['ResearchTopic'] | null> | null; // [ResearchTopic]
+  }
   BfPerson: { // field return type
     id: string; // ID!
     name: string | null; // String
+  }
+  Creation: { // field return type
+    tbd: string | null; // String
+  }
+  Distribution: { // field return type
+    tbd: string | null; // String
   }
   Mutation: { // field return type
     checkEmail: boolean | null; // Boolean
@@ -253,6 +331,21 @@ export interface NexusGenFieldTypes {
   Recommendations: { // field return type
     recommendations: Array<NexusGenRootTypes['RecommendationItem'] | null> | null; // [RecommendationItem]
   }
+  ResearchEntry: { // field return type
+    name: string | null; // String
+    summary: string | null; // String
+    type: string | null; // String
+    url: string | null; // String
+  }
+  ResearchTopic: { // field return type
+    entries: Array<NexusGenRootTypes['ResearchEntry'] | null> | null; // [ResearchEntry]
+    name: string | null; // String
+  }
+  Twitter: { // field return type
+    handle: string | null; // String
+    imgUrl: string | null; // String
+    name: string | null; // String
+  }
   YCRecommendationItem: { // field return type
     confidence: number | null; // Float
     explanation: string | null; // String
@@ -281,6 +374,7 @@ export interface NexusGenFieldTypes {
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
     docs: NexusGenRootTypes['BfDocs'] | null; // BfDocs
     id: string; // ID!
+    organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
   BfNode: { // field return type
     id: string; // ID!
@@ -291,6 +385,9 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  Analytics: { // field return type name
+    tbd: 'String'
+  }
   BfBlog: { // field return type name
     id: 'ID'
     name: 'String'
@@ -321,11 +418,13 @@ export interface NexusGenFieldTypeNames {
     blog: 'BfBlog'
     docs: 'BfDocs'
     id: 'ID'
+    organization: 'BfOrganization'
   }
   BfCurrentViewerLoggedOut: { // field return type name
     blog: 'BfBlog'
     docs: 'BfDocs'
     id: 'ID'
+    organization: 'BfOrganization'
   }
   BfDocs: { // field return type name
     id: 'ID'
@@ -353,9 +452,31 @@ export interface NexusGenFieldTypeNames {
     cursor: 'String'
     node: 'BfDocsPost'
   }
+  BfOrganization: { // field return type name
+    analytics: 'Analytics'
+    creation: 'Creation'
+    distribution: 'Distribution'
+    id: 'ID'
+    identity: 'BfOrganization_Identity'
+    research: 'BfOrganization_Research'
+  }
+  BfOrganization_Identity: { // field return type name
+    twitter: 'Twitter'
+    voice: 'String'
+    voiceSummary: 'String'
+  }
+  BfOrganization_Research: { // field return type name
+    topics: 'ResearchTopic'
+  }
   BfPerson: { // field return type name
     id: 'ID'
     name: 'String'
+  }
+  Creation: { // field return type name
+    tbd: 'String'
+  }
+  Distribution: { // field return type name
+    tbd: 'String'
   }
   Mutation: { // field return type name
     checkEmail: 'Boolean'
@@ -385,6 +506,21 @@ export interface NexusGenFieldTypeNames {
   Recommendations: { // field return type name
     recommendations: 'RecommendationItem'
   }
+  ResearchEntry: { // field return type name
+    name: 'String'
+    summary: 'String'
+    type: 'String'
+    url: 'String'
+  }
+  ResearchTopic: { // field return type name
+    entries: 'ResearchEntry'
+    name: 'String'
+  }
+  Twitter: { // field return type name
+    handle: 'String'
+    imgUrl: 'String'
+    name: 'String'
+  }
   YCRecommendationItem: { // field return type name
     confidence: 'Float'
     explanation: 'String'
@@ -413,6 +549,7 @@ export interface NexusGenFieldTypeNames {
     blog: 'BfBlog'
     docs: 'BfDocs'
     id: 'ID'
+    organization: 'BfOrganization'
   }
   BfNode: { // field return type name
     id: 'ID'
@@ -478,8 +615,8 @@ export interface NexusGenArgTypes {
 
 export interface NexusGenAbstractTypeMembers {
   BfCurrentViewer: "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut"
-  BfNode: "BfBlog" | "BfBlogPost" | "BfDocs" | "BfDocsPost" | "BfPerson"
-  Node: "BfBlog" | "BfBlogPost" | "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut" | "BfDocs" | "BfDocsPost" | "BfPerson"
+  BfNode: "BfBlog" | "BfBlogPost" | "BfDocs" | "BfDocsPost" | "BfOrganization" | "BfPerson"
+  Node: "BfBlog" | "BfBlogPost" | "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut" | "BfDocs" | "BfDocsPost" | "BfOrganization" | "BfPerson"
 }
 
 export interface NexusGenTypeInterfaces {
@@ -489,6 +626,7 @@ export interface NexusGenTypeInterfaces {
   BfCurrentViewerLoggedOut: "BfCurrentViewer" | "Node"
   BfDocs: "BfNode" | "Node"
   BfDocsPost: "BfNode" | "Node"
+  BfOrganization: "BfNode" | "Node"
   BfPerson: "BfNode" | "Node"
   BfCurrentViewer: "Node"
   BfNode: "Node"

@@ -567,7 +567,6 @@ div#toast-root {
   text-align: center;
   padding: 20px;
   width: 100%;
-  max-width: 300px;
   min-height: 64px;
   display: flex;
   flex-direction: column;
@@ -583,8 +582,12 @@ div#toast-root {
   display: block;
   color: var(--textSecondary);
   cursor: pointer;
+  width: 100%;
 }
 .dropzone .text .filename {
   font-weight: bold;
   color: var(--secondaryColor);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }

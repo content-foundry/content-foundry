@@ -1,11 +1,10 @@
 build/**
-!.gitkeep
 *.ipynb_checkpoints
 !node_modules
 nix_system
 .direnv
 attached_assets/
-static/build
+static/build/*
 .cache
 .local
 node_modules
@@ -15,3 +14,4 @@ vendor
 .sl
 .config/sapling
 tmp/*
+!**/.gitkeep

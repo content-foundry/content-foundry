@@ -29,7 +29,13 @@
 }
 
 .docs_page {
-  background: radial-gradient(var(--background) 50%, transparent 100%), linear-gradient(in oklch -25deg, var(--secondaryColor) 40%, var(--fourtharyColor) 60%);
+  background:
+    radial-gradient(var(--background) 50%, transparent 100%),
+    linear-gradient(
+    in oklch -25deg,
+    var(--secondaryColor) 40%,
+    var(--fourtharyColor) 60%
+  );
   background-size: 120% 210%;
   background-position: 40%;
 }

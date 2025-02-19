@@ -3,6 +3,10 @@
 ### Do not make changes to this file directly
 
 
+type Analytics {
+  tbd: String
+}
+
 type BfBlog implements BfNode & Node {
   """Unique identifier for the resource"""
   id: ID!
@@ -67,6 +71,7 @@ interface BfCurrentViewer implements Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  organization: BfOrganization
 }
 
 type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
@@ -75,6 +80,7 @@ type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  organization: BfOrganization
 }
 
 type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
@@ -83,6 +89,7 @@ type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  organization: BfOrganization
 }
 
 type BfDocs implements BfNode & Node {
@@ -148,10 +155,39 @@ interface BfNode implements Node {
   id: ID!
 }
 
+type BfOrganization implements BfNode & Node {
+  analytics: Analytics
+  creation: Creation
+  distribution: Distribution
+
+  """Unique identifier for the resource"""
+  id: ID!
+  identity: BfOrganization_Identity
+  research: BfOrganization_Research
+}
+
+type BfOrganization_Identity {
+  twitter: Twitter
+  voice: String
+  voiceSummary: String
+}
+
+type BfOrganization_Research {
+  topics: [ResearchTopic]
+}
+
 type BfPerson implements BfNode & Node {
   """Unique identifier for the resource"""
   id: ID!
   name: String
+}
+
+type Creation {
+  tbd: String
+}
+
+type Distribution {
+  tbd: String
 }
 
 scalar JSON
@@ -216,6 +252,24 @@ type RecommendationItem {
 type Recommendations {
   """A list of recommendations"""
   recommendations: [RecommendationItem]
+}
+
+type ResearchEntry {
+  name: String
+  summary: String
+  type: String
+  url: String
+}
+
+type ResearchTopic {
+  entries: [ResearchEntry]
+  name: String
+}
+
+type Twitter {
+  handle: String
+  imgUrl: String
+  name: String
 }
 
 type YCRecommendationItem {

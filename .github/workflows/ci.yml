@@ -1,0 +1,62 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: cachix/install-nix-action@v25
+        with:
+          nix_path: nixpkgs=channel:nixos-24_11
+
+      - name: Parse .replit env and export to GitHub Actions
+        run: |
+          sudo apt-get update && sudo apt-get install -y python3-pip
+          pip3 install toml
+
+          python3 << 'EOF'
+          import toml
+          import os
+          data = toml.load(".replit")
+          env_data = data.get("env", {})
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              for key, value in env_data.items():
+                  f.write(f"{key}={value}\n")
+          EOF
+
+      - name: Set environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "ASSEMBLY_AI_KEY=${{ secrets.ASSEMBLY_AI_KEY }}" >> $GITHUB_ENV
+          echo "OPEN_AI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> $GITHUB_ENV
+          echo "OPEN_ROUTER_API_KEY=${{ secrets.OPEN_ROUTER_API_KEY }}" >> $GITHUB_ENV
+          echo "POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+          echo "INFRA_BIN_PATH=$GITHUB_WORKSPACE/infra/bin" >> $GITHUB_ENV
+          echo "PATH=/usr/bin:/bin:${{ env.INFRA_BIN_PATH }}:$PATH" >> $GITHUB_ENV
+
+      - name: Debug environment
+        run: |
+          echo "Environment variables in job:"
+          env | grep -E "DATABASE_URL|REPL_HOME|BF_ENV"
+
+      - name: Add infra bin to PATH
+        run: echo "/home/runner/work/content-foundry/content-foundry/infra/bin" >> $GITHUB_PATH
+
+      - name: Run CI in nix
+        run: |
+          nix develop . --command bash -c "
+            echo 'Inside nix develop:'
+            which bff || echo 'bff not found in PATH?'
+            echo $PATH
+            ls -la /home/runner/work/content-foundry/content-foundry/infra/bin
+            ls -l /home/runner/work/content-foundry/content-foundry/infra/bin
+            readlink -f /home/runner/work/content-foundry/content-foundry/infra/bin/bff
+            chmod +x /home/runner/work/content-foundry/content-foundry/infra/bin/bff
+
+            bff ci
+          "

@@ -4,9 +4,57 @@ import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
 
-export default async function ciCommand(_options: string[]): Promise<number> {
+export default async function ciCommand(options: string[]): Promise<number> {
+  // Clear console
+  // deno-lint-ignore no-console
+  console.clear();
   logger.info("Running CI checks...");
   let hasErrors = false;
+
+  // Install dependencies
+  logger.info("Installing dependencies...");
+  const installResult = await runShellCommand(
+    ["deno", "install"],
+    undefined,
+    {},
+    true,
+    true,
+  );
+  if (installResult !== 0) {
+    logger.error("Failed to install dependencies");
+    return installResult;
+  }
+
+  const shouldFix = options.includes("--fix") || options.includes("-f");
+
+  if (shouldFix) {
+    // Run format first
+    logger.info("Running formatter...");
+    const formatResult = await runShellCommand(["bff", "f"]);
+    if (formatResult !== 0) {
+      logger.error("Format failed");
+      return formatResult;
+    }
+
+    // Run lint with fix
+    logger.info("Running linter with --fix...");
+    const lintFixResult = await runShellCommand(["bff", "lint", "--fix"]);
+    if (lintFixResult !== 0) {
+      logger.error("Lint fix failed");
+      return lintFixResult;
+    }
+  }
+
+  // Run build after fix
+  logger.info("Running build...");
+  const buildResult = await runShellCommand(
+    ["bff", "build"],
+    undefined,
+    {},
+    true,
+    true,
+  );
+  if (buildResult !== 0) hasErrors = true;
 
   // Run deno lint
   const lintResult = await runShellCommand(
@@ -40,6 +88,7 @@ export default async function ciCommand(_options: string[]): Promise<number> {
 
   // Output summary
   logger.info("\n📊 CI Checks Summary:");
+  logger.info(`Build: ${buildResult === 0 ? "✅" : "❌"}`);
   logger.info(`Lint:   ${lintResult === 0 ? "✅" : "❌"}`);
   logger.info(`Tests:  ${testResult === 0 ? "✅" : "❌"}`);
   logger.info(`Format: ${fmtResult === 0 ? "✅" : "❌"}`);

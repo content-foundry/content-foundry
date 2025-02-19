@@ -6,9 +6,30 @@ const logger = getLogger(import.meta);
 
 export async function pull(): Promise<number> {
   logger.info("Pulling latest code from sapling...");
-  return await runShellCommand([
+  const pullResult = await runShellCommand([
     "sl",
     "pull",
+  ]);
+
+  if (pullResult !== 0) {
+    return pullResult;
+  }
+
+  logger.info("Going to remote/main...");
+  const gotoResult = await runShellCommand([
+    "sl",
+    "goto",
+    "remote/main",
+  ]);
+
+  if (gotoResult !== 0) {
+    return gotoResult;
+  }
+
+  logger.info("Installing dependencies...");
+  return await runShellCommand([
+    "deno",
+    "install",
   ]);
 }
 

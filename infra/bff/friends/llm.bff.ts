@@ -17,6 +17,7 @@ interface LlmOptions {
   ignoreGitignore: boolean;
   ignorePatterns: string[];
   outputFile?: string;
+  stdOut: boolean;
   cxml: boolean;
   lineNumbers: boolean;
 }
@@ -163,6 +164,8 @@ function parseArgs(args: string[]): LlmOptions {
     ignoreFilesOnly: false,
     ignoreGitignore: false,
     ignorePatterns: [],
+    outputFile: "build/llm.txt",
+    stdOut: false,
     cxml: false,
     lineNumbers: false,
   };
@@ -201,6 +204,10 @@ function parseArgs(args: string[]): LlmOptions {
       case "-n":
       case "--line-numbers":
         opts.lineNumbers = true;
+        break;
+      case "--std-out":
+        opts.stdOut = true;
+        opts.outputFile = undefined;
         break;
       default:
         opts.paths.push(arg);
@@ -329,32 +336,45 @@ async function outputOneFile(
     return docIndex;
   }
 
+  const outputLines: string[] = [];
   if (opts.cxml) {
-    await writer(`<document index="${docIndex}">`);
-    await writer(`<source>${filePath}</source>`);
-    await writer(`<document_content>`);
+    outputLines.push(`<document index="${docIndex}">`);
+    outputLines.push(`<source>${filePath}</source>`);
+    outputLines.push(`<document_content>`);
     if (opts.lineNumbers) {
-      await writer(addLineNumbers(content));
+      outputLines.push(addLineNumbers(content));
     } else {
-      await writer(content);
+      outputLines.push(content);
     }
-    await writer(`</document_content>`);
-    await writer(`</document>`);
-    return docIndex + 1;
-  }
-
-  // otherwise, default “---” style
-  await writer(filePath);
-  await writer("---");
-  if (opts.lineNumbers) {
-    await writer(addLineNumbers(content));
+    outputLines.push(`</document_content>`);
+    outputLines.push(`</document>`);
   } else {
-    await writer(content);
+    outputLines.push(filePath);
+    outputLines.push("---");
+    if (opts.lineNumbers) {
+      outputLines.push(addLineNumbers(content));
+    } else {
+      outputLines.push(content);
+    }
+    outputLines.push("---");
+    outputLines.push("");
   }
-  await writer("---");
-  await writer("");
 
-  return docIndex;
+  const outputContent = outputLines.join("\n");
+  if (opts.stdOut) {
+    await writer(outputContent);
+  } else {
+    if (opts.outputFile) {
+      const existingContent = await Deno.readTextFile(opts.outputFile).catch(
+        () => "",
+      );
+      await Deno.writeTextFile(
+        opts.outputFile,
+        existingContent + outputContent,
+      );
+    }
+  }
+  return docIndex + 1;
 }
 
 function shouldIgnore(

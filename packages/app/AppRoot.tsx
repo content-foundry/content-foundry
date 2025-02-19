@@ -39,9 +39,14 @@ export function AppRoot() {
       ...params,
     });
 
+    const { currentPath } = routerProps;
+
     return (
       <ErrorBoundary fallback="Nope. you error">
-        <BfIsographFragmentReader fragmentReference={fragmentReference} />
+        <BfIsographFragmentReader
+          fragmentReference={fragmentReference}
+          key={currentPath}
+        />
       </ErrorBoundary>
     );
   }

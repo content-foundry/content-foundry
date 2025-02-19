@@ -24,6 +24,7 @@ export type RouteGuts = {
 export type RouteMap = Map<string, RouteGuts>;
 
 export const appRoutes: RouteMap = new Map([
+  ["/", { Component: PageMarketing }],
   ["/ui", { Component: PageUIDemo }],
   ["/fcp", { Component: FinalCutProXML }],
 ]);
@@ -32,7 +33,7 @@ export const appRoutes: RouteMap = new Map([
 export type IsographRoute = IsographEntrypoint<any, RouteEntrypoint>;
 
 export type RouteEntrypoint = {
-  Body: React.FC;
+  Body: React.FC | null | undefined;
   title: string;
 };
 
@@ -41,16 +42,33 @@ iso(`entrypoint Query.EntrypointBlogPost`);
 iso(`entrypoint Query.EntrypointContentFoundryApp`);
 iso(`entrypoint Query.EntrypointDocs`);
 iso(`entrypoint Query.EntrypointDocsPost`);
+iso(`entrypoint Query.EntrypointTwitterIdeator`);
+iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshop`);
+iso(`entrypoint Query.EntrypointTwitterIdeatorEvents`);
+iso(`entrypoint Query.EntrypointTwitterIdeatorVoice`);
 
 import entrypointDocs from "packages/app/__generated__/__isograph/Query/EntrypointDocs/entrypoint.ts";
 import entrypointDocsPost from "packages/app/__generated__/__isograph/Query/EntrypointDocsPost/entrypoint.ts";
+import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts";
+import entrypointTwitterIdeatorWorkshop from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts";
+import entrypointTwitterIdeatorEvents from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorEvents/entrypoint.ts";
+import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts";
+import { PageMarketing } from "packages/app/pages/PageMarketing.tsx";
+
+export const loggedInAppRoutes = new Map<string, IsographRoute>([
+  ["/twitter", entrypointTwitterIdeator],
+  ["/twitter/voice", entrypointTwitterIdeatorVoice],
+  ["/twitter/events/:eventSlug?", entrypointTwitterIdeatorEvents],
+  ["/twitter/workshop/:workshopSlug?", entrypointTwitterIdeatorWorkshop],
+]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
-  ["/", entrypointApp],
+  ["/login", entrypointApp],
   ["/blog/:slug", entrypointBlogPost],
   ["/blog", entrypointBlog],
   ["/docs/:docsSlug", entrypointDocsPost],
   ["/docs", entrypointDocs],
+  ...loggedInAppRoutes,
 ]);
 
 export const toolRoutes: RouteMap = new Map([

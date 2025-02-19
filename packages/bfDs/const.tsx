@@ -9,8 +9,9 @@ const palletteLight = {
   text: [35, 42, 49], // rgba(35, 42, 49, 1)
   textMarketing: [46, 46, 46], // rgba(46, 46, 46, 1)
   accentText: [19, 201, 212], // rgba(19, 201, 212, 1)
-  secondaryText: [141, 147, 154], // rgba(141, 147, 154, 1)
+  secondaryText: [168, 168, 168], // rgba(141, 147, 154, 1)
   background: [255, 255, 255], // rgba(255, 255, 255, 1)
+  pageBackground: [252, 252, 252],
   border: [242, 242, 242], // rgba(242, 242, 242, 1)
   menuBackground: [255, 255, 255], // background
   glimmerBackground: [250, 250, 250],
@@ -31,11 +32,12 @@ const palletteDark = {
   fourthary: [238, 130, 238], // rgba(238, 130, 238, 1)
   negative: [248, 113, 113], // rgba(248, 113, 113, 1)
   // success: use 'secondary'
-  text: [200, 200, 205],
+  text: [220, 220, 225],
   textMarketing: [230, 230, 235], // rgba(46, 46, 46, 1)
   accentText: [19, 201, 212], // rgba(19, 201, 212, 1)
   secondaryText: [141, 147, 154], // rgba(141, 147, 154, 1)
-  background: [24, 25, 26],
+  background: [20, 21, 22],
+  pageBackground: [24, 25, 26],
   border: [64, 65, 66],
   menuBackground: [49, 50, 53],
   glimmerBackground: [30, 30, 30],
@@ -138,8 +140,8 @@ function generateColors(dark = false) {
     textOnDark: color(pallette.background),
     border: color(pallette.border),
     borderDark: color(pallette.border, -adjustment * 2),
-    pageBackground: color(pallette.background, -adjustment),
-    pageBackgroundTransparent: color(pallette.background, -adjustment, 0.97), // used with backdropFilter
+    pageBackground: color(pallette.pageBackground),
+    pageBackgroundTransparent: color(pallette.pageBackground, null, 0.97), // used with backdropFilter
     menuBackground: color(pallette.menuBackground),
     menuBackgroundHover: color(pallette.menuBackground, -adjustment),
     marketingBackground: `black linear-gradient(125deg, ${

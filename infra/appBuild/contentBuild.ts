@@ -4,6 +4,7 @@ import { ensureDir } from "@std/fs";
 import { dirname, extname, join } from "@std/path";
 import { getLogger } from "packages/logger.ts";
 import { compile } from "@mdx-js/mdx";
+import { processNotebookContent } from "infra/appBuild/utils/notebookUtils.ts";
 
 const logger = getLogger(import.meta);
 
@@ -43,31 +44,8 @@ async function processEntry(
 
       if (ext === ".ipynb") {
         const notebookContent = await Deno.readTextFile(sourcePath);
-        const notebook = JSON.parse(notebookContent);
 
-        // Convert notebook to MDX #techdebt on any
-        // deno-lint-ignore no-explicit-any
-        content = notebook.cells.map((cell: any) => {
-          if (cell.cell_type === "markdown") {
-            return cell.source.join("\n");
-          } else if (cell.cell_type === "code") {
-            const codeBlock = "```python\n" + cell.source.join("") + "\n```";
-            const outputs = "";
-
-            // if (cell.outputs) {
-            //   outputs += "---\n";
-            //   for (const out of cell.outputs) {
-            //     if (out.output_type === 'stream') {
-            //       outputs += "```\n" + out.text.join('') + "\n```\n";
-            //     } else if (out.output_type === 'display_data' || out.output_type === 'execute_result') {
-            //       outputs += JSON.stringify(out.data, null, 2) + "\n";
-            //     }
-            //   }
-            // }
-            return codeBlock + "\n---\n" + outputs;
-          }
-          return "";
-        }).join("\n\n");
+        content = processNotebookContent(notebookContent);
       } else {
         content = await Deno.readTextFile(sourcePath);
       }
