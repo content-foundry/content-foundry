@@ -44,21 +44,21 @@ iso(`entrypoint Query.EntrypointDocs`);
 iso(`entrypoint Query.EntrypointDocsPost`);
 iso(`entrypoint Query.EntrypointTwitterIdeator`);
 iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshop`);
-iso(`entrypoint Query.EntrypointTwitterIdeatorEvents`);
+iso(`entrypoint Query.entrypointTwitterIdeatorResearch`);
 iso(`entrypoint Query.EntrypointTwitterIdeatorVoice`);
 
 import entrypointDocs from "packages/app/__generated__/__isograph/Query/EntrypointDocs/entrypoint.ts";
 import entrypointDocsPost from "packages/app/__generated__/__isograph/Query/EntrypointDocsPost/entrypoint.ts";
 import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts";
 import entrypointTwitterIdeatorWorkshop from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts";
-import entrypointTwitterIdeatorEvents from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorEvents/entrypoint.ts";
+import entrypointTwitterIdeatorResearch from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearch/entrypoint.ts";
 import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts";
 import { PageMarketing } from "packages/app/pages/PageMarketing.tsx";
 
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
   ["/twitter", entrypointTwitterIdeator],
   ["/twitter/voice", entrypointTwitterIdeatorVoice],
-  ["/twitter/events/:eventSlug?", entrypointTwitterIdeatorEvents],
+  ["/twitter/research/:researchSlug?", entrypointTwitterIdeatorResearch],
   ["/twitter/workshop/:workshopSlug?", entrypointTwitterIdeatorWorkshop],
 ]);
 

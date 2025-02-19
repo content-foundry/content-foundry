@@ -5,12 +5,12 @@ import { getLogger } from "packages/logger.ts";
 const _logger = getLogger(import.meta);
 
 enum _SubPages {
-  EVENTS = "events",
+  RESEARCH = "research",
 }
 
 export const EntrypointTwitterIdeatorWorkshop = iso(`
   field Query.EntrypointTwitterIdeatorWorkshop {
-  # field Query.EntrypointTwitterIdeatorWorkshop($eventSlug: String) {
+  # field Query.EntrypointTwitterIdeatorWorkshop($researchSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
         __typename

@@ -1,5 +1,5 @@
 
-export type Query__EntrypointTwitterIdeatorPermalink__param = {
+export type Query__entrypointTwitterIdeatorResearchPermalink__param = {
   readonly data: {
     readonly me: ({
       /**

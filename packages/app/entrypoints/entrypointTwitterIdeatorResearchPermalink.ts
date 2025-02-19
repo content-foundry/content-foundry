@@ -5,12 +5,12 @@ import { getLogger } from "packages/logger.ts";
 const _logger = getLogger(import.meta);
 
 enum _SubPages {
-  EVENTS = "events",
+  RESEARCH = "research",
 }
 
-export const EntrypointTwitterIdeatorPermalink = iso(`
-  field Query.EntrypointTwitterIdeatorPermalink {
-  # field Query.EntrypointTwitterIdeatorPermalink($eventSlug: String) {
+export const entrypointTwitterIdeatorResearchPermalink = iso(`
+  field Query.entrypointTwitterIdeatorResearchPermalink {
+  # field Query.entrypointTwitterIdeatorResearchPermalink($researchSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
         __typename
@@ -18,7 +18,7 @@ export const EntrypointTwitterIdeatorPermalink = iso(`
     }
   }
 `)(
-  function EntrypointTwitterIdeatorPermalink(
+  function entrypointTwitterIdeatorResearchPermalink(
     { data, parameters },
   ): RouteEntrypoint {
     const { _twitterSubpage } = parameters;

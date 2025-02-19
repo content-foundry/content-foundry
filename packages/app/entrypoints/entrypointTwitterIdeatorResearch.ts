@@ -5,11 +5,11 @@ import { getLogger } from "packages/logger.ts";
 const _logger = getLogger(import.meta);
 
 enum _SubPages {
-  EVENTS = "events",
+  RESEARCH = "research",
 }
 
-export const EntrypointTwitterIdeatorEvents = iso(`
-  field Query.EntrypointTwitterIdeatorEvents {
+export const entrypointTwitterIdeatorResearch = iso(`
+  field Query.entrypointTwitterIdeatorResearch {
     me {
       organization {
         Research
@@ -17,7 +17,7 @@ export const EntrypointTwitterIdeatorEvents = iso(`
     }
   }
 `)(
-  function EntrypointTwitterIdeatorEvents(
+  function entrypointTwitterIdeatorResearch(
     { data },
   ): RouteEntrypoint {
     return {
