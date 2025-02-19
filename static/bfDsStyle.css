@@ -74,7 +74,7 @@ a.dark:visited {
 }
 .thin {
   font-weight: 100;
-  opacity: 0.5;
+  opacity: 0.5
 }
 .center {
   text-align: center;
@@ -109,6 +109,8 @@ a.dark:visited {
 .spaceBetween {
   justify-content: space-between;
 }
+
+
 
 /* Responsive styles */
 .mobile-show {
@@ -161,6 +163,9 @@ a.dark:visited {
   }
 }
 
+
+
+
 /* BfDs Callout */
 
 .callout {
@@ -178,19 +183,19 @@ a.dark:visited {
 }
 .callout.info {
   background: var(--text015);
-  border-color: var(--text);
+  border-color: var(--text)
 }
 .callout.warning {
   background: var(--primaryColor015);
-  border-color: var(--primaryColor);
+  border-color: var(--primaryColor)
 }
 .callout.error {
   background: var(--alert015);
-  border-color: var(--alert);
+  border-color: var(--alert)
 }
 .callout.success {
   background: var(--secondaryColor015);
-  border-color: var(--secondaryColor);
+  border-color: var(--secondaryColor)
 }
 
 /* Sheet */
@@ -201,7 +206,7 @@ a.dark:visited {
   box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
   transition: 250ms margin ease;
   margin-right: -100%;
-  position: relative;
+  position: relative
 }
 .sheet.active {
   margin-right: 0;
@@ -264,32 +269,33 @@ a.dark:visited {
 }
 
 /* BfDs Breadcrumb */
-ul.breadcrumbs {
+ul.breadcrumbs{
   padding: 0;
   display: flex;
   gap: 8px;
 }
 
-li.breadcrumb-item {
+li.breadcrumb-item{
   list-style: none;
   position: relative;
   padding-left: 16px;
 }
 
 li.breadcrumb-item:not(:first-of-type)::before {
-  content: ">";
+  content: '>';
   position: absolute;
   left: 0;
   top: 0;
 }
 
+
 /* Glimmer */
 .glimmer {
   border-radius: 8px;
   background: linear-gradient(
-    125deg,
-    var(--glimmerBackground) 25%,
-    var(--glimmer) 45%,
+    125deg, 
+    var(--glimmerBackground) 25%, 
+    var(--glimmer) 45%, 
     var(--glimmerBackground) 65%
   );
   background-size: 200% 200%;
@@ -304,6 +310,8 @@ li.breadcrumb-item:not(:first-of-type)::before {
     background-position: -60% 0;
   }
 }
+
+
 
 /* BfDs List */
 .list {
@@ -503,6 +511,7 @@ div#toast-root {
   transition: width 0.1s linear;
 }
 
+
 /* UI Demo */
 .ui {
   height: 100%;
@@ -558,7 +567,6 @@ div#toast-root {
   text-align: center;
   padding: 20px;
   width: 100%;
-  max-width: 300px;
   min-height: 64px;
   display: flex;
   flex-direction: column;
@@ -574,8 +582,12 @@ div#toast-root {
   display: block;
   color: var(--textSecondary);
   cursor: pointer;
+  width: 100%;
 }
 .dropzone .text .filename {
   font-weight: bold;
   color: var(--secondaryColor);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }

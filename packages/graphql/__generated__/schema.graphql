@@ -162,8 +162,18 @@ type BfOrganization implements BfNode & Node {
 
   """Unique identifier for the resource"""
   id: ID!
-  identity: Identity
-  research: Research
+  identity: BfOrganization_Identity
+  research: BfOrganization_Research
+}
+
+type BfOrganization_Identity {
+  twitter: Twitter
+  voice: String
+  voiceSummary: String
+}
+
+type BfOrganization_Research {
+  topics: [ResearchTopic]
 }
 
 type BfPerson implements BfNode & Node {
@@ -177,10 +187,6 @@ type Creation {
 }
 
 type Distribution {
-  tbd: String
-}
-
-type Identity {
   tbd: String
 }
 
@@ -248,8 +254,22 @@ type Recommendations {
   recommendations: [RecommendationItem]
 }
 
-type Research {
-  tbd: String
+type ResearchEntry {
+  name: String
+  summary: String
+  type: String
+  url: String
+}
+
+type ResearchTopic {
+  entries: [ResearchEntry]
+  name: String
+}
+
+type Twitter {
+  handle: String
+  imgUrl: String
+  name: String
 }
 
 type YCRecommendationItem {
