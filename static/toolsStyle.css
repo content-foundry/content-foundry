@@ -17,10 +17,14 @@
 
 .tools-h1 {
   font-family: var(--marketingFontFamily);
+  margin: 0 20px;
+  font-size: 52px;
+  font-weight: normal;
+  line-height: 1em;
 }
 
 .tools-logo {
-  width: 150px;
+  width: 224px;
 }
 
 .tools-grid {
