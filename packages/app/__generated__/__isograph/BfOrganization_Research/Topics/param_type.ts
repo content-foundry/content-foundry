@@ -1,5 +1,5 @@
 
-export type BfOrganization_Research__SuggestionsPage__param = {
+export type BfOrganization_Research__Topics__param = {
   readonly data: {
     readonly topics: (ReadonlyArray<({
       readonly name: (string | null),

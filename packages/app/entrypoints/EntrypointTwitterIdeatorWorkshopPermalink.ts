@@ -5,12 +5,12 @@ import { getLogger } from "packages/logger.ts";
 const _logger = getLogger(import.meta);
 
 enum _SubPages {
-  EVENTS = "events",
+  RESEARCH = "research",
 }
 
 export const EntrypointTwitterIdeatorWorkshopPermalink = iso(`
   field Query.EntrypointTwitterIdeatorWorkshopPermalink {
-  # field Query.EntrypointTwitterIdeatorWorkshopPermalink($eventSlug: String) {
+  # field Query.EntrypointTwitterIdeatorWorkshopPermalink($researchSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
         __typename
@@ -30,6 +30,6 @@ export const EntrypointTwitterIdeatorWorkshopPermalink = iso(`
     // if (Body == null) {
     //   return { redirectToLogin: true };
     // }
-    return { Body, title: "Twitter Voice" };
+    return { Body, title: "Twitter Workshopping" };
   },
 );

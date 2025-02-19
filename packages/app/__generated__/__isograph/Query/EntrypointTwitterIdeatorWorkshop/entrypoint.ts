@@ -8,9 +8,21 @@ const queryText = 'query EntrypointTwitterIdeatorWorkshop  {\
   me {\
     __typename,\
     id,\
-    ... on BfCurrentViewerLoggedIn {\
+    organization {\
       id,\
       __typename,\
+      creation {\
+        suggestions,\
+      },\
+      identity {\
+        twitter {\
+          handle,\
+          imgUrl,\
+          name,\
+        },\
+        voice,\
+        voiceSummary,\
+      },\
     },\
   },\
 }';
@@ -35,8 +47,10 @@ const normalizationAst: NormalizationAst = {
           arguments: null,
         },
         {
-          kind: "InlineFragment",
-          type: "BfCurrentViewerLoggedIn",
+          kind: "Linked",
+          fieldName: "organization",
+          arguments: null,
+          concreteType: "BfOrganization",
           selections: [
             {
               kind: "Scalar",
@@ -47,6 +61,60 @@ const normalizationAst: NormalizationAst = {
               kind: "Scalar",
               fieldName: "__typename",
               arguments: null,
+            },
+            {
+              kind: "Linked",
+              fieldName: "creation",
+              arguments: null,
+              concreteType: "Creation",
+              selections: [
+                {
+                  kind: "Scalar",
+                  fieldName: "suggestions",
+                  arguments: null,
+                },
+              ],
+            },
+            {
+              kind: "Linked",
+              fieldName: "identity",
+              arguments: null,
+              concreteType: "BfOrganization_Identity",
+              selections: [
+                {
+                  kind: "Linked",
+                  fieldName: "twitter",
+                  arguments: null,
+                  concreteType: "Twitter",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "handle",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "imgUrl",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "name",
+                      arguments: null,
+                    },
+                  ],
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "voice",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "voiceSummary",
+                  arguments: null,
+                },
+              ],
             },
           ],
         },

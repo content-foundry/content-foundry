@@ -1,6 +1,6 @@
 import { type BfOrganization__Research__output_type } from '../../BfOrganization/Research/output_type.ts';
 
-export type Query__EntrypointTwitterIdeatorEvents__param = {
+export type Query__entrypointTwitterIdeatorResearch__param = {
   readonly data: {
     readonly me: ({
       readonly organization: ({

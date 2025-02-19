@@ -2,7 +2,7 @@ import type { EagerReaderArtifact, ReaderAst } from '@isograph/react';
 import { Query__EntrypointTwitterIdeatorWorkshop__param } from './param_type.ts';
 import { Query__EntrypointTwitterIdeatorWorkshop__output_type } from './output_type.ts';
 import { EntrypointTwitterIdeatorWorkshop as resolver } from '../../../../entrypoints/EntrypointTwitterIdeatorWorkshop.ts';
-import BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader from '../../BfCurrentViewerLoggedIn/asBfCurrentViewerLoggedIn/resolver_reader.ts';
+import BfOrganization__Workshopping__resolver_reader from '../../BfOrganization/Workshopping/resolver_reader.ts';
 
 const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorWorkshop__param> = [
   {
@@ -14,16 +14,17 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorWorkshop__param> = [
     selections: [
       {
         kind: "Linked",
-        fieldName: "asBfCurrentViewerLoggedIn",
+        fieldName: "organization",
         alias: null,
         arguments: null,
-        condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
+        condition: null,
         selections: [
           {
-            kind: "Scalar",
-            fieldName: "__typename",
-            alias: null,
+            kind: "Resolver",
+            alias: "Workshopping",
             arguments: null,
+            readerArtifact: BfOrganization__Workshopping__resolver_reader,
+            usedRefetchQueries: [],
           },
         ],
       },

@@ -6,7 +6,7 @@ const _logger = getLogger(import.meta);
 
 export const EntrypointTwitterIdeatorVoice = iso(`
   field Query.EntrypointTwitterIdeatorVoice {
-  # field Query.EntrypointTwitterIdeatorVoice($eventSlug: String) {
+  # field Query.EntrypointTwitterIdeatorVoice($researchSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
         organization {

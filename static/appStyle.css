@@ -65,6 +65,10 @@
   flex-direction: column;
   gap: 20px;
   width: 40%;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
 }
 .voice-section-header {
   display: flex;
@@ -132,11 +136,6 @@
   font-weight: bold;
   font-size: 16px;
   margin-top: -8px;
-}
-.editor-workspace{
-  overflow-y: auto;
-  flex: 1;
-  justify-content: space-around;
 }
 .text-editor{
   flex:1;
@@ -260,12 +259,14 @@
 /* CURRENT EVENTS */
 .current-events-container {
   padding: 20px 48px;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
 }
 .current-event-section {
   margin-bottom: 30px;
 }
 .current-events-header-container {
-  font-size: 42px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -279,8 +280,8 @@
 }
 .subpageHeaderRoute {
   color: var(--textSecondary);
-  font-size: 0.5em;
-  line-height: 1.1;
+  font-size: 20px;
+  line-height: 1;
   font-weight: bold;
 }
 .current-events-header {
@@ -361,8 +362,10 @@
 .current-events-page-header-container {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 20px;
-  padding: 25px;
+  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .info-section {
@@ -392,8 +395,8 @@
 
 
 .header-image {
-  width: 50px;
-  height: 50px;
+  width: 96px;
+  height: 102px;
   border-radius: 8px;
   background: linear-gradient(to top, #ddd, #fff);
 }
@@ -401,8 +404,7 @@
 .compose-section {
   background: #333;
   color: white;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 24px 48px 60px;
   display: flex;
   flex-direction: column;
   gap: 20px;

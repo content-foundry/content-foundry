@@ -133,7 +133,7 @@ export interface NexusGenObjects {
     name?: string | null; // String
   }
   Creation: { // root type
-    tbd?: string | null; // String
+    suggestions?: Array<string | null> | null; // [String]
   }
   Distribution: { // root type
     tbd?: string | null; // String
@@ -298,7 +298,7 @@ export interface NexusGenFieldTypes {
     name: string | null; // String
   }
   Creation: { // field return type
-    tbd: string | null; // String
+    suggestions: Array<string | null> | null; // [String]
   }
   Distribution: { // field return type
     tbd: string | null; // String
@@ -473,7 +473,7 @@ export interface NexusGenFieldTypeNames {
     name: 'String'
   }
   Creation: { // field return type name
-    tbd: 'String'
+    suggestions: 'String'
   }
   Distribution: { // field return type name
     tbd: 'String'
