@@ -100,14 +100,14 @@
   padding-bottom: 10px;
 }
 .left-side-bar{
-  min-width: 300px;
+  background-color: var(--pageBackground);
+  min-width: 320px;
   flex:0;
   border-right: 1px solid var(--border);
   height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
-  padding: 20px;
-  gap: 10px;
+  gap: 16px;
 }
 .sidebar-header {
 
@@ -123,6 +123,7 @@
   gap: 8px;
   background-color: var(--fourtharyColor015);
   border-radius: 10px;
+  margin: 0 20px;
 }
 .instructions-header {
   display: flex;
@@ -144,6 +145,7 @@
   box-sizing: border-box;
 }
 .right-side-bar{
+  background-color: var(--pageBackground);
   min-width: 250px;
   flex:0;
   border-left: 1px solid var(--border);
@@ -216,6 +218,7 @@
   flex-direction: row;
   align-items: center;
   gap: 12px;
+  margin: 0 20px;
 }
 
 .user-handle {
@@ -230,7 +233,7 @@
 }
 .steps{
   gap: 10px;
-  padding: 15px;
+  padding: 16px 32px;
   display: flex;
   flex-direction: column;
   border-top: 1px solid var(--border);
@@ -256,21 +259,36 @@
 
 /* CURRENT EVENTS */
 .current-events-container {
-  padding: 10px;
+  padding: 20px 48px;
 }
 .current-event-section {
   margin-bottom: 30px;
 }
 .current-events-header-container {
+  font-size: 42px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
+.current-events-header-container-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.subpageHeaderRoute {
+  color: var(--textSecondary);
+  font-size: 0.5em;
+  line-height: 1.1;
+  font-weight: bold;
+}
 .current-events-header {
   display:flex;
   font-family: var(--marketingFontFamily);
-  font-size: 2.5em;
+  font-weight: normal;
+  font-size: 42px;
+  line-height: 1em;
   margin: 0;
 }
 
@@ -289,12 +307,12 @@
 .card {
   width: 100px;
   height: 110px;
+  background-color: var(--textSecondary);
   border: 1px solid var(--border);
   border-radius: 8px;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
@@ -308,11 +326,12 @@
   font-weight: bold;
 }
 
-.headline {
+.card .headline {
   color: white;
   padding: 10px;
   width: 100%;
   font-size: 14px;
+  box-sizing: border-box;
   background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
 }
 .headline .text {

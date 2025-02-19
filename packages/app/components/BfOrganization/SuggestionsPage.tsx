@@ -2,6 +2,7 @@ import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { getLogger } from "packages/logger.ts";
+import { BfDsTooltip } from "packages/bfDs/components/BfDsTooltip.tsx";
 
 export const SuggestionsPage = iso(`
   field BfOrganization_Research.SuggestionsPage @component {
@@ -24,7 +25,10 @@ export const SuggestionsPage = iso(`
       <div className="flexRow editor-workspace">
         <div className="current-events-container">
           <div className="current-events-header-container">
-            <h2 className="current-events-header">Choose a topic</h2>
+            <div className="current-events-header-container-text">
+              <div className="subpageHeaderRoute">Research</div>
+              <h2 className="current-events-header">Choose a topic</h2>
+            </div>
             <BfDsButton
               kind="secondary"
               type="submit"
@@ -41,17 +45,17 @@ export const SuggestionsPage = iso(`
                   {topic.entries?.map((entry) => {
                     if (!entry) return null;
                     return (
-                      <div
-                        key={entry.name}
-                        className="card"
-                        onClick={() =>
-                          globalThis.open(entry.url ?? "", "_blank")}
-                      >
-                        <div className="headline">
-                          <div className="text">{entry?.name}</div>
-                          <div className="summary">{entry?.summary}</div>
+                      <BfDsTooltip key={entry.name} text={entry?.summary}>
+                        <div
+                          className="card"
+                          onClick={() =>
+                            globalThis.open(entry.url ?? "", "_blank")}
+                        >
+                          <div className="headline">
+                            <div className="text">{entry?.name}</div>
+                          </div>
                         </div>
-                      </div>
+                      </BfDsTooltip>
                     );
                   })}
                 </div>
