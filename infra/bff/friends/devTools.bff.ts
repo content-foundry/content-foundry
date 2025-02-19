@@ -27,7 +27,7 @@ async function configureSapling() {
     "api",
     "/user/emails",
     "--jq",
-    '.[] | select(.email | contains("boltfoundry.com")) | .email',
+    '.[0].email',
   ]);
 
   const [nameRaw, emailRaw] = await Promise.all([
@@ -70,12 +70,6 @@ async function configureSapling() {
       "--user",
       "ui.username",
       `${name} <${email}>`,
-    ]),
-    runShellCommand([
-      "ln",
-      "-s",
-      `${HOME}/${REPL_SLUG}/.local`,
-      `${HOME}/.local`,
     ]),
   ]);
   await runShellCommand([
