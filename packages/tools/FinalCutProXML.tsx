@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Dropzone } from "packages/bfDs/components/BfDsDropzone.tsx";
-import { CfLogo } from "packages/bfDs/static/CfLogo.tsx";
+import { BfDsDropzone } from "packages/bfDs/components/BfDsDropzone.tsx";
 import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { BfError } from "packages/BfError.ts";
+import { SubpageHeaderTitle } from "packages/app/components/Header/SubpageHeaderTitle.tsx";
 
 interface Settings {
   fps: number;
@@ -95,16 +95,10 @@ export function FinalCutProXML() {
 
   return (
     <div className="tools-container">
-      <h1 className="tools-h1">
-        <div className="tools-logo">
-          <CfLogo
-            boltColor="var(--textSecondary)"
-            foundryColor="var(--textSecondary)"
-          />
-        </div>
+      <SubpageHeaderTitle>
         Convert Audio/Video to Final Cut Pro XML titles
-      </h1>
-      <Dropzone onFileSelect={handleFileChange} />
+      </SubpageHeaderTitle>
+      <BfDsDropzone onFileSelect={handleFileChange} accept="audio/*,video/*" />
       <div className="tools-grid">
         <div className="tools-label">Max characters</div>
         <div>
@@ -237,7 +231,7 @@ function generateFCPXML(
   }
 
   xml += `
-            </gap>
+            </gap>Title
           </spine>
         </sequence>
       </project>
