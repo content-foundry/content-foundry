@@ -3,7 +3,6 @@ import { type BfBlog__BlogPostList__param } from './BfBlog/BlogPostList/param_ty
 import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostListItem/param_type.ts';
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
 import { type BfCurrentViewer__Docs__param } from './BfCurrentViewer/Docs/param_type.ts';
-import { type BfCurrentViewerLoggedIn__EditVoice__param } from './BfCurrentViewerLoggedIn/EditVoice/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep1/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep2/param_type.ts';
@@ -109,10 +108,6 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.Docs', T>
 ): IdentityWithParamComponent<BfCurrentViewer__Docs__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.EditVoice', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__EditVoice__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
