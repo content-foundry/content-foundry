@@ -1,10 +1,10 @@
 import type {IsographEntrypoint, NormalizationAst, RefetchQueryNormalizationArtifactWrapper} from '@isograph/react';
-import {Query__EntrypointTwitterIdeatorEvents__param} from './param_type.ts';
-import {Query__EntrypointTwitterIdeatorEvents__output_type} from './output_type.ts';
+import {Query__entrypointTwitterIdeatorResearch__param} from './param_type.ts';
+import {Query__entrypointTwitterIdeatorResearch__output_type} from './output_type.ts';
 import readerResolver from './resolver_reader.ts';
 const nestedRefetchQueries: RefetchQueryNormalizationArtifactWrapper[] = [];
 
-const queryText = 'query EntrypointTwitterIdeatorEvents  {\
+const queryText = 'query entrypointTwitterIdeatorResearch  {\
   me {\
     __typename,\
     id,\
@@ -161,8 +161,8 @@ const normalizationAst: NormalizationAst = {
   ],
 };
 const artifact: IsographEntrypoint<
-  Query__EntrypointTwitterIdeatorEvents__param,
-  Query__EntrypointTwitterIdeatorEvents__output_type
+  Query__entrypointTwitterIdeatorResearch__param,
+  Query__entrypointTwitterIdeatorResearch__output_type
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

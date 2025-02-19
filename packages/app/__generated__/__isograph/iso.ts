@@ -38,12 +38,12 @@ import { type Query__EntrypointBlog__param } from './Query/EntrypointBlog/param_
 import { type Query__EntrypointContentFoundryApp__param } from './Query/EntrypointContentFoundryApp/param_type.ts';
 import { type Query__EntrypointDocsPost__param } from './Query/EntrypointDocsPost/param_type.ts';
 import { type Query__EntrypointDocs__param } from './Query/EntrypointDocs/param_type.ts';
-import { type Query__EntrypointTwitterIdeatorEvents__param } from './Query/EntrypointTwitterIdeatorEvents/param_type.ts';
-import { type Query__EntrypointTwitterIdeatorPermalink__param } from './Query/EntrypointTwitterIdeatorPermalink/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorVoice__param } from './Query/EntrypointTwitterIdeatorVoice/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorWorkshopPermalink__param } from './Query/EntrypointTwitterIdeatorWorkshopPermalink/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorWorkshop__param } from './Query/EntrypointTwitterIdeatorWorkshop/param_type.ts';
 import { type Query__EntrypointTwitterIdeator__param } from './Query/EntrypointTwitterIdeator/param_type.ts';
+import { type Query__entrypointTwitterIdeatorResearchPermalink__param } from './Query/entrypointTwitterIdeatorResearchPermalink/param_type.ts';
+import { type Query__entrypointTwitterIdeatorResearch__param } from './Query/entrypointTwitterIdeatorResearch/param_type.ts';
 
 // This is the type given to regular client fields.
 // This means that the type of the exported iso literal is exactly
@@ -250,14 +250,6 @@ export function iso<T>(
 ): IdentityWithParam<Query__EntrypointDocs__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeatorEvents', T>
-): IdentityWithParam<Query__EntrypointTwitterIdeatorEvents__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeatorPermalink', T>
-): IdentityWithParam<Query__EntrypointTwitterIdeatorPermalink__param>;
-
-export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeatorVoice', T>
 ): IdentityWithParam<Query__EntrypointTwitterIdeatorVoice__param>;
 
@@ -272,6 +264,14 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeator', T>
 ): IdentityWithParam<Query__EntrypointTwitterIdeator__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Query.entrypointTwitterIdeatorResearchPermalink', T>
+): IdentityWithParam<Query__entrypointTwitterIdeatorResearchPermalink__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Query.entrypointTwitterIdeatorResearch', T>
+): IdentityWithParam<Query__entrypointTwitterIdeatorResearch__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CheckEmail', T>
@@ -322,10 +322,6 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorEvents', T>
-): void;
-
-export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorVoice', T>
 ): void;
 
@@ -335,6 +331,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeator', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointTwitterIdeatorResearch', T>
 ): void;
 
 export function iso(_isographLiteralText: string):

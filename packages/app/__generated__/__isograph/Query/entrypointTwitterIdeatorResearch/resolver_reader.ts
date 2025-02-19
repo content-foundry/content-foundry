@@ -1,10 +1,10 @@
 import type { EagerReaderArtifact, ReaderAst } from '@isograph/react';
-import { Query__EntrypointTwitterIdeatorEvents__param } from './param_type.ts';
-import { Query__EntrypointTwitterIdeatorEvents__output_type } from './output_type.ts';
-import { EntrypointTwitterIdeatorEvents as resolver } from '../../../../entrypoints/EntrypointTwitterIdeatorEvents.ts';
+import { Query__entrypointTwitterIdeatorResearch__param } from './param_type.ts';
+import { Query__entrypointTwitterIdeatorResearch__output_type } from './output_type.ts';
+import { entrypointTwitterIdeatorResearch as resolver } from '../../../../entrypoints/entrypointTwitterIdeatorResearch.ts';
 import BfOrganization__Research__resolver_reader from '../../BfOrganization/Research/resolver_reader.ts';
 
-const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorEvents__param> = [
+const readerAst: ReaderAst<Query__entrypointTwitterIdeatorResearch__param> = [
   {
     kind: "Linked",
     fieldName: "me",
@@ -33,8 +33,8 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorEvents__param> = [
 ];
 
 const artifact: EagerReaderArtifact<
-  Query__EntrypointTwitterIdeatorEvents__param,
-  Query__EntrypointTwitterIdeatorEvents__output_type
+  Query__entrypointTwitterIdeatorResearch__param,
+  Query__entrypointTwitterIdeatorResearch__output_type
 > = {
   kind: "EagerReaderArtifact",
   resolver,

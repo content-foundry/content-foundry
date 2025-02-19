@@ -8,7 +8,7 @@ const _logger = getLogger(import.meta);
 
 export const EntrypointTwitterIdeator = iso(`
   field Query.EntrypointTwitterIdeator {
-  # field Query.EntrypointTwitterIdeator($eventSlug: String) {
+  # field Query.EntrypointTwitterIdeator($researchSlug: String) {
     me {
       asBfCurrentViewerLoggedIn {
         organization {
@@ -24,7 +24,7 @@ export const EntrypointTwitterIdeator = iso(`
   const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.organization?.identity;
   useEffect(() => {
     if (hasVoice) {
-      replace("/twitter/events");
+      replace("/twitter/research");
       return;
     }
     replace("/twitter/voice");
