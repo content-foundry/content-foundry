@@ -12,22 +12,22 @@ Content Foundry is an open-source platform designed to help creators tell their
 story across all platforms, including their own. Content Foundry has five
 pillars, each describing a step of the content creation process.
 
-### Story Bank
+### Identity
 
 Take anecdotes, inspirations, ideas, user research, sales calls, and whatever
 information you have that relates to your brand and put it here. This serves as
 origin material for the rest of the process.
 
-### Idea Generator
+### Research
 
 Figure out what you should say before you say it. Come up with sketches,
 outlines or other ideas for tweets, posts, videos, etc.
 
-### Content Editor
+### Creation
 
 Write your content.
 
-### Community
+### Distribution
 
 Get your content where it needs to go
 
