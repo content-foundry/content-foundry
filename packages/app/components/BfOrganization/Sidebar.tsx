@@ -1,8 +1,8 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { SubpageHeaderTitle } from "packages/app/components/Header/SubpageHeaderTitle.tsx";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
-import { BfDsModal } from "packages/bfDs/components/BfDsModal.tsx";
 import { useState } from "react";
+import { useBfDs } from "packages/bfDs/hooks/useBfDs.tsx";
 
 export const Sidebar = iso(`
   field BfOrganization.Sidebar @component {
@@ -20,7 +20,9 @@ export const Sidebar = iso(`
   function Sidebar(
     { data },
   ) {
+    const { showModal } = useBfDs();
     const [showVerboseVoice, setShowVerboseVoice] = useState(false);
+
     return (
       <div className="flexColumn left-side-bar">
         <div className="sidebar-header">
@@ -48,7 +50,7 @@ export const Sidebar = iso(`
               <BfDsButton
                 kind="overlay"
                 iconLeft="pencil"
-                onClick={() => <BfDsModal>HI</BfDsModal>}
+                onClick={() => showModal("TODO: voice editor")}
                 size="medium"
               />
               <BfDsButton
