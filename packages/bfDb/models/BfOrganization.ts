@@ -5,7 +5,7 @@ import type { JSONValue } from "packages/bfDb/bfDb.ts";
 const _logger = getLogger(import.meta);
 
 type Props = {
-  identity: Record<string, JSONValue>;
+  identity?: Record<string, JSONValue>;
   research: Record<string, JSONValue>;
   creation: Record<string, JSONValue>;
   distribution: Record<string, JSONValue>;
@@ -13,17 +13,4 @@ type Props = {
 };
 
 export class BfOrganization extends BfNode<Props> {
-  static generateFakeOneForGraphql() {
-    return {
-      __typename: this.name,
-      id: "lol",
-      identity: {
-        // tbd: "rite"
-      },
-      research: {},
-      creation: {},
-      distribution: {},
-      analytics: {},
-    };
-  }
 }

@@ -1,6 +1,7 @@
 import type {ComponentReaderArtifact, ExtractSecondParam, ReaderAst } from '@isograph/react';
 import { BfOrganization__IdentityEditor__param } from './param_type.ts';
 import { EntrypointTwitterIdeatorVoice as resolver } from '../../../../components/BfOrganization/IdentityEditor.tsx';
+import BfOrganization_Identity__EditIdentity__resolver_reader from '../../BfOrganization_Identity/EditIdentity/resolver_reader.ts';
 
 const readerAst: ReaderAst<BfOrganization__IdentityEditor__param> = [
   {
@@ -11,10 +12,11 @@ const readerAst: ReaderAst<BfOrganization__IdentityEditor__param> = [
     condition: null,
     selections: [
       {
-        kind: "Scalar",
-        fieldName: "__typename",
-        alias: null,
+        kind: "Resolver",
+        alias: "EditIdentity",
         arguments: null,
+        readerArtifact: BfOrganization_Identity__EditIdentity__resolver_reader,
+        usedRefetchQueries: [],
       },
     ],
   },

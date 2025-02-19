@@ -117,8 +117,16 @@ export interface NexusGenObjects {
     creation?: NexusGenRootTypes['Creation'] | null; // Creation
     distribution?: NexusGenRootTypes['Distribution'] | null; // Distribution
     id: string; // ID!
-    identity?: NexusGenRootTypes['Identity'] | null; // Identity
-    research?: NexusGenRootTypes['Research'] | null; // Research
+    identity?: NexusGenRootTypes['BfOrganization_Identity'] | null; // BfOrganization_Identity
+    research?: NexusGenRootTypes['BfOrganization_Research'] | null; // BfOrganization_Research
+  }
+  BfOrganization_Identity: { // root type
+    twitter?: NexusGenRootTypes['Twitter'] | null; // Twitter
+    voice?: string | null; // String
+    voiceSummary?: string | null; // String
+  }
+  BfOrganization_Research: { // root type
+    topics?: Array<NexusGenRootTypes['ResearchTopic'] | null> | null; // [ResearchTopic]
   }
   BfPerson: { // root type
     id: string; // ID!
@@ -128,9 +136,6 @@ export interface NexusGenObjects {
     tbd?: string | null; // String
   }
   Distribution: { // root type
-    tbd?: string | null; // String
-  }
-  Identity: { // root type
     tbd?: string | null; // String
   }
   Mutation: {};
@@ -150,8 +155,20 @@ export interface NexusGenObjects {
   Recommendations: { // root type
     recommendations?: Array<NexusGenRootTypes['RecommendationItem'] | null> | null; // [RecommendationItem]
   }
-  Research: { // root type
-    tbd?: string | null; // String
+  ResearchEntry: { // root type
+    name?: string | null; // String
+    summary?: string | null; // String
+    type?: string | null; // String
+    url?: string | null; // String
+  }
+  ResearchTopic: { // root type
+    entries?: Array<NexusGenRootTypes['ResearchEntry'] | null> | null; // [ResearchEntry]
+    name?: string | null; // String
+  }
+  Twitter: { // root type
+    handle?: string | null; // String
+    imgUrl?: string | null; // String
+    name?: string | null; // String
   }
   YCRecommendationItem: { // root type
     confidence?: number | null; // Float
@@ -265,8 +282,16 @@ export interface NexusGenFieldTypes {
     creation: NexusGenRootTypes['Creation'] | null; // Creation
     distribution: NexusGenRootTypes['Distribution'] | null; // Distribution
     id: string; // ID!
-    identity: NexusGenRootTypes['Identity'] | null; // Identity
-    research: NexusGenRootTypes['Research'] | null; // Research
+    identity: NexusGenRootTypes['BfOrganization_Identity'] | null; // BfOrganization_Identity
+    research: NexusGenRootTypes['BfOrganization_Research'] | null; // BfOrganization_Research
+  }
+  BfOrganization_Identity: { // field return type
+    twitter: NexusGenRootTypes['Twitter'] | null; // Twitter
+    voice: string | null; // String
+    voiceSummary: string | null; // String
+  }
+  BfOrganization_Research: { // field return type
+    topics: Array<NexusGenRootTypes['ResearchTopic'] | null> | null; // [ResearchTopic]
   }
   BfPerson: { // field return type
     id: string; // ID!
@@ -276,9 +301,6 @@ export interface NexusGenFieldTypes {
     tbd: string | null; // String
   }
   Distribution: { // field return type
-    tbd: string | null; // String
-  }
-  Identity: { // field return type
     tbd: string | null; // String
   }
   Mutation: { // field return type
@@ -309,8 +331,20 @@ export interface NexusGenFieldTypes {
   Recommendations: { // field return type
     recommendations: Array<NexusGenRootTypes['RecommendationItem'] | null> | null; // [RecommendationItem]
   }
-  Research: { // field return type
-    tbd: string | null; // String
+  ResearchEntry: { // field return type
+    name: string | null; // String
+    summary: string | null; // String
+    type: string | null; // String
+    url: string | null; // String
+  }
+  ResearchTopic: { // field return type
+    entries: Array<NexusGenRootTypes['ResearchEntry'] | null> | null; // [ResearchEntry]
+    name: string | null; // String
+  }
+  Twitter: { // field return type
+    handle: string | null; // String
+    imgUrl: string | null; // String
+    name: string | null; // String
   }
   YCRecommendationItem: { // field return type
     confidence: number | null; // Float
@@ -423,8 +457,16 @@ export interface NexusGenFieldTypeNames {
     creation: 'Creation'
     distribution: 'Distribution'
     id: 'ID'
-    identity: 'Identity'
-    research: 'Research'
+    identity: 'BfOrganization_Identity'
+    research: 'BfOrganization_Research'
+  }
+  BfOrganization_Identity: { // field return type name
+    twitter: 'Twitter'
+    voice: 'String'
+    voiceSummary: 'String'
+  }
+  BfOrganization_Research: { // field return type name
+    topics: 'ResearchTopic'
   }
   BfPerson: { // field return type name
     id: 'ID'
@@ -434,9 +476,6 @@ export interface NexusGenFieldTypeNames {
     tbd: 'String'
   }
   Distribution: { // field return type name
-    tbd: 'String'
-  }
-  Identity: { // field return type name
     tbd: 'String'
   }
   Mutation: { // field return type name
@@ -467,8 +506,20 @@ export interface NexusGenFieldTypeNames {
   Recommendations: { // field return type name
     recommendations: 'RecommendationItem'
   }
-  Research: { // field return type name
-    tbd: 'String'
+  ResearchEntry: { // field return type name
+    name: 'String'
+    summary: 'String'
+    type: 'String'
+    url: 'String'
+  }
+  ResearchTopic: { // field return type name
+    entries: 'ResearchEntry'
+    name: 'String'
+  }
+  Twitter: { // field return type name
+    handle: 'String'
+    imgUrl: 'String'
+    name: 'String'
   }
   YCRecommendationItem: { // field return type name
     confidence: 'Float'

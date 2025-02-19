@@ -12,7 +12,7 @@ export const EntrypointTwitterIdeatorEvents = iso(`
   field Query.EntrypointTwitterIdeatorEvents {
     me {
       organization {
-       __typename
+        Research
       }
     }
   }
@@ -20,16 +20,9 @@ export const EntrypointTwitterIdeatorEvents = iso(`
   function EntrypointTwitterIdeatorEvents(
     { data },
   ): RouteEntrypoint {
-    // deno-lint-ignore prefer-const
-    let Body;
-
-    // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => `${data?.me?.organization?.__typename}™`;
-
-    // a future api suggestion:
-    // if (Body == null) {
-    //   return { redirectToLogin: true };
-    // }
-    return { Body, title: "Twitter Voice" };
+    return {
+      Body: data?.me?.organization?.Research,
+      title: "Twitter Research",
+    };
   },
 );

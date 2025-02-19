@@ -10,7 +10,26 @@ const queryText = 'query EntrypointTwitterIdeatorEvents  {\
     id,\
     organization {\
       id,\
-      __typename,\
+      identity {\
+        twitter {\
+          handle,\
+          imgUrl,\
+          name,\
+        },\
+        voice,\
+        voiceSummary,\
+      },\
+      research {\
+        topics {\
+          entries {\
+            name,\
+            summary,\
+            type,\
+            url,\
+          },\
+          name,\
+        },\
+      },\
     },\
   },\
 }';
@@ -46,9 +65,94 @@ const normalizationAst: NormalizationAst = {
               arguments: null,
             },
             {
-              kind: "Scalar",
-              fieldName: "__typename",
+              kind: "Linked",
+              fieldName: "identity",
               arguments: null,
+              concreteType: "BfOrganization_Identity",
+              selections: [
+                {
+                  kind: "Linked",
+                  fieldName: "twitter",
+                  arguments: null,
+                  concreteType: "Twitter",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "handle",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "imgUrl",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "name",
+                      arguments: null,
+                    },
+                  ],
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "voice",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "voiceSummary",
+                  arguments: null,
+                },
+              ],
+            },
+            {
+              kind: "Linked",
+              fieldName: "research",
+              arguments: null,
+              concreteType: "BfOrganization_Research",
+              selections: [
+                {
+                  kind: "Linked",
+                  fieldName: "topics",
+                  arguments: null,
+                  concreteType: "ResearchTopic",
+                  selections: [
+                    {
+                      kind: "Linked",
+                      fieldName: "entries",
+                      arguments: null,
+                      concreteType: "ResearchEntry",
+                      selections: [
+                        {
+                          kind: "Scalar",
+                          fieldName: "name",
+                          arguments: null,
+                        },
+                        {
+                          kind: "Scalar",
+                          fieldName: "summary",
+                          arguments: null,
+                        },
+                        {
+                          kind: "Scalar",
+                          fieldName: "type",
+                          arguments: null,
+                        },
+                        {
+                          kind: "Scalar",
+                          fieldName: "url",
+                          arguments: null,
+                        },
+                      ],
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "name",
+                      arguments: null,
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },

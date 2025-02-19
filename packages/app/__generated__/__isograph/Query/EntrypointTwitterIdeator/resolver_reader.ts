@@ -35,7 +35,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeator__param> = [
                 selections: [
                   {
                     kind: "Scalar",
-                    fieldName: "tbd",
+                    fieldName: "voice",
                     alias: null,
                     arguments: null,
                   },
