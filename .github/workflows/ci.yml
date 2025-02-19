@@ -51,13 +51,5 @@ jobs:
       - name: Run CI in nix
         run: |
           nix develop . --command bash -c "
-            echo 'Inside nix develop:'
-            which bff || echo 'bff not found in PATH?'
-            echo $PATH
-            ls -la /home/runner/work/content-foundry/content-foundry/infra/bin
-            ls -l /home/runner/work/content-foundry/content-foundry/infra/bin
-            readlink -f /home/runner/work/content-foundry/content-foundry/infra/bin/bff
-            chmod +x /home/runner/work/content-foundry/content-foundry/infra/bin/bff
-
-            bff ci
+            bff ci -g
           "
