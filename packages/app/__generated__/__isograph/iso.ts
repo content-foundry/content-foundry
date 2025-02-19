@@ -22,6 +22,10 @@ import { type BfDocs__DocsList__param } from './BfDocs/DocsList/param_type.ts';
 import { type BfDocs__DocsPostList__param } from './BfDocs/DocsPostList/param_type.ts';
 import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
 import { type BfOrganization__IdentityEditor__param } from './BfOrganization/IdentityEditor/param_type.ts';
+import { type BfOrganization__Research__param } from './BfOrganization/Research/param_type.ts';
+import { type BfOrganization__Sidebar__param } from './BfOrganization/Sidebar/param_type.ts';
+import { type BfOrganization_Identity__EditIdentity__param } from './BfOrganization_Identity/EditIdentity/param_type.ts';
+import { type BfOrganization_Research__SuggestionsPage__param } from './BfOrganization_Research/SuggestionsPage/param_type.ts';
 import { type Mutation__CheckEmail__param } from './Mutation/CheckEmail/param_type.ts';
 import { type Mutation__GetLoginOptions__param } from './Mutation/GetLoginOptions/param_type.ts';
 import { type Mutation__LoginAsDemoPerson__param } from './Mutation/LoginAsDemoPerson/param_type.ts';
@@ -181,6 +185,22 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfOrganization.IdentityEditor', T>
 ): IdentityWithParamComponent<BfOrganization__IdentityEditor__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.Research', T>
+): IdentityWithParamComponent<BfOrganization__Research__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.Sidebar', T>
+): IdentityWithParamComponent<BfOrganization__Sidebar__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization_Identity.EditIdentity', T>
+): IdentityWithParamComponent<BfOrganization_Identity__EditIdentity__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization_Research.SuggestionsPage', T>
+): IdentityWithParamComponent<BfOrganization_Research__SuggestionsPage__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.CheckEmail', T>

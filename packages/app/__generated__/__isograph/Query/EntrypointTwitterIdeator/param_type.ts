@@ -8,7 +8,7 @@ A client pointer for the BfCurrentViewerLoggedIn type.
       readonly asBfCurrentViewerLoggedIn: ({
         readonly organization: ({
           readonly identity: ({
-            readonly tbd: (string | null),
+            readonly voice: (string | null),
           } | null),
         } | null),
       } | null),

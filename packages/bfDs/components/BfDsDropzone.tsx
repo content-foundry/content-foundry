@@ -1,10 +1,11 @@
 import { useState } from "react";
 
 type Props = {
+  accept?: string;
   onFileSelect: (files: File[]) => void;
 };
 
-export function Dropzone({ onFileSelect }: Props) {
+export function BfDsDropzone({ accept, onFileSelect }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>();
 
@@ -30,11 +31,7 @@ export function Dropzone({ onFileSelect }: Props) {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-      ? Array.from(event.target.files).filter((file) =>
-        file.type.startsWith("audio/") || file.type.startsWith("video/")
-      )
-      : [];
+    const files = event.target.files ? Array.from(event.target.files) : [];
     if (files && onFileSelect) {
       onFileSelect(files);
       setFileName(files[0]?.name);
@@ -50,7 +47,7 @@ export function Dropzone({ onFileSelect }: Props) {
     >
       <input
         type="file"
-        accept="audio/*,video/*"
+        accept={accept}
         onChange={handleFileChange}
         hidden
         id="fileInput"
@@ -60,7 +57,7 @@ export function Dropzone({ onFileSelect }: Props) {
           <div className="filename">{fileName ?? "Select a file"}</div>
           {isDragging
             ? "Drop the files here..."
-            : "Drag & drop audio/video files here, or click to select"}
+            : "Drag & drop files here, or click to select"}
         </label>
       }
     </div>
@@ -71,7 +68,8 @@ export function Example() {
   const [file, setFile] = useState<File>();
   return (
     <>
-      <Dropzone
+      <BfDsDropzone
+        accept="audio/*,video/*"
         onFileSelect={(files: File[]): void => {
           setFile(files[0]);
         }}
