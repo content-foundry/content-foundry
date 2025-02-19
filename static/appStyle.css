@@ -65,6 +65,10 @@
   flex-direction: column;
   gap: 20px;
   width: 40%;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
 }
 .voice-section-header {
   display: flex;
