@@ -1,8 +1,8 @@
 import type {ComponentReaderArtifact, ExtractSecondParam, ReaderAst } from '@isograph/react';
-import { BfOrganization_Research__SuggestionsPage__param } from './param_type.ts';
-import { SuggestionsPage as resolver } from '../../../../components/BfOrganization/SuggestionsPage.tsx';
+import { BfOrganization_Research__Topics__param } from './param_type.ts';
+import { Topics as resolver } from '../../../../components/BfOrganization/Topics.tsx';
 
-const readerAst: ReaderAst<BfOrganization_Research__SuggestionsPage__param> = [
+const readerAst: ReaderAst<BfOrganization_Research__Topics__param> = [
   {
     kind: "Linked",
     fieldName: "topics",
@@ -54,11 +54,11 @@ const readerAst: ReaderAst<BfOrganization_Research__SuggestionsPage__param> = [
 ];
 
 const artifact: ComponentReaderArtifact<
-  BfOrganization_Research__SuggestionsPage__param,
+  BfOrganization_Research__Topics__param,
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization_Research.SuggestionsPage",
+  componentName: "BfOrganization_Research.Topics",
   resolver,
   readerAst,
   hasUpdatable: false,
