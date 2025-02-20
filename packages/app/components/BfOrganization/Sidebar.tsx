@@ -5,6 +5,12 @@ import { useState } from "react";
 import { useBfDs } from "packages/bfDs/hooks/useBfDs.tsx";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
 
+const steps = [
+  "Choose a topic",
+  "Get inspired and compose",
+  "Workshop",
+];
+
 export const Sidebar = iso(`
   field BfOrganization.Sidebar @component {
     identity{
@@ -22,11 +28,15 @@ export const Sidebar = iso(`
     { data },
   ) {
     const routerProps = useRouter();
-    const { researchSlug } = routerProps.routeParams;
+    const { currentPath, routeParams } = routerProps;
+    const { researchSlug } = routeParams;
     const { showModal } = useBfDs();
     const [showVerboseVoice, setShowVerboseVoice] = useState(false);
 
-    const currentStep = researchSlug ? 2 : 1;
+    let currentStep = researchSlug ? 2 : 1;
+    if (currentPath === "/twitter/workshopping") {
+      currentStep = 3;
+    }
 
     return (
       <div className="flexColumn left-side-bar">
@@ -79,25 +89,20 @@ export const Sidebar = iso(`
           </div>
         </div>
         <div className="steps">
-          <div className="step flexRow">
-            <div
-              className={`step-number${currentStep === 1 ? "-highlight" : ""}`}
-            >
-              1
-            </div>{" "}
-            Choose a topic.
-          </div>
-          <div className="step flexRow">
-            <div
-              className={`step-number${currentStep === 2 ? "-highlight" : ""}`}
-            >
-              2
-            </div>{" "}
-            Get inspired and compose.
-          </div>
-          <div className="step flexRow">
-            <div className="step-number">3</div> Workshop
-          </div>
+          {steps.map((step, index) => {
+            return (
+              <div className="step flexRow">
+                <div
+                  className={`step-number${
+                    currentStep === index + 1 ? "-highlight" : ""
+                  }`}
+                >
+                  {index + 1}
+                </div>{" "}
+                {step}
+              </div>
+            );
+          })}
         </div>
       </div>
     );

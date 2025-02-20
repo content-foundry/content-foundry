@@ -4,7 +4,9 @@ import {
 } from "packages/bfDs/components/BfDsForm/BfDsForm.tsx";
 import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 
-export function BfDsFormTextArea({ id, rows, title, placeholder }: BfDsFormElementProps) {
+export function BfDsFormTextArea(
+  { id, rows, title, placeholder }: BfDsFormElementProps,
+) {
   const { data, onChange } = useBfDsFormContext();
   if (!data) return null;
   return (

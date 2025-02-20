@@ -4,22 +4,21 @@ import { BfDsListItem } from "packages/bfDs/components/BfDsListItem.tsx";
 import { getLogger } from "packages/logger.ts";
 const logger = getLogger(import.meta);
 
-export const SessionsSidebar = iso(`
-  field BfOrganization.SessionsSidebar @component {
+export const HistorySidebar = iso(`
+  field BfOrganization.HistorySidebar @component {
     __typename
   }
 `)(
-  function SessionsSidebar(
+  function HistorySidebar(
     { data },
   ) {
     logger.debug(data.__typename);
     return (
       <div className="flexColumn right-side-bar">
         <div className="sessions-container">
-          <BfDsList header="Sessions">
-            <BfDsListItem content="Tweet 2/12/2025 2" onClick={() => null} />
-            <BfDsListItem content="Tweet 2/12/2025" onClick={() => null} />
-            <BfDsListItem content="Tweet 2/10/2025" onClick={() => null} />
+          <BfDsList header="History">
+            <BfDsListItem content="Initial suggestion" isHighlighted={true} />
+            <BfDsListItem content="old one suggestion" onClick={() => null} />
           </BfDsList>
         </div>
       </div>
