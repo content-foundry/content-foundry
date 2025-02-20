@@ -10,6 +10,7 @@ const queryText = 'query entrypointTwitterIdeatorResearch  {\
     id,\
     organization {\
       id,\
+      __typename,\
       identity {\
         twitter {\
           handle,\
@@ -20,6 +21,7 @@ const queryText = 'query entrypointTwitterIdeatorResearch  {\
         voiceSummary,\
       },\
       research {\
+        __typename,\
         topics {\
           entries {\
             name,\
@@ -62,6 +64,11 @@ const normalizationAst: NormalizationAst = {
             {
               kind: "Scalar",
               fieldName: "id",
+              arguments: null,
+            },
+            {
+              kind: "Scalar",
+              fieldName: "__typename",
               arguments: null,
             },
             {
@@ -111,6 +118,11 @@ const normalizationAst: NormalizationAst = {
               arguments: null,
               concreteType: "BfOrganization_Research",
               selections: [
+                {
+                  kind: "Scalar",
+                  fieldName: "__typename",
+                  arguments: null,
+                },
                 {
                   kind: "Linked",
                   fieldName: "topics",

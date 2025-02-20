@@ -3,6 +3,7 @@ import { SubpageHeaderTitle } from "packages/app/components/Header/SubpageHeader
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { useState } from "react";
 import { useBfDs } from "packages/bfDs/hooks/useBfDs.tsx";
+import { useRouter } from "packages/app/contexts/RouterContext.tsx";
 
 export const Sidebar = iso(`
   field BfOrganization.Sidebar @component {
@@ -20,8 +21,12 @@ export const Sidebar = iso(`
   function Sidebar(
     { data },
   ) {
+    const routerProps = useRouter();
+    const { researchSlug } = routerProps.routeParams;
     const { showModal } = useBfDs();
     const [showVerboseVoice, setShowVerboseVoice] = useState(false);
+
+    const currentStep = researchSlug ? 2 : 1;
 
     return (
       <div className="flexColumn left-side-bar">
@@ -74,12 +79,21 @@ export const Sidebar = iso(`
           </div>
         </div>
         <div className="steps">
-          {/* TODO implement classNames for highlight not worth it now with state machine that will be replaced */}
           <div className="step flexRow">
-            <div className="step-number-highlight">1</div> Choose a topic.
+            <div
+              className={`step-number${currentStep === 1 ? "-highlight" : ""}`}
+            >
+              1
+            </div>{" "}
+            Choose a topic.
           </div>
           <div className="step flexRow">
-            <div className="step-number">2</div> Get inspired and compose.
+            <div
+              className={`step-number${currentStep === 2 ? "-highlight" : ""}`}
+            >
+              2
+            </div>{" "}
+            Get inspired and compose.
           </div>
           <div className="step flexRow">
             <div className="step-number">3</div> Workshop
