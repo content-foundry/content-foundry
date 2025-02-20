@@ -24,9 +24,9 @@ Deno.test("shellBase: runShellCommand should run an echo command", async () => {
 });
 
 Deno.test("shellBase: runShellCommandWithOutput captures stdout", async () => {
-  const output = await runShellCommandWithOutput(["echo", "shellBaseOutput"]);
+  const {stdout} = await runShellCommandWithOutput(["echo", "shellBaseOutput"]);
   // on some systems, "echo" may append a newline
-  const trimmed = output.trim();
+  const trimmed = stdout.trim();
   assertEquals(trimmed, "shellBaseOutput");
 });
 
