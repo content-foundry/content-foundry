@@ -6,6 +6,7 @@ import logLevelPrefixPlugin from "loglevel-plugin-prefix";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 chalk.level = 3;
 
+
 log.setDefaultLevel(log.levels.INFO);
 
 const colors = {
@@ -65,6 +66,37 @@ if (!isBrowser()) {
     },
     timestampFormatter(date) {
       return date.toISOString();
+    },
+  });
+
+  logLevelPrefixPlugin.reg(log);
+  logLevelPrefixPlugin.apply(log, {
+    template: "%l:",
+    levelFormatter(level) {
+      // We only want to do the GitHub annotation format for .error logs
+      // from the "github_annotations" logger
+      return level.toUpperCase();
+    },
+    nameFormatter(name) {
+      if (name === "github_annotations") {
+        // Return an empty prefix so it doesn’t clutter
+        return "";
+      }
+      return name;
+    },
+    format(level, name, timestamp, ...messages) {
+      if (name === "github_annotations") {
+        if (level === "error") {
+          // Turn messages into a single string
+          const msg = messages.join(" ");
+          // Possibly parse out file=..., line=..., etc. if you keep them in the message
+          return `::error::${msg}`;
+        } else {
+          return messages.join(" ");
+        }
+      }
+      // Normal fallback
+      return messages.join(" ");
     },
   });
 }
