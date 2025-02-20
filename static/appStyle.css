@@ -343,13 +343,6 @@
   -webkit-box-orient: vertical;
 }
 
-.free-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 15px;
-}
-
 /* CURRENT EVENT CHOSEN PAGE */
 
 .current-event-page-content {
@@ -449,20 +442,12 @@
 }
 
 .original-text {
-  background: #f3f3f3;
+  background: var(--textSecondary015);
   padding: 10px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.copy-button {
-  background: #ddd;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 .suggestions-section {
@@ -476,10 +461,16 @@
 }
 
 .suggestion-container {
-  display: flex;
-  gap: 10px;
-  flex-direction: row;
+  gap: 4px;
   align-items: baseline;
+}
+
+.suggestion-row {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
 }
 
 .suggestion-card {
@@ -505,7 +496,9 @@
 .suggestion-number {
   font-weight: bold;
   font-family: var(--marketingFontFamily);
-  font-size: 24px;
+  font-size: 36px;
+  min-width: 1em;
+  text-align: center;
 }
 
 .suggestion-text {
@@ -514,26 +507,44 @@
 
 .suggestion-details {
   font-size: 14px;
-  background: #fff;
-  padding: 10px;
+  background: var(--pageBackground);
+  border: 1px solid var(--border);
+  padding: 12px;
   border-radius: 4px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+.suggestion-details-close {
+  position: absolute;
+  top: -1px;
+  right: -1px;
 }
 
 .footer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: #333;
-  padding: 15px;
-  border-radius: 8px;
+  padding: 16px;
   color: var(--textSecondary);
   justify-content: space-between;
   width: 100%;
+  box-sizing: border-box;
 }
 
+.engagement-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
 .engagement-icons {
   display: flex;
-  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--fontFamilyMono);
 }
 
 /* SESSIONS */

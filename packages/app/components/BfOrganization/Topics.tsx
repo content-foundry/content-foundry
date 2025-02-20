@@ -1,9 +1,10 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
-import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
-import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { getLogger } from "packages/logger.ts";
 import { BfDsTooltip } from "packages/bfDs/components/BfDsTooltip.tsx";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
+import { BfDsForm } from "packages/bfDs/components/BfDsForm/BfDsForm.tsx";
+import { BfDsFormSubmitButton } from "packages/bfDs/components/BfDsForm/BfDsFormSubmitButton.tsx";
+import { BfDsFormTextArea } from "packages/bfDs/components/BfDsForm/BfDsFormTextArea.tsx";
 
 const _logger = getLogger(import.meta);
 
@@ -24,6 +25,8 @@ export const Topics = iso(`
     { data },
   ) {
     const { navigate } = useRouter();
+    const _logger = getLogger(import.meta);
+
     return (
       <div className="current-events-container">
         <div className="current-events-header-container">
@@ -31,12 +34,15 @@ export const Topics = iso(`
             <div className="subpageHeaderRoute">Research</div>
             <h2 className="current-events-header">Choose a topic</h2>
           </div>
-          <BfDsButton
+          {/* TODO: Figure out the UX for "skip" */}
+          {
+            /* <BfDsButton
             kind="secondary"
             type="submit"
             text="Skip"
             onClick={() => navigate("/twitter/workshopping")}
-          />
+          /> */
+          }
         </div>
         {data.topics?.map((topic) => {
           if (!topic) return null;
@@ -67,15 +73,22 @@ export const Topics = iso(`
           );
         })}
 
-        <div className="current-event-section free-form">
+        <div className="current-event-section">
           <h3 className="category">Free-form</h3>
-          <BfDsInput type="text" placeholder="Something on your mind..." />
-          <BfDsButton
-            kind="primary"
-            text="Continue"
-            xstyle={{ alignSelf: "flex-end" }}
+          <BfDsForm
+            initialData={{ input: "" }}
+            xstyle={{ display: "flex", flexDirection: "column", gap: 8 }}
           >
-          </BfDsButton>
+            <BfDsFormTextArea
+              id="input"
+              placeholder="Something on your mind..."
+            />
+            <BfDsFormSubmitButton
+              kind="secondary"
+              text="Continue"
+              xstyle={{ alignSelf: "flex-end" }}
+            />
+          </BfDsForm>
         </div>
       </div>
     );

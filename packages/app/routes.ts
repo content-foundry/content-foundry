@@ -59,7 +59,10 @@ export const loggedInAppRoutes = new Map<string, IsographRoute>([
   ["/twitter", entrypointTwitterIdeator],
   ["/twitter/voice", entrypointTwitterIdeatorVoice],
   ["/twitter/research/:researchSlug?", entrypointTwitterIdeatorResearch],
-  ["/twitter/workshop/:workshopSlug?", entrypointTwitterIdeatorWorkshop],
+  [
+    "/twitter/workshopping/:workshoppingSlug?",
+    entrypointTwitterIdeatorWorkshop,
+  ],
 ]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
