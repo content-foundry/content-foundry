@@ -183,7 +183,8 @@ type BfPerson implements BfNode & Node {
 }
 
 type Creation {
-  tbd: String
+  originalText: String
+  suggestions: [String]
 }
 
 type Distribution {

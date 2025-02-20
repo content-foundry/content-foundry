@@ -19,8 +19,8 @@ export const Topic = iso(`
 
     logger.debug(data.__typename);
     return (
-      <div className="flexColumn scrollable">
-        <div className="current-events-container">
+      <div className="flexColumn">
+        <div className="current-events-container scrollable">
           <div className="current-events-page-header-container">
             <BfDsButton
               kind="outline"

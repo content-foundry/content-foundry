@@ -72,7 +72,17 @@ You sound like a mix between Richard Feynman (for his ability to make complex co
       },
     ],
   },
-  creation: {},
+  creation: {
+    originalText:
+      "Here is the text from my tweet that I wrote. It isn’t very good.",
+    suggestions: [
+      "I wrote this tweet, but it’s giving ‘meh.’ What can I do to make it ‘wow’?",
+      "This is the text from my tweet. I’m not sure it’s great—how can I improve it?",
+      "Here’s what I wrote for my tweet. It feels a bit off. Any ideas to make it better?",
+      "Here’s the text of my tweet. I think it could use some improvement. Thoughts?",
+      "I wrote this tweet, but I’m not fully happy with it. What could make it stronger?",
+    ],
+  },
   distribution: {},
   analytics: {},
 };
@@ -122,7 +132,8 @@ export const graphqlResearchType = objectType({
 export const graphqlCreationType = objectType({
   name: "Creation",
   definition(t) {
-    t.string("tbd");
+    t.string("originalText");
+    t.list.string("suggestions");
   },
 });
 
