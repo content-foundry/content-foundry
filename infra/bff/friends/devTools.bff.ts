@@ -18,7 +18,7 @@ async function configureSapling() {
     "/user",
     "--jq",
     ".name",
-  ]);
+  ]).then((({stdout}) => stdout));;
 
   const emailRawPromise = runShellCommandWithOutput([
     "gh",
@@ -26,7 +26,7 @@ async function configureSapling() {
     "/user/emails",
     "--jq",
     ".[0].email",
-  ]);
+  ]).then((({stdout}) => stdout));
 
   const [nameRaw, emailRaw] = await Promise.all([
     nameRawPromise,

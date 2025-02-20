@@ -1,5 +1,4 @@
-// log stuff and random exports
-
+// File: packages/logger.ts
 import log from "loglevel";
 import chalk from "chalk";
 import logLevelPrefixPlugin from "loglevel-plugin-prefix";
@@ -20,34 +19,32 @@ function getCallerInfo() {
   const error = new Error();
   const stack = error.stack?.split("\n");
   if (stack) {
-    // Iterate through the stack to find the first valid call from user code
-    for (let i = 0; i < stack.length; i++) {
-      const line = stack[i];
+    for (const line of stack) {
       if (
-        !line.includes("/node_modules/") && // Skip over node_module calls
-        !line.includes("loglevel-plugin-prefix.mjs") && // Skip logging library
-        !line.includes("getCallerInfo") && // Ignore utility function
-        !line.includes("Object.nameFormatter") // Skip inside logger formatting
+        !line.includes("/node_modules/") &&
+        !line.includes("loglevel-plugin-prefix.mjs") &&
+        !line.includes("getCallerInfo") &&
+        !line.includes("Object.nameFormatter")
       ) {
         const match = line.match(/at (.+):(\d+):(\d+)/);
         if (match) {
-          // Return the line number
           return `:${match[2]}`;
         }
       }
     }
   }
-
   return "unknown:0";
+}
+
+function isBrowser() {
+  return typeof Deno === "undefined";
 }
 
 if (!isBrowser()) {
   const defaultLogLevelString = getConfigurationVariable("LOG_LEVEL") ?? "INFO";
-  const defaultLogLevel =
-    log.levels[defaultLogLevelString as keyof typeof log.levels];
+  const defaultLogLevel = log.levels[defaultLogLevelString as keyof typeof log.levels];
   log.setDefaultLevel(defaultLogLevel);
   logLevelPrefixPlugin.reg(log);
-  let previousPath = "";
   logLevelPrefixPlugin.apply(log, {
     template: "%n%l:",
     levelFormatter(level) {
@@ -56,25 +53,32 @@ if (!isBrowser()) {
     },
     nameFormatter(name) {
       const callerInfo = getCallerInfo();
-      const currentPath = `${name || "global"}${callerInfo}`;
-      if (currentPath !== previousPath) {
-        previousPath = currentPath;
-        return chalk.dim(`↱ ${currentPath}\n`);
-      }
-      return "";
+      return `${chalk.dim(`↱ ${name || "global"}${callerInfo}\n`)}`;
     },
-    timestampFormatter(date) {
-      return date.toISOString();
+  });
+
+  logLevelPrefixPlugin.reg(log);
+  logLevelPrefixPlugin.apply(log, {
+    template: "%l:",
+    levelFormatter(level) {
+      return level.toUpperCase();
+    },
+    nameFormatter(name) {
+      if (name === "github_annotations") return "";
+      return name ?? "";
+    },
+    // Use `_timestamp` so that Deno doesn't warn about unused variable
+    format(level, name, _timestamp, ...messages) {
+      if (name === "github_annotations" && level === "error") {
+        const msg = messages.join(" ");
+        return `::error::${msg}`;
+      }
+      return messages.join(" ");
     },
   });
 }
 
-export function isBrowser() {
-  return typeof Deno === "undefined";
-}
-
-// Cache for logger instances
-const loggerCache = new Map<string, ReturnType<typeof log.getLogger>>();
+const loggerCache = new Map<string, log.Logger>();
 
 export function getLogger(importMeta: ImportMeta | string) {
   let loggerName: string;
@@ -86,7 +90,6 @@ export function getLogger(importMeta: ImportMeta | string) {
     if (isBrowser()) {
       loggerName = url.pathname;
     } else {
-      // get relative url and remove leading slash
       const relativePathname = url.pathname.split("deno-compile-web/")[1];
       loggerName = relativePathname
         ? relativePathname.replace(/^\//, "")
@@ -95,14 +98,11 @@ export function getLogger(importMeta: ImportMeta | string) {
   }
 
   if (!loggerCache.has(loggerName)) {
-    const logger = log.getLogger(loggerName);
-    const defaultLogLevelString = getConfigurationVariable("LOG_LEVEL") ??
-      "INFO";
-    const defaultLogLevel =
-      log.levels[defaultLogLevelString as keyof typeof log.levels];
-    logger.setDefaultLevel(defaultLogLevel);
-    loggerCache.set(loggerName, logger);
+    const newLogger = log.getLogger(loggerName);
+    const defaultLogLevelString = getConfigurationVariable("LOG_LEVEL") ?? "INFO";
+    const defaultLogLevel = log.levels[defaultLogLevelString as keyof typeof log.levels];
+    newLogger.setDefaultLevel(defaultLogLevel);
+    loggerCache.set(loggerName, newLogger);
   }
-
   return loggerCache.get(loggerName)!;
 }
