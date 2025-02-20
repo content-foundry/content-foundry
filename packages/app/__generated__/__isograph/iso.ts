@@ -20,10 +20,12 @@ import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentV
 import { type BfDocs__DocsList__param } from './BfDocs/DocsList/param_type.ts';
 import { type BfDocs__DocsPostList__param } from './BfDocs/DocsPostList/param_type.ts';
 import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
+import { type BfOrganization__HistorySidebar__param } from './BfOrganization/HistorySidebar/param_type.ts';
 import { type BfOrganization__IdentityEditor__param } from './BfOrganization/IdentityEditor/param_type.ts';
 import { type BfOrganization__Research__param } from './BfOrganization/Research/param_type.ts';
 import { type BfOrganization__SessionsSidebar__param } from './BfOrganization/SessionsSidebar/param_type.ts';
 import { type BfOrganization__Sidebar__param } from './BfOrganization/Sidebar/param_type.ts';
+import { type BfOrganization__Workshopping__param } from './BfOrganization/Workshopping/param_type.ts';
 import { type BfOrganization_Identity__EditIdentity__param } from './BfOrganization_Identity/EditIdentity/param_type.ts';
 import { type BfOrganization_Research__Topics__param } from './BfOrganization_Research/Topics/param_type.ts';
 import { type BfOrganization_Research__Topic__param } from './BfOrganization_Research/Topic/param_type.ts';
@@ -180,6 +182,10 @@ export function iso<T>(
 ): IdentityWithParamComponent<BfDocsPost__DocsPostListItem__param>;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.HistorySidebar', T>
+): IdentityWithParamComponent<BfOrganization__HistorySidebar__param>;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfOrganization.IdentityEditor', T>
 ): IdentityWithParamComponent<BfOrganization__IdentityEditor__param>;
 
@@ -194,6 +200,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfOrganization.Sidebar', T>
 ): IdentityWithParamComponent<BfOrganization__Sidebar__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.Workshopping', T>
+): IdentityWithParamComponent<BfOrganization__Workshopping__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfOrganization_Identity.EditIdentity', T>

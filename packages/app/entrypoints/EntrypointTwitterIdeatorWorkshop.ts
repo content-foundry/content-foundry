@@ -10,21 +10,19 @@ enum _SubPages {
 
 export const EntrypointTwitterIdeatorWorkshop = iso(`
   field Query.EntrypointTwitterIdeatorWorkshop {
-  # field Query.EntrypointTwitterIdeatorWorkshop($researchSlug: String) {
     me {
-      asBfCurrentViewerLoggedIn {
-        __typename
+      organization {
+        Workshopping
       }
     }
   }
 `)(
-  function EntrypointTwitterIdeatorWorkshop(): RouteEntrypoint {
-    // deno-lint-ignore prefer-const
-    let Body;
-
-    // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice
-    Body ??= () => null;
-
-    return { Body, title: "Twitter Voice" };
+  function EntrypointTwitterIdeatorWorkshop(
+    { data },
+  ): RouteEntrypoint {
+    return {
+      Body: data?.me?.organization?.Workshopping,
+      title: "Twitter Workshopping",
+    };
   },
 );
