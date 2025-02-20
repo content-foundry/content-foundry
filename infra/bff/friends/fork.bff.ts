@@ -11,7 +11,11 @@ export async function fork(): Promise<number> {
   logger.info("Forking Content Foundry repository...");
 
   // 1. Check GitHub auth status first
-  const authStatus = await runShellCommandWithOutput(["gh", "auth", "status"]);
+  const { stdout: authStatus } = await runShellCommandWithOutput([
+    "gh",
+    "auth",
+    "status",
+  ]);
   logger.log("GitHub auth status:", authStatus);
 
   // If not authenticated, do an interactive login
@@ -44,7 +48,11 @@ export async function fork(): Promise<number> {
   }
 
   // 2. Retrieve your GitHub username (also confirms login success)
-  const userInfo = await runShellCommandWithOutput(["gh", "api", "user"]);
+  const { stdout: userInfo } = await runShellCommandWithOutput([
+    "gh",
+    "api",
+    "user",
+  ]);
   const username = JSON.parse(userInfo).login;
   const forkRepoUrl = `https://github.com/${username}/content-foundry.git`;
 

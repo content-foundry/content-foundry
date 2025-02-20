@@ -1,280 +1,266 @@
-// infra/bff/friends/ci.bff.ts
+// FILE: infra/bff/friends/ci.bff.ts
+
 import { register } from "infra/bff/bff.ts";
-import {
-  runShellCommand,
-  runShellCommandWithOutput,
-} from "infra/bff/shellBase.ts";
+import { runShellCommandWithOutput } from "infra/bff/shellBase.ts";
 import { getLogger } from "packages/logger.ts";
+import { loggerGithub } from "infra/bff/githubLogger.ts";
 
 const logger = getLogger(import.meta);
 
-/**
- * Print a GitHub Actions annotation.
- * See: https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-error-message
- */
-function printGitHubAnnotation(
-  type: "error" | "warning",
-  msg: string,
-  file?: string,
-  line?: number,
-  col?: number,
-) {
-  // Example format:
-  //   ::error file=app.ts,line=10,col=15::Something went wrong
-  // Or, simpler:
-  //   ::error ::Some error message
-  let annotation = `::${type}`;
-  if (file) annotation += ` file=${file}`;
-  if (typeof line === "number") annotation += `,line=${line}`;
-  if (typeof col === "number") annotation += `,col=${col}`;
-  annotation += `::${msg}`;
-  // deno-lint-ignore no-console
-  console.log(annotation);
+type GhMeta = {
+  file?: string;
+  line?: number;
+  col?: number;
+};
+
+// Quick helpers to unify normal logging & GH annotations
+const logCI = {
+  info: (msg: string) => {
+    logger.info(msg);
+  },
+  error: (msg: string, meta?: GhMeta) => {
+    if (meta) {
+      loggerGithub.error(msg, meta);
+    } else {
+      logger.error(msg);
+    }
+  },
+  warn: (msg: string, meta?: GhMeta) => {
+    if (meta) {
+      loggerGithub.warn(msg, meta);
+    } else {
+      logger.warn(msg);
+    }
+  },
+  debug: (msg: string, meta?: GhMeta) => {
+    if (meta) {
+      loggerGithub.warn(msg, meta);
+    } else {
+      logger.debug(msg);
+    }
+  },
+};
+
+// ----------------------------------------------------------------------------
+// 1. Lint step
+// ----------------------------------------------------------------------------
+
+async function runLintStep(useGithub: boolean): Promise<number> {
+  logger.info("Running deno lint");
+  // If useGithub, do `deno lint --json` so we can parse it ourselves
+  const cmdArray = ["deno", "lint"];
+  if (useGithub) {
+    cmdArray.push("--json");
+  }
+
+  const { code: errorCode, stdout } = await runShellCommandWithOutput(
+    cmdArray,
+    {},
+    /* useSpinner */ true,
+    /* silent */ useGithub, // or "false" if you still want logs
+  );
+
+  // If GitHub annotations mode, parse JSON output and emit annotations
+  if (useGithub) {
+    parseDenoLintJsonOutput(stdout);
+  }
+  return errorCode;
 }
 
-/**
- * Run `deno lint --json`, parse the single object it returns,
- * and emit GitHub annotations for each diagnostic if found.
- */
-async function runLintWithGithubAnnotations(): Promise<number> {
-  let code = 0;
+/** If `deno lint --json` was used, parse JSON and emit GH Annotations. */
+function parseDenoLintJsonOutput(jsonString: string) {
   try {
-    const output = await runShellCommandWithOutput(
-      ["deno", "lint", "--json"],
-      {},
-      /* useSpinner= */ false,
-      /* silent= */ true,
-    );
-
-    // In newer Deno, the result is a single object:
-    // {
-    //   "diagnostics": [...],
-    //   "errors": [...],
-    //   ...
-    // }
-    const parsed = JSON.parse(output);
-
-    // 1) "diagnostics" array
+    const parsed = JSON.parse(jsonString); // shape: { diagnostics: [...], errors: [...] }
+    // 1) diagnostics
     for (const diag of parsed.diagnostics ?? []) {
       const filePath = diag.location?.filename ?? "unknown.ts";
       const start = diag.location?.range?.start;
-      const line = typeof start?.line === "number" ? start.line + 1 : undefined;
-      const col = typeof start?.character === "number"
+      const line = (typeof start?.line === "number")
+        ? start.line + 1
+        : undefined;
+      const col = (typeof start?.character === "number")
         ? start.character + 1
         : undefined;
-      const message = diag.message ?? "Unknown lint issue";
-      printGitHubAnnotation("error", message, filePath, line, col);
-      code = 1;
+      const message = diag.message ?? "Unknown lint problem";
+      logCI.debug(message, { file: filePath, line, col });
     }
-
-    // 2) "errors" array (e.g. parse failures)
+    // 2) errors
     for (const err of parsed.errors ?? []) {
       const filePath = err.location?.filename ?? "unknown.ts";
       const start = err.location?.range?.start;
-      const line = typeof start?.line === "number" ? start.line + 1 : undefined;
-      const col = typeof start?.character === "number"
+      const line = (typeof start?.line === "number")
+        ? start.line + 1
+        : undefined;
+      const col = (typeof start?.character === "number")
         ? start.character + 1
         : undefined;
       const message = err.message ?? "Unknown lint error";
-      printGitHubAnnotation("error", message, filePath, line, col);
-      code = 1;
+      logCI.error(message, { file: filePath, line, col });
     }
   } catch (err) {
     logger.error("Error parsing deno lint --json output:", err);
-    code = 1;
   }
+}
 
+// ----------------------------------------------------------------------------
+// 2. Fmt step
+// ----------------------------------------------------------------------------
+
+async function runFormatStep(useGithub: boolean): Promise<number> {
+  logger.info("Checking formatting (deno fmt --check)...");
+  const { code, stdout } = await runShellCommandWithOutput(
+    ["deno", "fmt", "--check"],
+    {},
+    /* useSpinner */ true,
+    /* silent */ useGithub,
+  );
+
+  // If GitHub annotations mode, parse the text output
+  if (useGithub) {
+    parseDenoFmtOutput(stdout);
+  }
   return code;
 }
 
 /**
- * Parse the JSON output from `deno test --json` line-by-line
- * and emit GitHub annotations for failing tests.
+ * Parse the plain-text output of `deno fmt --check` for lines referencing file paths, line numbers,
+ * etc. This is a simple example that looks for:
+ *    from /full/path/to/file.ts:
+ *      12 | -    ...
+ * and so on, then logs GH annotations as warnings.
  */
-async function runTestWithGithubAnnotations(): Promise<number> {
-  let code = 0;
-  try {
-    const cmd = ["deno", "test", "-A", "--json"];
-    const rawOutput = await runShellCommandWithOutput(cmd, {}, false, true);
+function parseDenoFmtOutput(fullOutput: string) {
+  const lines = fullOutput.split("\n");
+  let currentFile: string | undefined;
 
-    // deno test --json prints multiple JSON lines, one event per line
-    const lines = rawOutput.split("\n").filter(Boolean);
-    for (const line of lines) {
-      const event = JSON.parse(line);
+  for (const line of lines) {
+    // e.g. "from /home/runner/workspace/infra/bff/friends/githubAnnotations.ts:"
+    const fromMatch = line.match(/^from\s+([^:]+):$/);
+    if (fromMatch) {
+      currentFile = fromMatch[1].trim();
+      continue;
+    }
 
-      // "testEnd" event indicates a single test has completed
-      if (event.event === "testEnd") {
-        if (event.result?.passed === false) {
-          code = 1;
-          const testName = event.result.name ?? "unknown test";
-          const errorMsg = event.result.error?.message ?? "Test failed";
-          // Typically there's no exact file/line from the "testEnd" JSON.
-          // We'll attach the test name to the annotation as best we can:
-          printGitHubAnnotation(
-            "error",
-            `[TEST FAIL] ${testName}: ${errorMsg}`,
-          );
-        }
+    // e.g. "  60 | -    const foo = 123;"
+    // We'll parse out the line number & mark it as a "warning" annotation
+    if (currentFile) {
+      // check for blank line => done with that file
+      if (line.trim() === "") {
+        currentFile = undefined;
+        continue;
       }
 
-      // You could also check other event types like "uncaughtException" or "error"
-      // if you want more detailed annotations.
+      const lineMatch = line.match(/^\s+(\d+)\s+\|\s+(.*)$/);
+      if (lineMatch) {
+        const lineNum = parseInt(lineMatch[1], 10);
+        const snippet = lineMatch[2];
+        // You can produce a more descriptive message if you want
+        // e.g. "File not formatted according to deno fmt!"
+        logCI.warn(snippet, { file: currentFile, line: lineNum });
+        continue;
+      }
     }
-  } catch (err) {
-    logger.error("Error parsing deno test --json output:", err);
-    code = 1;
+
+    // If we see `error: Found X not formatted files in Y files`
+    // we'll mark that as an error annotation.
+    if (line.includes("error: Found") && line.includes("not formatted files")) {
+      logCI.error(line.trim());
+    }
   }
+}
+
+// ----------------------------------------------------------------------------
+// 3. Build step
+// ----------------------------------------------------------------------------
+
+async function runBuildStep(useGithub: boolean): Promise<number> {
+  logger.info("Running bff build");
+  const { code } = await runShellCommandWithOutput(
+    ["bff", "build"],
+    {},
+    /* useSpinner */ true,
+    /* silent */ useGithub,
+  );
   return code;
 }
 
-/**
- * The main CI command.
- *
- * Usage:
- *   bff ci
- *   bff ci --fix     # runs deno fmt & lint fix
- *   bff ci --github  # emits GitHub workflow annotations
- */
-export default async function ciCommand(options: string[]): Promise<number> {
-  // Clear console
-  // deno-lint-ignore no-console
-  console.clear();
-  logger.info("Running CI checks...");
+// ----------------------------------------------------------------------------
+// 4. Test step
+// ----------------------------------------------------------------------------
 
-  let hasErrors = false;
-  const shouldFix = options.includes("--fix") || options.includes("-f");
-  const githubMode = options.includes("--github") || options.includes("-g");
+async function runTestStep(useGithub: boolean): Promise<number> {
+  logger.info("Running deno test -A");
+  const { code } = await runShellCommandWithOutput(
+    ["bff", "test"],
+    {},
+    /* useSpinner */ true,
+    /* silent */ useGithub,
+  );
+  return code;
+}
 
-  // 1) Install dependencies
-  logger.info("Installing dependencies...");
-  const installResult = await runShellCommand(
+// ----------------------------------------------------------------------------
+// 5. Install step
+// ----------------------------------------------------------------------------
+
+async function runInstallStep(useGithub: boolean): Promise<number> {
+  logger.info("Caching dependencies via deno cache .");
+  // For the example, we re-use "deno install" since your logs do that.
+  // But you might prefer "deno cache --reload ." or similar in your real pipeline.
+  const { code } = await runShellCommandWithOutput(
     ["deno", "install"],
-    undefined,
     {},
     true,
-    true,
+    useGithub,
   );
-  if (installResult !== 0) {
-    logger.error("Failed to install dependencies");
-    return installResult;
-  }
+  return code;
+}
 
-  // 2) Format + Lint Fix, if requested
-  if (shouldFix) {
-    // deno fmt
-    logger.info("Running deno fmt...");
-    const fmtFixResult = await runShellCommand(
-      ["deno", "fmt"],
-      undefined,
-      {},
-      true,
-      true,
-    );
-    if (fmtFixResult !== 0) {
-      logger.error("Format failed");
-      return fmtFixResult;
-    }
+// ----------------------------------------------------------------------------
+// MAIN CI pipeline
+// ----------------------------------------------------------------------------
 
-    // deno lint --fix
-    logger.info("Running deno lint --fix...");
-    const lintFixResult = await runShellCommand(
-      ["deno", "lint", "--fix"],
-      undefined,
-      {},
-      true,
-      true,
-    );
-    if (lintFixResult !== 0) {
-      logger.error("Lint fix failed");
-      return lintFixResult;
-    }
-  }
+async function ciCommand(options: string[]) {
+  logger.info("Running CI checks...");
+  const useGithub = options.includes("-g");
 
-  // 3) Build
-  logger.info("Running build...");
-  const buildResult = await runShellCommand(
-    ["bff", "build"],
-    undefined,
-    {},
-    true,
-    true,
+  // 1) Install / “deno cache”
+  const installResult = await runInstallStep(useGithub);
+
+  // 2) Build step
+  const buildResult = await runBuildStep(useGithub);
+
+  // 3) Lint (with or without JSON mode)
+  const lintResult = await runLintStep(useGithub);
+
+  // 4) Test
+  const testResult = await runTestStep(useGithub);
+
+  // 5) Format check
+  const fmtResult = await runFormatStep(useGithub);
+
+  const hasErrors = Boolean(
+    installResult || buildResult || lintResult || testResult || fmtResult,
   );
-  if (buildResult !== 0) {
-    hasErrors = true;
-  }
 
-  // 4) Lint
-  let lintResult = 0;
-  if (githubMode) {
-    logger.info("Running deno lint --json (GitHub mode)...");
-    lintResult = await runLintWithGithubAnnotations();
-  } else {
-    logger.info("Running deno lint...");
-    lintResult = await runShellCommand(
-      ["deno", "lint"],
-      undefined,
-      {},
-      true,
-      true,
-    );
-  }
-  if (lintResult !== 0) hasErrors = true;
-
-  // 5) Test
-  let testResult = 0;
-  if (githubMode) {
-    logger.info("Running deno test --json (GitHub mode)...");
-    testResult = await runTestWithGithubAnnotations();
-  } else {
-    logger.info("Running deno test -A...");
-    testResult = await runShellCommand(
-      ["deno", "test", "-A"],
-      undefined,
-      {},
-      true,
-      true,
-    );
-  }
-  if (testResult !== 0) hasErrors = true;
-
-  // 6) Format check
-  logger.info("Checking formatting (deno fmt --check)...");
-  const fmtCheckResult = await runShellCommand(
-    ["deno", "fmt", "--check"],
-    undefined,
-    {},
-    true,
-    true,
-  );
-  if (fmtCheckResult !== 0) {
-    hasErrors = true;
-    if (githubMode) {
-      // There's no `--json` for deno fmt, so let's produce one annotation:
-      printGitHubAnnotation(
-        "error",
-        "Some files need formatting. Run `deno fmt`.",
-      );
-    }
-  }
-
-  // 7) Output summary
   logger.info("\n📊 CI Checks Summary:");
-  logger.info(`Build:   ${buildResult === 0 ? "✅" : "❌"}`);
-  logger.info(`Lint:    ${lintResult === 0 ? "✅" : "❌"}`);
-  logger.info(`Test:    ${testResult === 0 ? "✅" : "❌"}`);
-  logger.info(`Format:  ${fmtCheckResult === 0 ? "✅" : "❌"}`);
+  logger.info(`Install:   ${installResult === 0 ? "✅" : "❌"}`);
+  logger.info(`Build:     ${buildResult === 0 ? "✅" : "❌"}`);
+  logger.info(`Lint:      ${lintResult === 0 ? "✅" : "❌"}`);
+  logger.info(`Test:      ${testResult === 0 ? "✅" : "❌"}`);
+  logger.info(`Format:    ${fmtResult === 0 ? "✅" : "❌"}`);
 
   if (hasErrors) {
-    logger.error("\n❌ Some CI checks failed");
+    logCI.error("CI checks failed");
     return 1;
+  } else {
+    logger.info("All CI checks passed");
+    return 0;
   }
-
-  logger.info("\n✨ All CI checks passed! ✨");
-  return 0;
 }
 
 register(
   "ci",
-  "Run CI checks (lint, test, format, build). Optional flags: --fix, --github",
+  "Run CI checks (lint, test, build, format). E.g. `bff ci -g` for GH annotations.",
   ciCommand,
 );

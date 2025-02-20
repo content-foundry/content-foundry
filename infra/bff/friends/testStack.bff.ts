@@ -8,7 +8,7 @@ import {
 const logger = getLogger(import.meta);
 
 async function getCurrentStack(): Promise<string[]> {
-  const output = await runShellCommandWithOutput(
+  const { stdout } = await runShellCommandWithOutput(
     [
       "sl",
       "log",
@@ -21,11 +21,11 @@ async function getCurrentStack(): Promise<string[]> {
     true,
     true,
   );
-  return output.split("\n").filter(Boolean);
+  return stdout.split("\n").filter(Boolean);
 }
 
 async function getCommitTitle(commit: string): Promise<string> {
-  return await runShellCommandWithOutput(
+  const { stdout } = await runShellCommandWithOutput(
     [
       "sl",
       "log",
@@ -38,6 +38,7 @@ async function getCommitTitle(commit: string): Promise<string> {
     true,
     true,
   );
+  return stdout.trim();
 }
 
 export async function testStack(): Promise<number> {
@@ -60,7 +61,7 @@ export async function testStack(): Promise<number> {
     }
 
     // Check for any changes after build
-    const hasChanges = await runShellCommandWithOutput(
+    const { stdout: hasChanges } = await runShellCommandWithOutput(
       [
         "sl",
         "status",
