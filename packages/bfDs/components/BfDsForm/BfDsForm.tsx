@@ -85,8 +85,9 @@ export type BfDsFormElementProps<
   TAdditionalFormElementProps = Record<string, unknown>,
 > = TAdditionalFormElementProps & {
   id: string;
-  title: string;
+  title?: string;
   rows?: string;
+  placeholder?: string;
 };
 
 /**

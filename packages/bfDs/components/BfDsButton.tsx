@@ -35,6 +35,7 @@ export type ButtonKind =
   | "outlineSuccess"
   | "overlay"
   | "overlayDark"
+  | "overlaySuccess"
   | "accent"
   | "gradientOverlay";
 
@@ -293,6 +294,12 @@ export function BfDsButton({
       color: "var(--background)",
       borderColor: hover ? "var(--outlineDarkHover)" : "transparent",
     },
+    overlaySuccess: {
+      ...baseButtonStyle,
+      backgroundColor: hover ? "var(--outlineHover)" : "transparent",
+      color: "var(--sucess)",
+      borderColor: hover ? "var(--outlineHover)" : "transparent",
+    },
 
     accent: {
       ...baseButtonStyle,
@@ -381,6 +388,12 @@ export function BfDsButton({
       backgroundColor: hover ? "var(--outlineDarkHover)" : "transparent",
       borderColor: hover ? "var(--outlineDarkHover)" : "transparent",
       color: "var(--background)",
+    },
+    overlaySuccess: {
+      ...baseIconButtonStyle,
+      backgroundColor: hover ? "var(--outlineHover)" : "transparent",
+      borderColor: hover ? "var(--outlineHover)" : "transparent",
+      color: "var(--success)",
     },
     accent: {
       ...baseIconButtonStyle,
