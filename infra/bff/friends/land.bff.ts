@@ -10,30 +10,31 @@ const logger = getLogger(import.meta);
 async function getSaplingCommitsSince(
   lastSaplingHash: string,
 ): Promise<Array<string>> {
-  const output = await runShellCommandWithOutput([
+  const { stdout } = await runShellCommandWithOutput([
     "sl",
     "log",
     `-r"${lastSaplingHash}::."`,
     "--template",
     "{desc}\n",
   ]);
-  return output.split("\n").filter(Boolean);
+  return stdout.split("\n").filter(Boolean);
 }
 
 async function getCurrentSaplingHash(): Promise<string> {
-  return (await runShellCommandWithOutput([
+  const { stdout } = await runShellCommandWithOutput([
     "sl",
     "log",
     "-r",
     ".",
     "--template",
     "{node}",
-  ])).trim();
+  ]);
+  return stdout.trim();
 }
 
 async function getLastSaplingHashFromGit(): Promise<string | null> {
   try {
-    const lastCommitMsg = await runShellCommandWithOutput([
+    const { stdout: lastCommitMsg } = await runShellCommandWithOutput([
       "git",
       "log",
       "-1",
@@ -104,7 +105,7 @@ export async function land(): Promise<number> {
     const commits = await getSaplingCommitsSince(lastSaplingHash);
     commitMsg = commits.join("\n\n");
   } else {
-    commitMsg = await runShellCommandWithOutput([
+    const { stdout } = await runShellCommandWithOutput([
       "sl",
       "log",
       "-r",
@@ -112,6 +113,7 @@ export async function land(): Promise<number> {
       "--template",
       "{desc}",
     ]);
+    commitMsg = stdout;
   }
 
   // Add all changes to git
