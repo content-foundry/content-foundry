@@ -1,4 +1,3 @@
-import type { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
@@ -12,6 +11,13 @@ const logger = getLogger(import.meta);
 
 export type BfNodeBaseProps = Record<string, JSONValue>;
 
+export type BfMetadataBase = {
+  /** Global ID */
+  bfGid: BfGid;
+  bfOid: BfGid;
+  className: string;
+};
+
 export type BfNodeCache<
   TProps extends BfNodeBaseProps = DefaultProps,
   T extends typeof BfNodeBase<TProps> = typeof BfNodeBase,
@@ -23,29 +29,28 @@ type DefaultProps = Record<string, never>;
 
 export class BfNodeBase<
   TProps extends BfNodeBaseProps = DefaultProps,
+  TMetadata extends BfMetadataBase = BfMetadataBase,
 > {
   __typename = this.constructor.name;
-  private _metadata: BfMetadata;
+  private _metadata: TMetadata;
 
   static generateSortValue() {
     return `${Date.now()}`;
   }
 
-  static generateMetadata(
+  static generateMetadata<
+    TGenerationMetadata extends BfMetadataBase = BfMetadataBase,
+  >(
     cv: BfCurrentViewer,
-    metadata?: Partial<BfMetadata>,
-  ): BfMetadata {
+    metadata?: Partial<TGenerationMetadata>,
+  ): TGenerationMetadata {
     const bfGid = toBfGid(generateUUID());
     const defaults = {
       bfGid: bfGid,
       bfOid: cv.bfOid,
-      bfCid: cv.bfGid,
       className: this.name,
-      createdAt: new Date(),
-      lastUpdated: new Date(),
-      sortValue: this.generateSortValue(),
-    };
-    return { ...defaults, ...metadata };
+    } as TGenerationMetadata;
+    return { ...defaults, ...metadata } as TGenerationMetadata;
   }
 
   static findX<
@@ -66,7 +71,7 @@ export class BfNodeBase<
   >(
     this: TThis,
     _cv: BfCurrentViewer,
-    _metadata: BfMetadata,
+    _metadata: BfMetadataBase,
     _props: TProps,
     _bfGids: Array<BfGid>,
     _cache: BfNodeCache,
@@ -106,12 +111,13 @@ export class BfNodeBase<
 
   static async __DANGEROUS__createUnattached<
     TProps extends BfNodeBaseProps,
-    TThis extends typeof BfNodeBase<TProps>,
+    TMetadata extends BfMetadataBase,
+    TThis extends typeof BfNodeBase<TProps, TMetadata>,
   >(
     this: TThis,
     cv: BfCurrentViewer,
     props: TProps,
-    metadata?: Partial<BfMetadata>,
+    metadata?: Partial<TMetadata>,
     cache?: BfNodeCache,
   ): Promise<InstanceType<TThis>> {
     logger.debug(
@@ -132,7 +138,7 @@ export class BfNodeBase<
   constructor(
     protected _currentViewer: BfCurrentViewer,
     protected _props: TProps,
-    metadata?: Partial<BfMetadata>,
+    metadata?: Partial<TMetadata>,
   ) {
     this._metadata = (this.constructor as typeof BfNodeBase).generateMetadata(
       _currentViewer,
@@ -144,7 +150,7 @@ export class BfNodeBase<
     return this._currentViewer;
   }
 
-  get metadata(): BfMetadata {
+  get metadata(): TMetadata {
     return this._metadata;
   }
 
@@ -196,7 +202,7 @@ export class BfNodeBase<
   >(
     _TargetBfClass: TBfClass,
     _props: TProps,
-    _metadata?: BfMetadata,
+    _metadata?: BfMetadataBase,
   ): Promise<InstanceType<TBfClass>> {
     throw new BfErrorNotImplemented();
   }
