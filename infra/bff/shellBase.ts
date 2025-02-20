@@ -10,7 +10,7 @@ export const runningProcesses: Deno.ChildProcess[] = [];
 
 export async function runShellCommand(
   commandArray: Array<string>,
-  cwdString = getConfigurationVariable("REPL_HOME") ?? Deno.cwd(),
+  cwdString = Deno.cwd(),
   additionalEnv = {},
   useSpinner = true,
   silent = false,
