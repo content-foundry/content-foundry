@@ -110,6 +110,9 @@ a.dark:visited {
   justify-content: space-between;
 }
 
+.scrollable {
+  overflow-y: auto;
+}
 
 
 /* Responsive styles */
@@ -330,6 +333,7 @@ li.breadcrumb-item:not(:first-of-type)::before {
   flex-direction: row;
 }
 .list-header-title {
+  font-size: 20px;
   flex: 1;
   font-weight: bold;
 }

@@ -31,6 +31,6 @@ export const entrypointTwitterIdeatorResearchPermalink = iso(`
     // if (Body == null) {
     //   return { redirectToLogin: true };
     // }
-    return { Body, title: "Twitter Voice" };
+    return { Body, title: "Twitter Research" };
   },
 );
