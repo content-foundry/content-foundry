@@ -4,7 +4,7 @@ import {
 } from "packages/bfDs/components/BfDsForm/BfDsForm.tsx";
 import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 
-export function BfDsFormTextArea({ id, rows, title }: BfDsFormElementProps) {
+export function BfDsFormTextArea({ id, rows, title, placeholder }: BfDsFormElementProps) {
   const { data, onChange } = useBfDsFormContext();
   if (!data) return null;
   return (
@@ -16,6 +16,7 @@ export function BfDsFormTextArea({ id, rows, title }: BfDsFormElementProps) {
       value={data[id] ?? ""}
       onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
         onChange?.({ ...data, [id]: event.target.value })}
+      placeholder={placeholder}
       rows={parseInt(rows as string)}
     />
   );
