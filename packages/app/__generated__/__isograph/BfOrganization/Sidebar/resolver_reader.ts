@@ -38,16 +38,25 @@ const readerAst: ReaderAst<BfOrganization__Sidebar__param> = [
         ],
       },
       {
-        kind: "Scalar",
-        fieldName: "voiceSummary",
-        alias: null,
-        arguments: null,
-      },
-      {
-        kind: "Scalar",
+        kind: "Linked",
         fieldName: "voice",
         alias: null,
         arguments: null,
+        condition: null,
+        selections: [
+          {
+            kind: "Scalar",
+            fieldName: "voiceSummary",
+            alias: null,
+            arguments: null,
+          },
+          {
+            kind: "Scalar",
+            fieldName: "voice",
+            alias: null,
+            arguments: null,
+          },
+        ],
       },
     ],
   },

@@ -13,7 +13,10 @@ export const EntrypointTwitterIdeator = iso(`
       asBfCurrentViewerLoggedIn {
         organization {
           identity {
-            voice
+            voice {
+              voiceSummary
+              voice
+            }
           }
         }
       }
