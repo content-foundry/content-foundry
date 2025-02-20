@@ -1,5 +1,6 @@
 import { objectType } from "nexus";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
+import { getVoice } from "packages/app/ai/getVoice.ts";
 
 export const exampleBfOrg = {
   __typename: "BfOrganization",
@@ -12,12 +13,14 @@ export const exampleBfOrg = {
       imgUrl:
         "https://m.media-amazon.com/images/M/MV5BMTY5MDc0ODkyNV5BMl5BanBnXkFtZTcwODI4ODg3Ng@@._V1_FMjpg_UX1000_.jpg",
     },
-    voiceSummary: `- Witty
-- Direct
-- Lightly irreverent`,
-    voice:
-      `You’re aiming for a voice that is witty, direct, and lightly irreverent—one that breaks away from stale corporate talk but still comes across as knowledgeable and genuine. This approach is casual enough to feel human-friendly, yet firmly grounded in expertise so your audience trusts what you say.\n
-You sound like a mix between Richard Feynman (for his ability to make complex concepts accessible with wit and charm) and Anthony Bourdain (for his sharp cultural observations and no-BS authenticity).`,
+    voice: {
+      voiceSummary: `- Witty
+  - Direct
+  - Lightly irreverent`,
+      voice:
+        `You’re aiming for a voice that is witty, direct, and lightly irreverent—one that breaks away from stale corporate talk but still comes across as knowledgeable and genuine. This approach is casual enough to feel human-friendly, yet firmly grounded in expertise so your audience trusts what you say.\n
+  You sound like a mix between Richard Feynman (for his ability to make complex concepts accessible with wit and charm) and Anthony Bourdain (for his sharp cultural observations and no-BS authenticity).`,
+    },
   },
   research: {
     topics: [
@@ -99,8 +102,23 @@ export const graphqlIdentityType = objectType({
         },
       }),
     });
-    t.string("voiceSummary");
-    t.string("voice");
+    t.field("voice", {
+      type: objectType({
+        name: "Voice",
+        definition(t) {
+          t.string("voiceSummary");
+          t.string("voice");
+        },
+      }),
+      async resolve(parent) {
+        const response = await getVoice(parent.twitter?.handle ?? "");
+        console.log(response);
+        return {
+          voiceSummary: response.voiceSummary,
+          voice: response.voice
+        };
+      }
+    });
   },
 });
 

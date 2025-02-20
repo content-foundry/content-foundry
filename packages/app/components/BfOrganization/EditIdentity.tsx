@@ -8,7 +8,10 @@ import { getLogger } from "packages/logger.ts";
 
 export const EditIdentity = iso(`
   field BfOrganization_Identity.EditIdentity @component {
-    voice
+    voice {
+      voiceSummary
+      voice
+    }
   }
 `)(function EditIdentity({ data }) {
   const logger = getLogger(import.meta);
@@ -26,7 +29,7 @@ export const EditIdentity = iso(`
         How does this look?
       </h2>
       <div className={sectionClasses}>
-        {data?.voice ?? ""}
+        {data?.voice?.voice ?? ""}
       </div>
       {!showChanges &&
         (

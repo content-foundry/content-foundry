@@ -19,8 +19,10 @@ export const Sidebar = iso(`
         name
         imgUrl
       }
-      voiceSummary
-      voice
+      voice {
+        voiceSummary
+        voice
+      }
     }
   }
 `)(
@@ -78,12 +80,12 @@ export const Sidebar = iso(`
             {showVerboseVoice
               ? (
                 <div>
-                  {data.identity?.voice}
+                  {data.identity?.voice?.voice}
                 </div>
               )
               : (
                 <div>
-                  {data.identity?.voiceSummary}
+                  {data.identity?.voice?.voiceSummary}
                 </div>
               )}
           </div>
