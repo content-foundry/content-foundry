@@ -25,7 +25,7 @@ export const Workshopping = iso(`
     const routerProps = useRouter();
     const { workshoppingSlug } = routerProps.routeParams;
     const [thumbs, setThumbs] = useState<Record<number, string | null>>({});
-
+    const showVoting = false;
     const handleThumbClick = (direction: string, thumbIndex: number) => {
       let thisThumbDirection = thumbs[thumbIndex];
       if (thisThumbDirection === direction) {
@@ -83,22 +83,25 @@ export const Workshopping = iso(`
                     <div key={text} className="suggestion-container flexColumn">
                       <div className="suggestion-row">
                         <div className="suggestion-header">
-                          <BfDsButton
-                            kind={thumbs[index] === "up"
-                              ? "filledSuccess"
-                              : "overlay"}
-                            iconLeft="thumbUp"
-                            onClick={() =>
-                              handleThumbClick("up", index)}
-                          />
-                          <BfDsButton
-                            kind={thumbs[index] === "down"
-                              ? "filledAlert"
-                              : "overlay"}
-                            iconLeft="thumbDown"
-                            onClick={() =>
-                              handleThumbClick("down", index)}
-                          />
+                          {showVoting && (
+                            <>
+                              <BfDsButton
+                                kind={thumbs[index] === "up"
+                                  ? "filledSuccess"
+                                  : "overlay"}
+                                iconLeft="thumbUp"
+                                onClick={() => handleThumbClick("up", index)}
+                              />
+                              <BfDsButton
+                                kind={thumbs[index] === "down"
+                                  ? "filledAlert"
+                                  : "overlay"}
+                                iconLeft="thumbDown"
+                                onClick={() =>
+                                  handleThumbClick("down", index)}
+                              />
+                            </>
+                          )}
                           <div className="suggestion-number">{index + 1}</div>
                         </div>
                         <div className="flexColumn flex1">
@@ -152,21 +155,23 @@ export const Workshopping = iso(`
               </div>
             </div>
           </div>
-          <div className="footer">
-            <BfDsButton kind="secondary" text="New suggestions" />
-            <div>Text or something</div>
-            <div className="engagement-container">
-              <div className="engagement-icons">
-                <BfDsIcon color="var(--alwaysWhite)" name="thumbUp" />{" "}
-                <div>{thumbsUp}</div>
+          {showVoting && (
+            <div className="footer">
+              <BfDsButton kind="secondary" text="New suggestions" />
+              <div>Text or something</div>
+              <div className="engagement-container">
+                <div className="engagement-icons">
+                  <BfDsIcon color="var(--alwaysWhite)" name="thumbUp" />{" "}
+                  <div>{thumbsUp}</div>
+                </div>
+                <div className="engagement-icons">
+                  <BfDsIcon color="var(--alwaysWhite)" name="thumbDown" />{" "}
+                  <div>{thumbsDown}</div>
+                </div>
               </div>
-              <div className="engagement-icons">
-                <BfDsIcon color="var(--alwaysWhite)" name="thumbDown" />{" "}
-                <div>{thumbsDown}</div>
-              </div>
+              <BfDsButton kind="primary" text="Refine" />
             </div>
-            <BfDsButton kind="primary" text="Refine" />
-          </div>
+          )}
         </div>
         {HistorySidebar && <HistorySidebar />}
       </div>
