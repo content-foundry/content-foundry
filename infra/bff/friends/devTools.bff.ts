@@ -11,8 +11,6 @@ const logger = getLogger(import.meta);
 
 async function configureSapling() {
   const XDG_CONFIG_HOME = getConfigurationVariable("XDG_CONFIG_HOME");
-  const REPL_SLUG = getConfigurationVariable("REPL_SLUG") ?? "";
-  const HOME = getConfigurationVariable("HOME") ?? "";
 
   const nameRawPromise = runShellCommandWithOutput([
     "gh",
@@ -27,7 +25,7 @@ async function configureSapling() {
     "api",
     "/user/emails",
     "--jq",
-    '.[] | select(.email | contains("boltfoundry.com")) | .email',
+    ".[0].email",
   ]);
 
   const [nameRaw, emailRaw] = await Promise.all([
@@ -70,12 +68,6 @@ async function configureSapling() {
       "--user",
       "ui.username",
       `${name} <${email}>`,
-    ]),
-    runShellCommand([
-      "ln",
-      "-s",
-      `${HOME}/${REPL_SLUG}/.local`,
-      `${HOME}/.local`,
     ]),
   ]);
   await runShellCommand([
