@@ -1,13 +1,11 @@
 import { neon } from "@neondatabase/serverless";
 
 import { getLogger } from "packages/logger.ts";
-import type {
-  BfMetadata,
-  BfMetadataDefault,
-} from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import type { BfMetadataEdge } from "packages/bfDb/coreModels/BfEdge.ts";
+import type { BfMetadataNode } from "packages/bfDb/coreModels/BfNode.ts";
 
 const logger = getLogger(import.meta);
 
@@ -35,9 +33,11 @@ export type EdgeRecords<
 //   T extends Record<string, unknown> = Record<string, unknown>,
 // > = { pageInfo: PageInfo; edges: Array<EdgeRecord<T>>; count: number };
 
+type BfDbMetadata = BfMetadataNode & Partial<BfMetadataEdge>;
+
 type DbItem<T extends Props> = {
   props: T;
-  metadata: BfMetadata;
+  metadata: BfDbMetadata;
 };
 
 const databaseUrl = getConfigurationVariable("DATABASE_URL");
@@ -228,7 +228,7 @@ type Row<
 //   );
 // }
 
-function rowToMetadata(row: Row): BfMetadata {
+function rowToMetadata(row: Row): BfDbMetadata {
   return {
     bfGid: toBfGid(row.bf_gid),
     bfOid: toBfGid(row.bf_oid),
@@ -330,7 +330,7 @@ export async function bfPutItem<
   TProps extends Props = Props,
 >(
   itemProps: TProps,
-  itemMetadata: BfMetadata,
+  itemMetadata: BfMetadataNode | BfMetadataEdge,
 ): Promise<void> {
   logger.trace({ itemProps, itemMetadata });
 
@@ -514,7 +514,7 @@ export async function bfQueryDescendantsByClassName<
 export async function bfQueryItemsUnified<
   TProps extends Props = Props,
 >(
-  metadataToQuery: Partial<BfMetadata>,
+  metadataToQuery: Partial<BfDbMetadata>,
   propsToQuery: Partial<TProps> = {},
   bfGids?: Array<string>,
   orderDirection: "ASC" | "DESC" = "ASC",
@@ -670,9 +670,8 @@ export async function bfQueryItemsUnified<
 
 export function bfQueryItems<
   TProps extends Props = Props,
-  TMetadata extends BfMetadata = BfMetadataDefault,
 >(
-  metadataToQuery: Partial<TMetadata>,
+  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
   propsToQuery: Partial<TProps> = {},
   bfGids?: Array<string>,
   orderDirection: "ASC" | "DESC" = "ASC",
@@ -700,9 +699,8 @@ export function bfQueryItems<
 
 export function bfQueryItemsWithSizeLimit<
   TProps extends Props = Props,
-  TMetadata extends BfMetadata = BfMetadataDefault,
 >(
-  metadataToQuery: Partial<TMetadata>,
+  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
   propsToQuery: Partial<TProps> = {},
   bfGids?: Array<string>,
   orderDirection: "ASC" | "DESC" = "ASC",
