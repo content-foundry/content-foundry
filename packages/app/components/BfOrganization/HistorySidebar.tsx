@@ -18,7 +18,6 @@ export const HistorySidebar = iso(`
         <div className="sessions-container">
           <BfDsList header="History">
             <BfDsListItem content="Initial suggestion" isHighlighted={true} />
-            <BfDsListItem content="old one suggestion" onClick={() => null} />
           </BfDsList>
         </div>
       </div>
