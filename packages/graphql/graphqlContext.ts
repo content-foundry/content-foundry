@@ -5,8 +5,10 @@ import type {
   BfNodeBase,
   BfNodeBaseProps,
 } from "packages/bfDb/classes/BfNodeBase.ts";
-import type { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
-import type { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
+import type {
+  BfMetadataNode,
+  BfNode,
+} from "packages/bfDb/coreModels/BfNode.ts";
 import { BfPerson } from "packages/bfDb/models/BfPerson.ts";
 import type {
   AuthenticationResponseJSON,
@@ -25,7 +27,7 @@ export type Context = {
     sourceNode: BfNode,
     BfClass: TBfClass,
     props: TProps,
-    metadata?: BfMetadata,
+    metadata?: BfMetadataNode,
   ): Promise<InstanceType<TBfClass>>;
   find<
     TProps extends BfNodeBaseProps,
@@ -133,7 +135,7 @@ export async function createContext(request: Request): Promise<Context> {
       sourceNode: BfNode,
       TargetBfClass: TBfClass,
       props: TProps,
-      metadata?: BfMetadata,
+      metadata?: BfMetadataNode,
     ) {
       let innerCache = cache.get(TargetBfClass.name);
       if (!innerCache) {

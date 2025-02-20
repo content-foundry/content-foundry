@@ -3,10 +3,12 @@ import {
   type BfNodeBaseProps,
 } from "packages/bfDb/classes/BfNodeBase.ts";
 import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
-import type { BfNodeCache } from "packages/bfDb/classes/BfNodeBase.ts";
+import type {
+  BfMetadataBase,
+  BfNodeCache,
+} from "packages/bfDb/classes/BfNodeBase.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { BfErrorNotImplemented } from "packages/BfError.ts";
-import type { BfMetadata } from "packages/bfDb/classes/BfNodeMetadata.ts";
 import { getLogger } from "packages/logger.ts";
 
 const _logger = getLogger(import.meta);
@@ -43,7 +45,7 @@ export class BfBlog extends BfNodeBase<BfBlogProps> {
     T extends BfNodeBase<TProps>,
   >(
     _cv: BfCurrentViewer,
-    _metadata: BfMetadata,
+    _metadata: BfMetadataBase,
     _props: TProps,
     _bfGids: Array<BfGid>,
     _cache?: BfNodeCache,
