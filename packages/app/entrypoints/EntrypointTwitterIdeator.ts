@@ -13,7 +13,10 @@ export const EntrypointTwitterIdeator = iso(`
       asBfCurrentViewerLoggedIn {
         organization {
           identity {
-            voice
+            voice {
+              voiceSummary
+              voice
+            }
           }
         }
       }
@@ -21,10 +24,14 @@ export const EntrypointTwitterIdeator = iso(`
   }
 `)(function EntrypointTwitterIdeator({ data }): RouteEntrypoint {
   const { replace } = useRouter();
+  const showSimpleComposers = true;
   const hasVoice = data?.me?.asBfCurrentViewerLoggedIn?.organization?.identity;
   useEffect(() => {
     if (hasVoice) {
-      replace("/twitter/research");
+      const url = showSimpleComposers
+        ? "/twitter/compose"
+        : "/twitter/research";
+      replace(url);
       return;
     }
     replace("/twitter/voice");

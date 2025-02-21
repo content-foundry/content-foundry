@@ -47,10 +47,14 @@ function verifyRefreshToken(token: string): { sub: string } | null {
   }
 }
 
+export type CurrentViewerTypenames =
+  | "BfCurrentViewerLoggedIn"
+  | "BfCurrentViewerLoggedOut";
+
 const logger = getLogger(import.meta);
 
 export abstract class BfCurrentViewer {
-  __typename;
+  __typename: CurrentViewerTypenames;
 
   static setLoginSuccessHeaders(responseHeaders: Headers, bfGid: string) {
     const { accessToken, refreshToken } = generateTokens(bfGid);
@@ -223,6 +227,17 @@ export abstract class BfCurrentViewer {
         toBfGid(email),
       );
   }
+  static __DANGEROUS__createFromBfGid(
+    importMeta: ImportMeta,
+    bfGid: string,
+    bfOid: string,
+  ) {
+    return BfCurrentViewerLoggedIn.__PROBABLY_DONT_USE_THIS_VERY_OFTEN__create(
+      importMeta,
+      toBfGid(bfGid),
+      toBfGid(bfOid),
+    );
+  }
   clear() {}
 
   protected constructor(
@@ -230,11 +245,14 @@ export abstract class BfCurrentViewer {
     readonly bfGid: BfGid, // person for whom the access token was created
     readonly bfOid: BfGid, // always an owner, used to determine access control
   ) {
-    this.__typename = this.constructor.name;
+    this.__typename = this.constructor.name as CurrentViewerTypenames;
   }
 
   toGraphql() {
-    return { __typename: this.constructor.name, id: this.bfGid };
+    return {
+      __typename: this.constructor.name as CurrentViewerTypenames,
+      id: this.bfGid,
+    };
   }
 
   toString() {

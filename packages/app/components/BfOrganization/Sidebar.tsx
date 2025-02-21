@@ -19,8 +19,10 @@ export const Sidebar = iso(`
         name
         imgUrl
       }
-      voiceSummary
-      voice
+      voice {
+        voiceSummary
+        voice
+      }
     }
   }
 `)(
@@ -32,7 +34,7 @@ export const Sidebar = iso(`
     const { researchSlug } = routeParams;
     const { showModal } = useBfDs();
     const [showVerboseVoice, setShowVerboseVoice] = useState(false);
-
+    const showSteps = false;
     let currentStep = researchSlug ? 2 : 1;
     if (currentPath === "/twitter/workshopping") {
       currentStep = 3;
@@ -78,32 +80,35 @@ export const Sidebar = iso(`
             {showVerboseVoice
               ? (
                 <div>
-                  {data.identity?.voice}
+                  {data.identity?.voice?.voice}
                 </div>
               )
               : (
                 <div>
-                  {data.identity?.voiceSummary}
+                  {data.identity?.voice?.voiceSummary}
                 </div>
               )}
           </div>
         </div>
-        <div className="steps">
-          {steps.map((step, index) => {
-            return (
-              <div className="step flexRow">
-                <div
-                  className={`step-number${
-                    currentStep === index + 1 ? "-highlight" : ""
-                  }`}
-                >
-                  {index + 1}
-                </div>{" "}
-                {step}
-              </div>
-            );
-          })}
-        </div>
+        {showSteps &&
+          (
+            <div className="steps">
+              {steps.map((step, index) => {
+                return (
+                  <div className="step flexRow">
+                    <div
+                      className={`step-number${
+                        currentStep === index + 1 ? "-highlight" : ""
+                      }`}
+                    >
+                      {index + 1}
+                    </div>{" "}
+                    {step}
+                  </div>
+                );
+              })}
+            </div>
+          )}
       </div>
     );
   },
