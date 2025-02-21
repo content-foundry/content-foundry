@@ -3,6 +3,7 @@ import { useState } from "react";
 import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { classnames } from "lib/classnames.ts";
+import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
 

@@ -27,10 +27,8 @@ export const graphqlBfDocsType = objectType({
   definition(t) {
     t.implements(graphqlBfNode);
     t.string("name");
-    // @ts-ignore problem with compiling on deno pre 2.1.7
     t.connectionField("posts", {
       type: graphqlBfDocsPostType,
-      // @ts-ignore problem with compiling on deno pre 2.1.7
       resolve: async (_parent, args, _ctx) => {
         const posts = await BfDocsPost.query();
         return connectionFromArray(posts.map((post) => post.toGraphql()), args);
