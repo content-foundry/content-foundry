@@ -168,8 +168,7 @@ type BfOrganization implements BfNode & Node {
 
 type BfOrganization_Identity {
   twitter: Twitter
-  voice: String
-  voiceSummary: String
+  voice: Voice
 }
 
 type BfOrganization_Research {
@@ -200,6 +199,7 @@ scalar JSONString
 
 type Mutation {
   checkEmail(email: String!): Boolean
+  createVoice(handle: String!): Voice
   getLoginOptions(email: String!): JSONString
   login(authResp: JSONString!, email: String!): BfCurrentViewer
   loginAsDemoPerson: BfCurrentViewerLoggedIn
@@ -271,6 +271,11 @@ type Twitter {
   handle: String
   imgUrl: String
   name: String
+}
+
+type Voice {
+  voice: String
+  voiceSummary: String
 }
 
 type YCRecommendationItem {

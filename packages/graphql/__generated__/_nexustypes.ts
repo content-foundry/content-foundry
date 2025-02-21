@@ -122,8 +122,7 @@ export interface NexusGenObjects {
   }
   BfOrganization_Identity: { // root type
     twitter?: NexusGenRootTypes['Twitter'] | null; // Twitter
-    voice?: string | null; // String
-    voiceSummary?: string | null; // String
+    voice?: NexusGenRootTypes['Voice'] | null; // Voice
   }
   BfOrganization_Research: { // root type
     topics?: Array<NexusGenRootTypes['ResearchTopic'] | null> | null; // [ResearchTopic]
@@ -170,6 +169,10 @@ export interface NexusGenObjects {
     handle?: string | null; // String
     imgUrl?: string | null; // String
     name?: string | null; // String
+  }
+  Voice: { // root type
+    voice?: string | null; // String
+    voiceSummary?: string | null; // String
   }
   YCRecommendationItem: { // root type
     confidence?: number | null; // Float
@@ -288,8 +291,7 @@ export interface NexusGenFieldTypes {
   }
   BfOrganization_Identity: { // field return type
     twitter: NexusGenRootTypes['Twitter'] | null; // Twitter
-    voice: string | null; // String
-    voiceSummary: string | null; // String
+    voice: NexusGenRootTypes['Voice'] | null; // Voice
   }
   BfOrganization_Research: { // field return type
     topics: Array<NexusGenRootTypes['ResearchTopic'] | null> | null; // [ResearchTopic]
@@ -307,6 +309,7 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     checkEmail: boolean | null; // Boolean
+    createVoice: NexusGenRootTypes['Voice'] | null; // Voice
     getLoginOptions: NexusGenScalars['JSONString'] | null; // JSONString
     login: NexusGenRootTypes['BfCurrentViewer'] | null; // BfCurrentViewer
     loginAsDemoPerson: NexusGenRootTypes['BfCurrentViewerLoggedIn'] | null; // BfCurrentViewerLoggedIn
@@ -347,6 +350,10 @@ export interface NexusGenFieldTypes {
     handle: string | null; // String
     imgUrl: string | null; // String
     name: string | null; // String
+  }
+  Voice: { // field return type
+    voice: string | null; // String
+    voiceSummary: string | null; // String
   }
   YCRecommendationItem: { // field return type
     confidence: number | null; // Float
@@ -464,8 +471,7 @@ export interface NexusGenFieldTypeNames {
   }
   BfOrganization_Identity: { // field return type name
     twitter: 'Twitter'
-    voice: 'String'
-    voiceSummary: 'String'
+    voice: 'Voice'
   }
   BfOrganization_Research: { // field return type name
     topics: 'ResearchTopic'
@@ -483,6 +489,7 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     checkEmail: 'Boolean'
+    createVoice: 'Voice'
     getLoginOptions: 'JSONString'
     login: 'BfCurrentViewer'
     loginAsDemoPerson: 'BfCurrentViewerLoggedIn'
@@ -523,6 +530,10 @@ export interface NexusGenFieldTypeNames {
     handle: 'String'
     imgUrl: 'String'
     name: 'String'
+  }
+  Voice: { // field return type name
+    voice: 'String'
+    voiceSummary: 'String'
   }
   YCRecommendationItem: { // field return type name
     confidence: 'Float'
@@ -588,6 +599,9 @@ export interface NexusGenArgTypes {
   Mutation: {
     checkEmail: { // args
       email: string; // String!
+    }
+    createVoice: { // args
+      handle: string; // String!
     }
     getLoginOptions: { // args
       email: string; // String!
