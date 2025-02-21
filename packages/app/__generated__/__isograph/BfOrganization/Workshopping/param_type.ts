@@ -7,7 +7,10 @@ export type BfOrganization__Workshopping__param = {
     readonly HistorySidebar: BfOrganization__HistorySidebar__output_type,
     readonly creation: ({
       readonly originalText: (string | null),
-      readonly suggestions: (ReadonlyArray<(string | null)> | null),
+      readonly suggestions: (ReadonlyArray<({
+        readonly tweet: (string | null),
+        readonly explanation: (string | null),
+      } | null)> | null),
     } | null),
   },
   readonly parameters: Record<PropertyKey, never>,

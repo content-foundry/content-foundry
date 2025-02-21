@@ -33,6 +33,7 @@ import { type Mutation__CreateVoice__param } from './Mutation/CreateVoice/param_
 import { type Mutation__GetLoginOptions__param } from './Mutation/GetLoginOptions/param_type.ts';
 import { type Mutation__LoginAsDemoPerson__param } from './Mutation/LoginAsDemoPerson/param_type.ts';
 import { type Mutation__Login__param } from './Mutation/Login/param_type.ts';
+import { type Mutation__MakeTweets__param } from './Mutation/MakeTweets/param_type.ts';
 import { type Mutation__Register__param } from './Mutation/Register/param_type.ts';
 import { type Mutation__RegistrationOptions__param } from './Mutation/RegistrationOptions/param_type.ts';
 import { type Mutation__SubmitYcForm__param } from './Mutation/SubmitYcForm/param_type.ts';
@@ -235,6 +236,10 @@ export function iso<T>(
 ): IdentityWithParam<Mutation__Login__param>;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Mutation.MakeTweets', T>
+): IdentityWithParam<Mutation__MakeTweets__param>;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.Register', T>
 ): IdentityWithParamComponent<Mutation__Register__param>;
 
@@ -316,6 +321,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.Login', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Mutation.MakeTweets', T>
 ): void;
 
 export function iso<T>(

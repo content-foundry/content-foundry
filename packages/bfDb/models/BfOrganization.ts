@@ -31,8 +31,13 @@ type Props = {
   } | null;
   creation?: {
     originalText?: string | null;
-    suggestions?: string[] | null;
-  } | null;
+    suggestions?:
+      | Array<{
+        tweet: string;
+        explanation: string;
+      }>
+      | null;
+  };
   distribution?: Record<string, JSONValue>;
   analytics?: Record<string, JSONValue>;
 };

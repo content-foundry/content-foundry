@@ -4,7 +4,10 @@ import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { useState } from "react";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
-// const logger = getLogger(import.meta);
+import { useMutation } from "packages/app/hooks/isographPrototypes/useMutation.tsx";
+import makeTweetsMutation from "packages/app/__generated__/__isograph/Mutation/MakeTweets/entrypoint.ts";
+import { getLogger } from "packages/logger.ts";
+const logger = getLogger(import.meta);
 
 export const SimpleComposer = iso(`
   field BfOrganization.SimpleComposer @component {
@@ -14,6 +17,7 @@ export const SimpleComposer = iso(`
   function SimpleComposer(
     { data },
   ) {
+    const { commit } = useMutation(makeTweetsMutation);
     const { navigate } = useRouter();
     const Sidebar = data.Sidebar;
     const [draftTweet, setDraftTweet] = useState("");
@@ -33,7 +37,17 @@ export const SimpleComposer = iso(`
             type="submit"
             text="Submit"
             xstyle={{ alignSelf: "flex-end" }}
-            onClick={() => navigate("/twitter/workshopping")}
+            onClick={() => (
+              commit({ tweet: draftTweet }, {
+                onComplete: (makeTweetMutationData) => {
+                  logger.debug(
+                    "tweet created successfully",
+                    makeTweetMutationData,
+                  );
+                  navigate("/twitter/workshopping");
+                },
+              })
+            )}
           />
         </div>
       </div>

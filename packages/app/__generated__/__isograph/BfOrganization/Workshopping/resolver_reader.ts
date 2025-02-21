@@ -33,10 +33,25 @@ const readerAst: ReaderAst<BfOrganization__Workshopping__param> = [
         arguments: null,
       },
       {
-        kind: "Scalar",
+        kind: "Linked",
         fieldName: "suggestions",
         alias: null,
         arguments: null,
+        condition: null,
+        selections: [
+          {
+            kind: "Scalar",
+            fieldName: "tweet",
+            alias: null,
+            arguments: null,
+          },
+          {
+            kind: "Scalar",
+            fieldName: "explanation",
+            alias: null,
+            arguments: null,
+          },
+        ],
       },
     ],
   },

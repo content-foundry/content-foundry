@@ -61,15 +61,17 @@ export async function getVoice(
   );
 
   const choice = response.choices[0];
-  if (!choice) throw new Error("No choice");
-  let responseObject = { voice: "", voiceSummary: "" };
-  try {
-    responseObject =
-      isValidJSON(choice.message.content ?? '{voice: "", voiceSummary: ""}')
-        ? JSON.parse(choice.message.content ?? '{voice: "", voiceSummary: ""}')
-        : { voice: "", voiceSummary: "" };
-    return responseObject;
-  } catch (_e) {
-    return responseObject;
+  if (!choice) {
+    throw new Error("No choice");
   }
+
+  let responseObject = { voice: "", voiceSummary: "" };
+  const choiceContent = choice.message.content ??
+    '{"voice": "", "voiceSummary": ""}';
+
+  if (isValidJSON(choiceContent)) {
+    responseObject = JSON.parse(choiceContent);
+  }
+
+  return responseObject;
 }
