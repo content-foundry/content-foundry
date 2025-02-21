@@ -1,6 +1,6 @@
 import type { PostHog } from "posthog-js";
 import type { PostHog as PostHogNode } from "posthog-node";
-import { getLogger, isBrowser } from "packages/logger.ts";
+import { getLogger } from "packages/logger.ts";
 import { BfError } from "packages/BfError.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 
@@ -8,6 +8,10 @@ const logger = getLogger(import.meta);
 
 let frontendClient: PostHog | undefined;
 let backendClient: PostHogNode | undefined;
+
+function isBrowser() {
+  return typeof Deno === "undefined";
+}
 
 export async function startupBackend() {
   if (isBrowser()) {

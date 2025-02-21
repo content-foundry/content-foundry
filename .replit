@@ -106,7 +106,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bff build"
+args = "bff build --slow-exit"
 
 [[workflows.workflow]]
 name = "Tools Server"
@@ -151,11 +151,11 @@ HISTFILESIZE = "100000"
 HISTSIZE = "10000"
 FLAG_DIRENV = "1"
 REPLIT_PID1_FLAG_DIRENV = "1"
-FLAKE_PATH = "$HOME/workspace/nix_system/bin"
+# FLAKE_PATH = "$HOME/workspace/nix_system/bin"
 INFRA_BIN_PATH = "$HOME/workspace/infra/bin"
 PATH = "$INFRA_BIN_PATH:$FLAKE_PATH:$PATH"
 REPLIT_PORT_THINGY="8284"
-DENO_TRACE_PERMISSIONS="true"
+DENO_TRACE_PERMISSIONS="1"
 DENO_NO_UPDATE_CHECK="1"
 OTEL_EXPORTER_OTLP_HEADERS="authorization=$HYPERDX_INGESTION_KEY"
 OTEL_EXPORTER_OTLP_ENDPOINT="https://in-otel.hyperdx.io"
