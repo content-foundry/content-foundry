@@ -1,6 +1,9 @@
 import { getLogger } from "packages/logger.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
+import {
+  BfCurrentViewer,
+  type CurrentViewerTypenames,
+} from "packages/bfDb/classes/BfCurrentViewer.ts";
 import type {
   BfNodeBase,
   BfNodeBaseProps,
@@ -19,7 +22,10 @@ const logger = getLogger(import.meta);
 
 export type Context = {
   [Symbol.dispose]: () => void;
-  getCvForGraphql(): { __typename: string; id: string };
+  getCvForGraphql(): {
+    __typename: CurrentViewerTypenames;
+    id: string;
+  };
   createTargetNode<
     TProps extends BfNodeBaseProps,
     TBfClass extends typeof BfNode<TProps>,
