@@ -4,10 +4,25 @@ import { EditIdentity as resolver } from '../../../../components/BfOrganization/
 
 const readerAst: ReaderAst<BfOrganization_Identity__EditIdentity__param> = [
   {
-    kind: "Scalar",
+    kind: "Linked",
     fieldName: "voice",
     alias: null,
     arguments: null,
+    condition: null,
+    selections: [
+      {
+        kind: "Scalar",
+        fieldName: "voiceSummary",
+        alias: null,
+        arguments: null,
+      },
+      {
+        kind: "Scalar",
+        fieldName: "voice",
+        alias: null,
+        arguments: null,
+      },
+    ],
   },
 ];
 

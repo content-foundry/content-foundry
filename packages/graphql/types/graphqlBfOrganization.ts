@@ -1,91 +1,22 @@
-import { objectType } from "nexus";
+import { mutationField, nonNull, objectType, stringArg } from "nexus";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
+import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
+import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import { getLogger } from "packages/logger.ts";
+import { getVoice } from "packages/app/ai/getVoice.ts";
+
+const logger = getLogger(import.meta);
 
 export const exampleBfOrg = {
   __typename: "BfOrganization",
   id: "lol",
-  // identity: null,
-  identity: {
-    twitter: {
-      handle: "George_LeVitre",
-      name: "George LeVitre",
-      imgUrl:
-        "https://m.media-amazon.com/images/M/MV5BMTY5MDc0ODkyNV5BMl5BanBnXkFtZTcwODI4ODg3Ng@@._V1_FMjpg_UX1000_.jpg",
-    },
-    voiceSummary: `- Witty
-- Direct
-- Lightly irreverent`,
-    voice:
-      `You’re aiming for a voice that is witty, direct, and lightly irreverent—one that breaks away from stale corporate talk but still comes across as knowledgeable and genuine. This approach is casual enough to feel human-friendly, yet firmly grounded in expertise so your audience trusts what you say.\n
-You sound like a mix between Richard Feynman (for his ability to make complex concepts accessible with wit and charm) and Anthony Bourdain (for his sharp cultural observations and no-BS authenticity).`,
-  },
-  research: {
-    topics: [
-      {
-        name: "Current Events",
-        entries: [],
-      },
-      {
-        name: "Sports",
-        entries: [{
-          type: "sport",
-          name: "U.S. Olympic Mixed Doubles Curling Trials",
-          summary:
-            "The trials to determine the U.S. representatives for mixed doubles curling at the upcoming Olympics are taking place in Lafayette, Colorado, from February 17 to 23, 2025.",
-          url:
-            "https://www.sportstravelmagazine.com/2025-sports-calendar-the-year-in-major-events/",
-        }, {
-          type: "sport",
-          name: "ISU Four Continents Figure Skating Championship",
-          summary:
-            "Top figure skaters from four continents are competing in Seoul from February 19 to 23, 2025.",
-          url:
-            "https://www.sportstravelmagazine.com/2025-sports-calendar-the-year-in-major-events/",
-        }, {
-          type: "sport",
-          name: "Major League Baseball Spring Training",
-          summary:
-            "MLB teams begin their spring training on February 20, 2025, marking the start of preparations for the upcoming season.",
-          url:
-            "https://www.sportstravelmagazine.com/2025-sports-calendar-the-year-in-major-events/",
-        }, {
-          type: "sport",
-          name: "USA Gymnastics Winter Cup",
-          summary:
-            "Gymnasts from across the country are gathering in Louisville, Kentucky, for the Winter Cup from February 20 to 23, 2025.",
-          url:
-            "https://www.sportstravelmagazine.com/2025-sports-calendar-the-year-in-major-events/",
-        }, {
-          type: "sport",
-          name: "Premier League Darts Night 3",
-          summary:
-            "The third night of the Premier League Darts takes place at the 3Arena in Dublin on February 20, 2025, featuring top darts players competing for points.",
-          url:
-            "https://talksport.com/darts/2934828/premier-league-darts-night-3-live-start-schedule-results-winner-luke-littler/",
-        }, {
-          type: "sport",
-          name: "NBA Regular Season Games",
-          summary:
-            "The NBA regular season continues with multiple games scheduled throughout the week, including matchups like Hornets vs. Lakers on February 19 and Grizzlies vs. Pacers on February 20.",
-          url: "https://www.nba.com/schedule",
-        }],
-      },
-    ],
-  },
-  creation: {
-    originalText:
-      "Here is the text from my tweet that I wrote. It isn’t very good.",
-    suggestions: [
-      "I wrote this tweet, but it’s giving ‘meh.’ What can I do to make it ‘wow’?",
-      "This is the text from my tweet. I’m not sure it’s great—how can I improve it?",
-      "Here’s what I wrote for my tweet. It feels a bit off. Any ideas to make it better?",
-      "Here’s the text of my tweet. I think it could use some improvement. Thoughts?",
-      "I wrote this tweet, but I’m not fully happy with it. What could make it stronger?",
-    ],
-  },
+  identity: null,
+  research: null,
+  creation: null,
   distribution: {},
   analytics: {},
 };
+
 export const graphqlIdentityType = objectType({
   name: "BfOrganization_Identity",
   definition(t) {
@@ -99,8 +30,15 @@ export const graphqlIdentityType = objectType({
         },
       }),
     });
-    t.string("voiceSummary");
-    t.string("voice");
+    t.field("voice", {
+      type: objectType({
+        name: "Voice",
+        definition(t) {
+          t.string("voiceSummary");
+          t.string("voice");
+        },
+      })
+    });
   },
 });
 
@@ -170,5 +108,36 @@ export const graphqlBfOrganizationType = objectType({
     t.field("analytics", {
       type: graphqlAnalyticsType,
     });
+  },
+});
+
+export const createVoiceMutation = mutationField("createVoice", {
+  args: {
+    handle: nonNull(stringArg()),
+  },
+  type: "Voice",
+  resolve: async (_, { handle }, ctx) => {
+    const org = await ctx.findX(
+      BfOrganization,
+      toBfGid("1526874860774e4fb612258ed8092ab7"),
+    );
+    logger.info("ORG", org);
+    // TODO: get twitter name and picture
+    // const twitterResponse...
+    const voiceResponse = await getVoice(handle);
+    logger.info("VOICE RESPONSE", voiceResponse);
+    org.props = {
+      ...org.props,
+      identity: {
+        twitter: {
+          handle,
+          // name: twitterResponse.name,
+          // imgUrl: twitterResponse.imgUrl,
+        },
+        voice: voiceResponse,
+      },
+    };
+    await org.save();
+    return voiceResponse;
   },
 });

@@ -1,5 +1,8 @@
 import OpenAI from "@openai/openai";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import { getLogger } from "packages/logger.ts";
+
+const _logger = getLogger(import.meta);
 
 let openRouter: OpenAI;
 let openAI: OpenAI;
