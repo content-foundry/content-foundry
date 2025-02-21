@@ -2,16 +2,19 @@ import { getAi } from "lib/ai.ts";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { isValidJSON } from "lib/jsonUtils.ts";
+import { getLogger } from "packages/logger.ts";
+
+const _logger = getLogger(import.meta);
 
 const TweetSuggestionSchema = z.object({
   tweet: z.string().describe(
     "a revised version of the given tweet better suited to fit the users voice, avoiding hashtags if the user doesn't use them",
   ),
-  explanation: z.string().describe("an explination of the revisions made"),
+  explanation: z.string().describe("an explanation of the revisions made"),
 });
 
 const Schema = z.object({
-  tweetsuggestions: z.array(TweetSuggestionSchema).describe(
+  suggestions: z.array(TweetSuggestionSchema).describe(
     "an array of 5 objects that match the given schema",
   ),
 });
@@ -62,13 +65,19 @@ export async function makeTweets(
 
   const choice = response.choices[0];
   if (!choice) throw new Error("No choice");
-  let responseObject = {};
-  try {
-    responseObject = isValidJSON(choice.message.content ?? "{}")
-      ? JSON.parse(choice.message.content ?? "{}")
-      : {};
-    return responseObject;
-  } catch (_e) {
-    return responseObject;
+
+  let suggestions = [];
+  if (
+    choice.message.content &&
+    isValidJSON(choice.message.content)
+  ) {
+    const json = JSON.parse(choice.message.content);
+    suggestions = json.suggestions;
   }
+
+  const responseObject = {
+    originalText: content,
+    suggestions,
+  };
+  return responseObject;
 }

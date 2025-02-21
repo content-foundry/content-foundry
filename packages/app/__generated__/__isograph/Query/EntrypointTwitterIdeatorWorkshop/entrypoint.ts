@@ -13,7 +13,10 @@ const queryText = 'query EntrypointTwitterIdeatorWorkshop  {\
       __typename,\
       creation {\
         originalText,\
-        suggestions,\
+        suggestions {\
+          explanation,\
+          tweet,\
+        },\
       },\
       identity {\
         twitter {\
@@ -77,9 +80,22 @@ const normalizationAst: NormalizationAst = {
                   arguments: null,
                 },
                 {
-                  kind: "Scalar",
+                  kind: "Linked",
                   fieldName: "suggestions",
                   arguments: null,
+                  concreteType: "Suggestion",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "explanation",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "tweet",
+                      arguments: null,
+                    },
+                  ],
                 },
               ],
             },

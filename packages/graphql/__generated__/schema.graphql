@@ -183,7 +183,7 @@ type BfPerson implements BfNode & Node {
 
 type Creation {
   originalText: String
-  suggestions: [String]
+  suggestions: [Suggestion]
 }
 
 type Distribution {
@@ -203,6 +203,7 @@ type Mutation {
   getLoginOptions(email: String!): JSONString
   login(authResp: JSONString!, email: String!): BfCurrentViewer
   loginAsDemoPerson: BfCurrentViewerLoggedIn
+  makeTweets(tweet: String!): Creation
   register(attResp: JSONString!, email: String!): BfCurrentViewerLoggedIn
   registrationOptions(email: String!): JSONString
   submitYcForm(formData: String, systemPrompt: String, taskPrompt: String): YCRecommendations
@@ -265,6 +266,11 @@ type ResearchEntry {
 type ResearchTopic {
   entries: [ResearchEntry]
   name: String
+}
+
+type Suggestion {
+  explanation: String
+  tweet: String
 }
 
 type Twitter {

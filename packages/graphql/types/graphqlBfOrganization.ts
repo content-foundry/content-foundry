@@ -4,6 +4,7 @@ import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
 import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { getLogger } from "packages/logger.ts";
 import { getVoice } from "packages/app/ai/getVoice.ts";
+import { makeTweets } from "packages/app/ai/makeTweets.ts";
 
 const logger = getLogger(import.meta);
 
@@ -71,7 +72,15 @@ export const graphqlCreationType = objectType({
   name: "Creation",
   definition(t) {
     t.string("originalText");
-    t.list.string("suggestions");
+    t.list.field("suggestions", {
+      type: objectType({
+        name: "Suggestion",
+        definition(t) {
+          t.string("tweet");
+          t.string("explanation");
+        },
+      }),
+    });
   },
 });
 
@@ -139,5 +148,27 @@ export const createVoiceMutation = mutationField("createVoice", {
     };
     await org.save();
     return voiceResponse;
+  },
+});
+
+export const makeTweetsMutation = mutationField("makeTweets", {
+  args: {
+    tweet: nonNull(stringArg()),
+  },
+  type: "Creation",
+  resolve: async (_, { tweet }, ctx) => {
+    const org = await ctx.findX(
+      BfOrganization,
+      toBfGid("1526874860774e4fb612258ed8092ab7"),
+    );
+    logger.info("ORG", org);
+    const response = await makeTweets(tweet);
+    logger.info("TWEETS RESPONSE", response);
+    org.props = {
+      ...org.props,
+      creation: response,
+    };
+    await org.save();
+    return response;
   },
 });
