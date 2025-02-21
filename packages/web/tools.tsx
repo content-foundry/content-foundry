@@ -64,7 +64,7 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
   try {
     await Deno.readTextFile("./tmp/ghcode");
     // If the file exists, return the default route response
-    return defaultRoute(req);
+    return defaultRoute();
   } catch {
     // File doesn't exist, proceed with proxy
     const url = new URL(req.url);

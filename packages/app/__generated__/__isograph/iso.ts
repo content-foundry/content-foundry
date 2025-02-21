@@ -17,8 +17,6 @@ import { type BfCurrentViewerLoggedOut__LoginAndRegisterForm__param } from './Bf
 import { type BfCurrentViewerLoggedOut__LoginButton__param } from './BfCurrentViewerLoggedOut/LoginButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__RegisterButton__param } from './BfCurrentViewerLoggedOut/RegisterButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentViewerLoggedOut/WelcomeVideo/param_type.ts';
-import { type BfDocs__DocsList__param } from './BfDocs/DocsList/param_type.ts';
-import { type BfDocs__DocsPostList__param } from './BfDocs/DocsPostList/param_type.ts';
 import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
 import { type BfOrganization__HistorySidebar__param } from './BfOrganization/HistorySidebar/param_type.ts';
 import { type BfOrganization__IdentityEditor__param } from './BfOrganization/IdentityEditor/param_type.ts';
@@ -170,14 +168,6 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedOut.WelcomeVideo', T>
 ): IdentityWithParamComponent<BfCurrentViewerLoggedOut__WelcomeVideo__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfDocs.DocsList', T>
-): IdentityWithParamComponent<BfDocs__DocsList__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfDocs.DocsPostList', T>
-): IdentityWithParam<BfDocs__DocsPostList__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfDocsPost.DocsPostListItem', T>
