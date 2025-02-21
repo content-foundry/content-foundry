@@ -50,6 +50,6 @@ jobs:
 
       - name: Run CI in nix
         run: |
-          nix develop . --command bash -c "
+          nix develop . --impure --command bash -c "
             bff ci -g
           "

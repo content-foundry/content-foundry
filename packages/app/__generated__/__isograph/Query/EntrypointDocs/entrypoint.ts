@@ -5,104 +5,16 @@ import readerResolver from './resolver_reader.ts';
 const nestedRefetchQueries: RefetchQueryNormalizationArtifactWrapper[] = [];
 
 const queryText = 'query EntrypointDocs  {\
-  me {\
-    __typename,\
-    id,\
-    docs {\
-      id,\
-      posts {\
-        nodes {\
-          id,\
-          author,\
-          href,\
-          status,\
-          summary,\
-          title,\
-        },\
-      },\
-    },\
-  },\
+  __typename,\
 }';
 
 const normalizationAst: NormalizationAst = {
   kind: "NormalizationAst",
   selections: [
     {
-      kind: "Linked",
-      fieldName: "me",
+      kind: "Scalar",
+      fieldName: "__typename",
       arguments: null,
-      concreteType: null,
-      selections: [
-        {
-          kind: "Scalar",
-          fieldName: "__typename",
-          arguments: null,
-        },
-        {
-          kind: "Scalar",
-          fieldName: "id",
-          arguments: null,
-        },
-        {
-          kind: "Linked",
-          fieldName: "docs",
-          arguments: null,
-          concreteType: "BfDocs",
-          selections: [
-            {
-              kind: "Scalar",
-              fieldName: "id",
-              arguments: null,
-            },
-            {
-              kind: "Linked",
-              fieldName: "posts",
-              arguments: null,
-              concreteType: "BfDocsPostConnection",
-              selections: [
-                {
-                  kind: "Linked",
-                  fieldName: "nodes",
-                  arguments: null,
-                  concreteType: "BfDocsPost",
-                  selections: [
-                    {
-                      kind: "Scalar",
-                      fieldName: "id",
-                      arguments: null,
-                    },
-                    {
-                      kind: "Scalar",
-                      fieldName: "author",
-                      arguments: null,
-                    },
-                    {
-                      kind: "Scalar",
-                      fieldName: "href",
-                      arguments: null,
-                    },
-                    {
-                      kind: "Scalar",
-                      fieldName: "status",
-                      arguments: null,
-                    },
-                    {
-                      kind: "Scalar",
-                      fieldName: "summary",
-                      arguments: null,
-                    },
-                    {
-                      kind: "Scalar",
-                      fieldName: "title",
-                      arguments: null,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
     },
   ],
 };
