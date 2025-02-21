@@ -16,8 +16,10 @@ const queryText = 'query EntrypointTwitterIdeatorCompose  {\
           imgUrl,\
           name,\
         },\
-        voice,\
-        voiceSummary,\
+        voice {\
+          voice,\
+          voiceSummary,\
+        },\
       },\
     },\
   },\
@@ -83,14 +85,22 @@ const normalizationAst: NormalizationAst = {
                   ],
                 },
                 {
-                  kind: "Scalar",
+                  kind: "Linked",
                   fieldName: "voice",
                   arguments: null,
-                },
-                {
-                  kind: "Scalar",
-                  fieldName: "voiceSummary",
-                  arguments: null,
+                  concreteType: "Voice",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "voice",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "voiceSummary",
+                      arguments: null,
+                    },
+                  ],
                 },
               ],
             },

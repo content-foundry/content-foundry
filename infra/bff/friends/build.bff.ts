@@ -14,6 +14,7 @@ const allowedEnvironmentVariables = [
   "LOG_LEVEL",
   "NODE_ENV",
   "NODE_PG_FORCE_NATIVE",
+  "OPENAI_BASE_URL",
   "OPENAI_API_KEY",
   "OPENAI_ORG_ID",
   "OPENAI_PROJECT_ID",
@@ -44,6 +45,7 @@ const allowedNetworkDestionations = [
   "esm.sh:443",
   "localhost",
   "openrouter.ai",
+  "api.openai.com:443",
   dbDomain,
   neonApiDomain,
 ];

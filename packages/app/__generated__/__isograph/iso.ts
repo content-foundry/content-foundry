@@ -29,6 +29,7 @@ import { type BfOrganization_Identity__EditIdentity__param } from './BfOrganizat
 import { type BfOrganization_Research__Topics__param } from './BfOrganization_Research/Topics/param_type.ts';
 import { type BfOrganization_Research__Topic__param } from './BfOrganization_Research/Topic/param_type.ts';
 import { type Mutation__CheckEmail__param } from './Mutation/CheckEmail/param_type.ts';
+import { type Mutation__CreateVoice__param } from './Mutation/CreateVoice/param_type.ts';
 import { type Mutation__GetLoginOptions__param } from './Mutation/GetLoginOptions/param_type.ts';
 import { type Mutation__LoginAsDemoPerson__param } from './Mutation/LoginAsDemoPerson/param_type.ts';
 import { type Mutation__Login__param } from './Mutation/Login/param_type.ts';
@@ -218,6 +219,10 @@ export function iso<T>(
 ): IdentityWithParam<Mutation__CheckEmail__param>;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Mutation.CreateVoice', T>
+): IdentityWithParam<Mutation__CreateVoice__param>;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.GetLoginOptions', T>
 ): IdentityWithParam<Mutation__GetLoginOptions__param>;
 
@@ -295,6 +300,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CheckEmail', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CreateVoice', T>
 ): void;
 
 export function iso<T>(
