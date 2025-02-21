@@ -18,6 +18,7 @@ export const SimpleComposer = iso(`
     { data },
   ) {
     const { commit } = useMutation(makeTweetsMutation);
+    const [isInFlight, setIsInFlight] = useState(false);
     const { navigate } = useRouter();
     const Sidebar = data.Sidebar;
     const [draftTweet, setDraftTweet] = useState("");
@@ -33,20 +34,24 @@ export const SimpleComposer = iso(`
             onChange={(e) => setDraftTweet(e.target.value)}
           />
           <BfDsButton
+            disabled={draftTweet.length === 0 || isInFlight}
             kind="primary"
             type="submit"
+            showSpinner={isInFlight}
             text="Submit"
             xstyle={{ alignSelf: "flex-end" }}
             onClick={() => (
-              commit({ tweet: draftTweet }, {
-                onComplete: (makeTweetMutationData) => {
-                  logger.debug(
-                    "tweet created successfully",
-                    makeTweetMutationData,
-                  );
-                  navigate("/twitter/workshopping");
-                },
-              })
+              setIsInFlight(true),
+                commit({ tweet: draftTweet }, {
+                  onComplete: (makeTweetMutationData) => {
+                    logger.debug(
+                      "tweet created successfully",
+                      makeTweetMutationData,
+                    );
+                    setIsInFlight(false);
+                    navigate("/twitter/workshopping");
+                  },
+                })
             )}
           />
         </div>

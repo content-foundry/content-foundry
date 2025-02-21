@@ -1,12 +1,10 @@
 import { mutationField, nonNull, objectType, stringArg } from "nexus";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
-import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
-import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { getLogger } from "packages/logger.ts";
 import { getVoice } from "packages/app/ai/getVoice.ts";
 import { makeTweets } from "packages/app/ai/makeTweets.ts";
 
-const logger = getLogger(import.meta);
+const _logger = getLogger(import.meta);
 
 export const exampleBfOrg = {
   __typename: "BfOrganization",
@@ -126,15 +124,13 @@ export const createVoiceMutation = mutationField("createVoice", {
   },
   type: "Voice",
   resolve: async (_, { handle }, ctx) => {
-    const org = await ctx.findX(
-      BfOrganization,
-      toBfGid("1526874860774e4fb612258ed8092ab7"),
-    );
-    logger.info("ORG", org);
+    const org = await ctx.findOrganizationForCurrentViewer();
+    if (!org) {
+      throw new Error("No organization found");
+    }
     // TODO: get twitter name and picture
     // const twitterResponse...
     const voiceResponse = await getVoice(handle);
-    logger.info("VOICE RESPONSE", voiceResponse);
     org.props = {
       ...org.props,
       identity: {
@@ -157,13 +153,11 @@ export const makeTweetsMutation = mutationField("makeTweets", {
   },
   type: "Creation",
   resolve: async (_, { tweet }, ctx) => {
-    const org = await ctx.findX(
-      BfOrganization,
-      toBfGid("1526874860774e4fb612258ed8092ab7"),
-    );
-    logger.info("ORG", org);
+    const org = await ctx.findOrganizationForCurrentViewer();
+    if (!org) {
+      throw new Error("No organization found");
+    }
     const response = await makeTweets(tweet);
-    logger.info("TWEETS RESPONSE", response);
     org.props = {
       ...org.props,
       creation: response,
