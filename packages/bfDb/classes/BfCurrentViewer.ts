@@ -227,6 +227,17 @@ export abstract class BfCurrentViewer {
         toBfGid(email),
       );
   }
+  static __DANGEROUS__createFromBfGid(
+    importMeta: ImportMeta,
+    bfGid: string,
+    bfOid: string,
+  ) {
+    return BfCurrentViewerLoggedIn.__PROBABLY_DONT_USE_THIS_VERY_OFTEN__create(
+      importMeta,
+      toBfGid(bfGid),
+      toBfGid(bfOid),
+    );
+  }
   clear() {}
 
   protected constructor(

@@ -7,8 +7,10 @@ export type BfOrganization__Sidebar__param = {
         readonly name: (string | null),
         readonly imgUrl: (string | null),
       } | null),
-      readonly voiceSummary: (string | null),
-      readonly voice: (string | null),
+      readonly voice: ({
+        readonly voiceSummary: (string | null),
+        readonly voice: (string | null),
+      } | null),
     } | null),
   },
   readonly parameters: Record<PropertyKey, never>,

@@ -4,6 +4,10 @@ import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { BfDsDropzone } from "packages/bfDs/components/BfDsDropzone.tsx";
 import { getLogger } from "packages/logger.ts";
+import { useMutation } from "packages/app/hooks/isographPrototypes/useMutation.tsx";
+import { useState } from "react";
+import createVoiceMutation from "packages/app/__generated__/__isograph/Mutation/CreateVoice/entrypoint.ts";
+import { useRouter } from "packages/app/contexts/RouterContext.tsx";
 
 export const EntrypointTwitterIdeatorVoice = iso(`
   field BfOrganization.IdentityEditor @component {
@@ -15,7 +19,11 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   function EntrypointTwitterIdeatorVoice(
     { data },
   ) {
+    const { navigate } = useRouter();
+    const { commit } = useMutation(createVoiceMutation);
+    const [isInFlight, setIsInFlight] = useState(false);
     const EditIdentity = data.identity?.EditIdentity;
+    const [handle, setHandle] = useState("");
     const logger = getLogger(import.meta);
     return (
       <div className="page">
@@ -36,6 +44,8 @@ export const EntrypointTwitterIdeatorVoice = iso(`
                 <BfDsInput
                   label="Twitter handle"
                   placeholder="@George_LeVitre"
+                  value={handle}
+                  onChange={(e) => setHandle(e.target.value)}
                 />
                 <div className="line-separator-container">
                   <div className="line" />
@@ -53,11 +63,26 @@ export const EntrypointTwitterIdeatorVoice = iso(`
                   onFileSelect={() => (logger.info("foo"))}
                 />
                 <BfDsButton
+                  disabled={handle.length === 0 || isInFlight}
                   kind="primary"
                   type="submit"
+                  showSpinner={isInFlight}
                   text="Submit"
                   xstyle={{ alignSelf: "flex-end" }}
-                  onClick={() => (logger.info("foo"))}
+                  onClick={() => {
+                    setIsInFlight(true);
+                    commit({ handle: handle }, {
+                      onComplete: (createVoiceMutationData) => {
+                        setIsInFlight(false);
+                        setHandle("");
+                        logger.debug(
+                          "voice created successfully",
+                          createVoiceMutationData,
+                        );
+                        navigate("/twitter/voice");
+                      },
+                    });
+                  }}
                 />
               </>
             )}

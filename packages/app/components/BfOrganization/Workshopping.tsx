@@ -2,8 +2,6 @@ import { useState } from "react";
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
-import { BfDsList } from "packages/bfDs/components/BfDsList.tsx";
-import { BfDsListItem } from "packages/bfDs/components/BfDsListItem.tsx";
 import { BfDsIcon } from "packages/bfDs/components/BfDsIcon.tsx";
 import { BfDsCopyButton } from "packages/bfDs/components/BfDsCopyButton.tsx";
 import { getLogger } from "packages/logger.ts";
@@ -15,7 +13,10 @@ export const Workshopping = iso(`
     HistorySidebar
     creation {
       originalText
-      suggestions
+      suggestions {
+        tweet
+        explanation
+      }
     }
   }
 `)(
@@ -77,10 +78,13 @@ export const Workshopping = iso(`
             <div className="suggestions-section">
               <h3 className="category">Suggestions</h3>
               <div className="suggestion-list">
-                {data.creation?.suggestions?.map((text, index) => {
+                {data.creation?.suggestions?.map((suggestion, index) => {
                   const [showInfo, setShowInfo] = useState(false);
                   return (
-                    <div key={text} className="suggestion-container flexColumn">
+                    <div
+                      key={suggestion?.tweet}
+                      className="suggestion-container flexColumn"
+                    >
                       <div className="suggestion-row">
                         <div className="suggestion-header">
                           {showVoting && (
@@ -97,8 +101,7 @@ export const Workshopping = iso(`
                                   ? "filledAlert"
                                   : "overlay"}
                                 iconLeft="thumbDown"
-                                onClick={() =>
-                                  handleThumbClick("down", index)}
+                                onClick={() => handleThumbClick("down", index)}
                               />
                             </>
                           )}
@@ -107,11 +110,11 @@ export const Workshopping = iso(`
                         <div className="flexColumn flex1">
                           <div className="suggestion-card">
                             <div className="suggestion-text">
-                              {text}
+                              {suggestion?.tweet}
                             </div>
                             <BfDsCopyButton
                               kind="outline"
-                              textToCopy={text ?? ""}
+                              textToCopy={suggestion?.tweet ?? ""}
                             />
                           </div>
                         </div>
@@ -127,17 +130,7 @@ export const Workshopping = iso(`
                                 onClick={() => setShowInfo(false)}
                               />
                             </div>
-                            <BfDsList>
-                              <BfDsListItem content="Using ‘giving meh’ adds
-                        humor and
-                        personality, making the tone
-                        lighthearted and
-                        engaging." />
-                              <BfDsListItem content="The contrast between“meh” and
-                        “wow” is happy
-                          and memorable." />
-                              <BfDsListItem content="Better matches yourirreverent style." />
-                            </BfDsList>
+                            {suggestion?.explanation}
                           </div>
                         )
                         : (

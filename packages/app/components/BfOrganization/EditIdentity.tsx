@@ -5,15 +5,22 @@ import { useState } from "react";
 import { classnames } from "lib/classnames.ts";
 import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 import { getLogger } from "packages/logger.ts";
+import { useRouter } from "packages/app/contexts/RouterContext.tsx";
+
+const logger = getLogger(import.meta);
 
 export const EditIdentity = iso(`
   field BfOrganization_Identity.EditIdentity @component {
-    voice
+    voice {
+      voiceSummary
+      voice
+    }
   }
 `)(function EditIdentity({ data }) {
-  const logger = getLogger(import.meta);
+  const { navigate } = useRouter();
   const [showChanges, setShowChanges] = useState(false);
   const [voiceLinks, setVoiceLinks] = useState<string[]>([]);
+  const enableChanges = false;
   const sectionClasses = classnames([
     "voice-section-voice-style",
     {
@@ -26,23 +33,28 @@ export const EditIdentity = iso(`
         How does this look?
       </h2>
       <div className={sectionClasses}>
-        {data?.voice ?? ""}
+        {data?.voice?.voice ?? ""}
       </div>
       {!showChanges &&
         (
           <div className="flexRow spaceBetween gapMedium">
-            <BfDsButton
-              kind="outline"
-              text="Make Changes"
-              onClick={() => {
-                setShowChanges(true);
-              }}
-              xstyle={{ alignSelf: "flex-end" }}
-            />
+            {enableChanges && (
+              <BfDsButton
+                kind="outline"
+                text="Make Changes"
+                onClick={() => {
+                  setShowChanges(true);
+                }}
+                xstyle={{ alignSelf: "flex-end" }}
+              />
+            )}
             <BfDsButton
               kind="primary"
               type="submit"
               text="Looks Good"
+              onClick={() => {
+                navigate("/twitter/compose");
+              }}
               xstyle={{ alignSelf: "flex-end" }}
             />
           </div>

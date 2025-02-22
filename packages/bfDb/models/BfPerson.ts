@@ -20,6 +20,7 @@ import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
 
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
 
 const logger = getLogger(import.meta);
 const rpID = getConfigurationVariable("RPID") ??
@@ -53,6 +54,10 @@ export type BfPersonProps = {
 };
 
 export class BfPerson extends BfNode<BfPersonProps> {
+  override afterCreate() {
+    this.createTargetNode(BfOrganization, {});
+  }
+
   static findCurrentViewer(cv: BfCurrentViewer): Promise<BfPerson> {
     return this.findX(cv, cv.bfGid);
   }
