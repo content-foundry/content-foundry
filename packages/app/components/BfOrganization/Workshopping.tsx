@@ -69,7 +69,7 @@ export const Workshopping = iso(`
               <div className="original-text">
                 {data.creation?.originalText}
                 <BfDsCopyButton
-                  kind="secondary"
+                  kind="outline"
                   textToCopy={data.creation?.originalText ?? ""}
                 />
               </div>

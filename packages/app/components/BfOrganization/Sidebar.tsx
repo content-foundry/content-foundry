@@ -52,7 +52,7 @@ export const Sidebar = iso(`
             className="user-card-image"
             style={{
               background:
-                `url(${data.identity?.twitter?.imgUrl}) no-repeat 50% 50% / cover`,
+                `var(--background) url(${data.identity?.twitter?.imgUrl}) no-repeat 50% 50% / cover`,
             }}
           />
           <div>
