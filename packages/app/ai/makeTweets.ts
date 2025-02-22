@@ -10,7 +10,9 @@ const TweetSuggestionSchema = z.object({
   tweet: z.string().describe(
     "a revised version of the given tweet better suited to fit the users voice, avoiding hashtags if the user doesn't use them",
   ),
-  explanation: z.string().describe("an explanation of the revisions made"),
+  explanation: z.string().describe(
+    "an explanation of the revisions made and how they use the user's voice",
+  ),
 });
 
 const Schema = z.object({
@@ -31,11 +33,15 @@ const taskPrompty = `here is my draft tweet and a description of my voice.
 `;
 
 export async function makeTweets(
-  content: string,
+  tweet: string,
+  voice: string | null = null,
   taskPrompt = taskPrompty,
   systemPrompt = systemPrompty,
 ) {
   const options = {};
+  const content = `*Draft tweet*: ${tweet}
+
+*Voice*: ${voice}`;
   const response = await openAi.chat.completions.create(
     {
       model: "openai/gpt-4o:online",
@@ -56,7 +62,7 @@ export async function makeTweets(
         },
         {
           role: "system",
-          content: "Please return the new tweets using our  JSON schema.",
+          content: "Please return the new tweets using our JSON schema.",
         },
       ],
     },
@@ -76,7 +82,7 @@ export async function makeTweets(
   }
 
   const responseObject = {
-    originalText: content,
+    originalText: tweet,
     suggestions,
   };
   return responseObject;
