@@ -16,8 +16,6 @@ const Schema = z.object({
 
 const openAi = getAi();
 
-export default openAi;
-
 export const systemPrompty =
   `You are an assistant who analyzes a persons twitter profile and tweets in order to give them a summary of their voice on twitter
 `;
