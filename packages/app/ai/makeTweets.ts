@@ -23,8 +23,6 @@ const Schema = z.object({
 
 const openAi = getAi();
 
-export default openAi;
-
 export const systemPrompty =
   `You are an assistant suggests alternative tweets that are more in line with a persons existing voice on twitter.
 `;
