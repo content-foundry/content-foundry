@@ -193,11 +193,11 @@ export async function createContext(request: Request): Promise<Context> {
     loginDemoUser,
 
     async findOrganizationForCurrentViewer() {
-      const org = await BfOrganization.findX(
+      const orgs = await BfOrganization.query(
         currentViewer,
-        toBfGid("a5a48e08bb3b4c8f94877612bc6df648"),
+        { bfCid: currentViewer.bfGid },
       );
-      return org;
+      return orgs[0];
     },
   };
   return ctx;
