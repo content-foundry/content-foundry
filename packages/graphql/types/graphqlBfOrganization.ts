@@ -147,7 +147,7 @@ export const makeTweetsMutation = mutationField("makeTweets", {
     if (!org) {
       throw new Error("No organization found");
     }
-    const response = await makeTweets(tweet);
+    const response = await makeTweets(tweet, org.props.identity?.voice?.voice);
     org.props = {
       ...org.props,
       creation: response,
