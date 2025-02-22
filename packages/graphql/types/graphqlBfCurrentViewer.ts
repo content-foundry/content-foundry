@@ -17,11 +17,10 @@ import type { RegistrationResponseJSON } from "@simplewebauthn/server";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import { graphqlBfBlogType } from "packages/graphql/types/graphqlBfBlog.ts";
 import { BfBlog } from "packages/bfDb/models/BfBlog.ts";
-import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { graphqlBfDocsType } from "packages/graphql/types/graphqlBfDocs.ts";
 import { BfDocs } from "packages/bfDb/models/BfDocs.ts";
 import { graphqlBfOrganizationType } from "packages/graphql/types/graphqlBfOrganization.ts";
-import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
 const logger = getLogger(import.meta);
 
 export const graphqlBfCurrentViewerType = interfaceType({
@@ -45,10 +44,10 @@ export const graphqlBfCurrentViewerType = interfaceType({
     t.field("organization", {
       type: graphqlBfOrganizationType,
       resolve: async (_parent, _args, ctx) => {
-        const org = await ctx.findX(
-          BfOrganization,
-          toBfGid("1526874860774e4fb612258ed8092ab7"),
-        );
+        const org = await ctx.findOrganizationForCurrentViewer();
+        if (!org) {
+          throw new Error("No organization found for current viewer");
+        }
         return org.toGraphql();
       },
     });

@@ -17,6 +17,7 @@ import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
 } from "@simplewebauthn/server";
+import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
 
 const logger = getLogger(import.meta);
 
@@ -61,6 +62,7 @@ export type Context = {
   getRequestHeader(name: string): string | null;
   getResponseHeaders(): Headers;
   loginDemoUser(): Promise<BfCurrentViewer>;
+  findOrganizationForCurrentViewer(): Promise<BfOrganization | null>;
 };
 
 export async function createContext(request: Request): Promise<Context> {
@@ -189,6 +191,14 @@ export async function createContext(request: Request): Promise<Context> {
     login,
     register,
     loginDemoUser,
+
+    async findOrganizationForCurrentViewer() {
+      const org = await BfOrganization.findX(
+        currentViewer,
+        toBfGid("a5a48e08bb3b4c8f94877612bc6df648"),
+      );
+      return org;
+    },
   };
   return ctx;
 }
