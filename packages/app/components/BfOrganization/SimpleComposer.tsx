@@ -18,6 +18,7 @@ export const SimpleComposer = iso(`
     { data },
   ) {
     const { commit } = useMutation(makeTweetsMutation);
+    const [isInFlight, setIsInFlight] = useState(false);
     const { navigate } = useRouter();
     const Sidebar = data.Sidebar;
     const [draftTweet, setDraftTweet] = useState("");
@@ -25,28 +26,37 @@ export const SimpleComposer = iso(`
       <div className="flexRow editor-container">
         {Sidebar && <Sidebar />}
         <div className="voice-section">
-          <h2 className="voice-section-header">
-            Write a draft tweet
-          </h2>
+          <div className="current-events-header-container-text">
+            <div className="subpageHeaderRoute">Workshopping</div>
+            <h2 className="current-events-header">Initial suggestion</h2>
+          </div>
+          <div>
+            Jot down a quick draft of your tweet. When you click "Continue,"
+            you’ll see options to enhance it using your voice!
+          </div>
           <BfDsTextArea
             value={draftTweet}
             onChange={(e) => setDraftTweet(e.target.value)}
           />
           <BfDsButton
+            disabled={draftTweet.length === 0 || isInFlight}
             kind="primary"
             type="submit"
-            text="Submit"
+            showSpinner={isInFlight}
+            text="Continue"
             xstyle={{ alignSelf: "flex-end" }}
             onClick={() => (
-              commit({ tweet: draftTweet }, {
-                onComplete: (makeTweetMutationData) => {
-                  logger.debug(
-                    "tweet created successfully",
-                    makeTweetMutationData,
-                  );
-                  navigate("/twitter/workshopping");
-                },
-              })
+              setIsInFlight(true),
+                commit({ tweet: draftTweet }, {
+                  onComplete: (makeTweetMutationData) => {
+                    logger.debug(
+                      "tweet created successfully",
+                      makeTweetMutationData,
+                    );
+                    setIsInFlight(false);
+                    navigate("/twitter/workshopping");
+                  },
+                })
             )}
           />
         </div>
