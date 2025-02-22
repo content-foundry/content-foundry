@@ -27,8 +27,8 @@ export const SimpleComposer = iso(`
         {Sidebar && <Sidebar />}
         <div className="voice-section">
           <div className="current-events-header-container-text">
-            <div className="subpageHeaderRoute">Workshopping</div>
-            <h2 className="current-events-header">Initial suggestion</h2>
+            <div className="subpageHeaderRoute">Compose</div>
+            <h2 className="current-events-header">Write a draft tweet</h2>
           </div>
           <div>
             Jot down a quick draft of your tweet. When you click "Continue,"

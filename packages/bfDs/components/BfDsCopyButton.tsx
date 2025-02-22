@@ -22,6 +22,14 @@ export function BfDsCopyButton(
   };
 
   const text = copied ? "Copied!" : buttonText;
+  const marginInlineStart = copied ? 0 : 18;
 
-  return <BfDsButton kind={kind} text={text} onClick={handleCopy} />;
+  return (
+    <BfDsButton
+      kind={copied ? "outlineSuccess" : kind}
+      text={text}
+      onClick={handleCopy}
+      xstyle={{ marginInlineStart }}
+    />
+  );
 }
