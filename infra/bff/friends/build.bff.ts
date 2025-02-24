@@ -85,6 +85,12 @@ export async function build([waitForFail]: Array<string>): Promise<number> {
   await Deno.remove("static/build", { recursive: true });
   await Deno.mkdir("static/build", { recursive: true });
   await Deno.writeFile("static/build/.gitkeep", new Uint8Array());
+  const routesBuildResult = await runShellCommand([
+    "./infra/appBuild/routesBuild.ts",
+  ]);
+  if (routesBuildResult !== 0) {
+    return routesBuildResult;
+  }
   const contentResult = await runShellCommand([
     "./infra/appBuild/contentBuild.ts",
   ]);
@@ -94,11 +100,22 @@ export async function build([waitForFail]: Array<string>): Promise<number> {
 
   const result = await runShellCommand(["./packages/graphql/graphqlServer.ts"]);
   if (result) return result;
+  if (result && waitForFail) {
+    return new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Build failed")), 15000);
+    });
+  }
   const isographResult = await runShellCommand(
     ["deno", "run", "-A", "npm:@isograph/compiler"],
     "packages/app",
   );
-  if (isographResult) return result;
+
+  if (isographResult && waitForFail) {
+    return new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Build failed")), 15000);
+    });
+  }
+
   const denoCompile = runShellCommand(denoCompilationCommand);
   const jsCompile = runShellCommand(["./infra/appBuild/appBuild.ts"]);
   const [denoResult, jsResult] = await Promise.all([denoCompile, jsCompile]);
