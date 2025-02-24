@@ -5,6 +5,7 @@ import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { useState } from "react";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
 import { useMutation } from "packages/app/hooks/isographPrototypes/useMutation.tsx";
+import { BfDsCallout } from "packages/bfDs/components/BfDsCallout.tsx";
 import makeTweetsMutation from "packages/app/__generated__/__isograph/Mutation/MakeTweets/entrypoint.ts";
 import { getLogger } from "packages/logger.ts";
 const logger = getLogger(import.meta);
@@ -22,6 +23,7 @@ export const SimpleComposer = iso(`
     const { navigate } = useRouter();
     const Sidebar = data.Sidebar;
     const [draftTweet, setDraftTweet] = useState("");
+    const [error, setError] = useState<string | null>(null);
     return (
       <div className="flexRow editor-container">
         {Sidebar && <Sidebar />}
@@ -45,20 +47,26 @@ export const SimpleComposer = iso(`
             showSpinner={isInFlight}
             text="Continue"
             xstyle={{ alignSelf: "flex-end" }}
-            onClick={() => (
-              setIsInFlight(true),
-                commit({ tweet: draftTweet }, {
-                  onComplete: (makeTweetMutationData) => {
-                    logger.debug(
-                      "tweet created successfully",
-                      makeTweetMutationData,
-                    );
-                    setIsInFlight(false);
-                    navigate("/twitter/workshopping");
-                  },
-                })
-            )}
+            onClick={() => {
+              setIsInFlight(true);
+              setError(null);
+              commit({ tweet: draftTweet }, {
+                onError: () => {
+                  setError("An error occurred.");
+                  setIsInFlight(false);
+                },
+                onComplete: (makeTweetMutationData) => {
+                  logger.debug(
+                    "tweet created successfully",
+                    makeTweetMutationData,
+                  );
+                  setIsInFlight(false);
+                  navigate("/twitter/workshopping");
+                },
+              });
+            }}
           />
+          {error && <BfDsCallout kind="error" header="Error" body={error} />}
         </div>
       </div>
     );
