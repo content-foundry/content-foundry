@@ -1,5 +1,4 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
-import type { RouteEntrypoint } from "packages/app/routes.ts";
 import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
@@ -16,7 +15,7 @@ export const EntrypointDocsPost = iso(`
       }
     }
   }
-`)(function EntrypointDocsPost({ data }): RouteEntrypoint {
+`)(function EntrypointDocsPost({ data }){
   const Body = data?.me?.docs?.post?.DocsPostListItem ?? (() => "no doc");
   logger.debug("dataer", data);
   const title = "Documentation Post";

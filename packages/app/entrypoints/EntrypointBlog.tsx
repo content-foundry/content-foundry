@@ -1,5 +1,4 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
-import type { RouteEntrypoint } from "packages/app/routes.ts";
 
 export const EntrypointBlog = iso(`
   field Query.EntrypointBlog {
@@ -10,7 +9,7 @@ export const EntrypointBlog = iso(`
       Blog
     }
   }
-`)(function EntrypointBlog({ data }): RouteEntrypoint {
+`)(function EntrypointBlog({ data }){
   const title = "Content Foundry";
   const DefaultBody = () => "coming soon";
 
