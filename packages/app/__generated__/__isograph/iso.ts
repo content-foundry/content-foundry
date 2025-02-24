@@ -368,11 +368,19 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink', T>
+): void;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorWorkshop', T>
 ): void;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeator', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointTwitterIdeatorResearchPermalink', T>
 ): void;
 
 export function iso<T>(
