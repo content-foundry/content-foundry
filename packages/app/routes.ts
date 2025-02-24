@@ -1,10 +1,5 @@
 import { PageUIDemo } from "packages/app/pages/PageUIDemo.tsx";
-
-import entrypointBlog from "packages/app/__generated__/__isograph/Query/EntrypointBlog/entrypoint.ts";
-import entrypointBlogPost from "packages/app/__generated__/__isograph/Query/EntrypointBlogPost/entrypoint.ts";
-import entrypointApp from "packages/app/__generated__/__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts";
 import type { IsographEntrypoint } from "@isograph/react";
-import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { FinalCutProXML } from "packages/tools/FinalCutProXML.tsx";
 
 function fileHandlerFactory(url: string) {
@@ -24,7 +19,6 @@ export type RouteGuts = {
 export type RouteMap = Map<string, RouteGuts>;
 
 export const appRoutes: RouteMap = new Map([
-  ["/", { Component: PageMarketing }],
   ["/ui", { Component: PageUIDemo }],
   ["/fcp", { Component: FinalCutProXML }],
 ]);
@@ -37,25 +31,18 @@ export type RouteEntrypoint = {
   title: string;
 };
 
-iso(`entrypoint Query.EntrypointBlog`);
-iso(`entrypoint Query.EntrypointBlogPost`);
-iso(`entrypoint Query.EntrypointContentFoundryApp`);
-iso(`entrypoint Query.EntrypointDocs`);
-iso(`entrypoint Query.EntrypointDocsPost`);
-iso(`entrypoint Query.EntrypointTwitterIdeator`);
-iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshop`);
-iso(`entrypoint Query.entrypointTwitterIdeatorResearch`);
-iso(`entrypoint Query.EntrypointTwitterIdeatorVoice`);
-iso(`entrypoint Query.EntrypointTwitterIdeatorCompose`);
-
-import entrypointDocs from "packages/app/__generated__/__isograph/Query/EntrypointDocs/entrypoint.ts";
-import entrypointDocsPost from "packages/app/__generated__/__isograph/Query/EntrypointDocsPost/entrypoint.ts";
-import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts";
-import entrypointTwitterIdeatorWorkshop from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts";
-import entrypointTwitterIdeatorResearch from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearch/entrypoint.ts";
-import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts";
-import entrypointTwitterIdeatorCompose from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorCompose/entrypoint.ts";
-import { PageMarketing } from "packages/app/pages/PageMarketing.tsx";
+import {
+  entrypointBlog,
+  entrypointBlogPost,
+  entrypointContentFoundryApp,
+  entrypointDocs,
+  entrypointDocsPost,
+  entrypointTwitterIdeator,
+  entrypointTwitterIdeatorCompose,
+  entrypointTwitterIdeatorResearch,
+  entrypointTwitterIdeatorVoice,
+  entrypointTwitterIdeatorWorkshop,
+} from "packages/app/__generated__/builtRoutes.ts";
 
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
   ["/twitter", entrypointTwitterIdeator],
@@ -69,7 +56,7 @@ export const loggedInAppRoutes = new Map<string, IsographRoute>([
 ]);
 
 export const isographAppRoutes = new Map<string, IsographRoute>([
-  ["/login", entrypointApp],
+  ["/login", entrypointContentFoundryApp],
   ["/blog/:slug", entrypointBlogPost],
   ["/blog", entrypointBlog],
   ["/docs/:docsSlug", entrypointDocsPost],
