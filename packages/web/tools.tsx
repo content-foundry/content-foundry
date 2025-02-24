@@ -79,7 +79,7 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
           : undefined,
         redirect: "manual",
       });
-      logger.info(response);
+      logger.debug(response);
       return response;
     } catch (_) {
       // If the proxy doesn't respond, show "backend hasn't responded" page
@@ -178,7 +178,7 @@ if (import.meta.main) {
       const res = await matchedHandler(req, routeParams);
       const perf = performance.now() - timer;
       const perfInMs = Math.round(perf);
-      logger.info(
+      logger.debug(
         `[${
           new Date().toISOString()
         }] [${req.method}] ${res.status} ${incomingUrl} ${
