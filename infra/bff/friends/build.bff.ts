@@ -91,6 +91,7 @@ export async function build([waitForFail]: Array<string>): Promise<number> {
   if (contentResult !== 0) {
     return contentResult;
   }
+  
   const result = await runShellCommand(["./packages/graphql/graphqlServer.ts"]);
   if (result) return result;
   const isographResult = await runShellCommand(
