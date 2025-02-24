@@ -168,8 +168,7 @@ type BfOrganization implements BfNode & Node {
 
 type BfOrganization_Identity {
   twitter: Twitter
-  voice: String
-  voiceSummary: String
+  voice: Voice
 }
 
 type BfOrganization_Research {
@@ -184,7 +183,7 @@ type BfPerson implements BfNode & Node {
 
 type Creation {
   originalText: String
-  suggestions: [String]
+  suggestions: [Suggestion]
 }
 
 type Distribution {
@@ -200,9 +199,11 @@ scalar JSONString
 
 type Mutation {
   checkEmail(email: String!): Boolean
+  createVoice(handle: String!): Voice
   getLoginOptions(email: String!): JSONString
   login(authResp: JSONString!, email: String!): BfCurrentViewer
   loginAsDemoPerson: BfCurrentViewerLoggedIn
+  makeTweets(tweet: String!): Creation
   register(attResp: JSONString!, email: String!): BfCurrentViewerLoggedIn
   registrationOptions(email: String!): JSONString
   submitYcForm(formData: String, systemPrompt: String, taskPrompt: String): YCRecommendations
@@ -267,10 +268,20 @@ type ResearchTopic {
   name: String
 }
 
+type Suggestion {
+  explanation: String
+  tweet: String
+}
+
 type Twitter {
   handle: String
   imgUrl: String
   name: String
+}
+
+type Voice {
+  voice: String
+  voiceSummary: String
 }
 
 type YCRecommendationItem {

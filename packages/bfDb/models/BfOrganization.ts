@@ -5,11 +5,41 @@ import type { JSONValue } from "packages/bfDb/bfDb.ts";
 const _logger = getLogger(import.meta);
 
 type Props = {
-  identity?: Record<string, JSONValue>;
-  research: Record<string, JSONValue>;
-  creation: Record<string, JSONValue>;
-  distribution: Record<string, JSONValue>;
-  analytics: Record<string, JSONValue>;
+  identity?: {
+    twitter?: {
+      handle?: string | null;
+      name?: string | null;
+      imgUrl?: string | null;
+    } | null;
+    voice?: {
+      voice?: string | null;
+      voiceSummary?: string | null;
+    } | null;
+  } | null;
+  research?: {
+    topics?:
+      | Array<{
+        name: string;
+        entries: Array<{
+          type: string;
+          name: string;
+          summary: string;
+          url: string;
+        }>;
+      }>
+      | null;
+  } | null;
+  creation?: {
+    originalText?: string | null;
+    suggestions?:
+      | Array<{
+        tweet: string;
+        explanation: string;
+      }>
+      | null;
+  };
+  distribution?: Record<string, JSONValue>;
+  analytics?: Record<string, JSONValue>;
 };
 
 export class BfOrganization extends BfNode<Props> {

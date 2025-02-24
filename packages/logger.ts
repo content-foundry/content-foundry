@@ -58,25 +58,25 @@ if (!isBrowser()) {
     },
   });
 
-  logLevelPrefixPlugin.reg(log);
-  logLevelPrefixPlugin.apply(log, {
-    template: "%l:",
-    levelFormatter(level) {
-      return level.toUpperCase();
-    },
-    nameFormatter(name) {
-      if (name === "github_annotations") return "";
-      return name ?? "";
-    },
-    // Use `_timestamp` so that Deno doesn't warn about unused variable
-    format(level, name, _timestamp, ...messages) {
-      if (name === "github_annotations" && level === "error") {
-        const msg = messages.join(" ");
-        return `::error::${msg}`;
-      }
-      return messages.join(" ");
-    },
-  });
+  // logLevelPrefixPlugin.reg(log);
+  // logLevelPrefixPlugin.apply(log, {
+  //   template: "%l:",
+  //   levelFormatter(level) {
+  //     return level.toUpperCase();
+  //   },
+  //   nameFormatter(name) {
+  //     if (name === "github_annotations") return "";
+  //     return name ?? "";
+  //   },
+  //   // Use `_timestamp` so that Deno doesn't warn about unused variable
+  //   format(level, name, _timestamp, ...messages) {
+  //     if (name === "github_annotations" && level === "error") {
+  //       const msg = messages.join(" ");
+  //       return `::error::${msg}`;
+  //     }
+  //     return messages.join(" ");
+  //   },
+  // });
 }
 
 const loggerCache = new Map<string, log.Logger>();

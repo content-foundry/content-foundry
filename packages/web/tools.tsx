@@ -64,7 +64,7 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
   try {
     await Deno.readTextFile("./tmp/ghcode");
     // If the file exists, return the default route response
-    return defaultRoute(req);
+    return defaultRoute();
   } catch {
     // File doesn't exist, proceed with proxy
     const url = new URL(req.url);
@@ -79,7 +79,7 @@ const proxyRoute: Handler = async (req: Request): Promise<Response> => {
           : undefined,
         redirect: "manual",
       });
-      logger.info(response);
+      logger.debug(response);
       return response;
     } catch (_) {
       // If the proxy doesn't respond, show "backend hasn't responded" page
@@ -178,7 +178,7 @@ if (import.meta.main) {
       const res = await matchedHandler(req, routeParams);
       const perf = performance.now() - timer;
       const perfInMs = Math.round(perf);
-      logger.info(
+      logger.debug(
         `[${
           new Date().toISOString()
         }] [${req.method}] ${res.status} ${incomingUrl} ${

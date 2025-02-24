@@ -19,8 +19,10 @@ export const Sidebar = iso(`
         name
         imgUrl
       }
-      voiceSummary
-      voice
+      voice {
+        voiceSummary
+        voice
+      }
     }
   }
 `)(
@@ -42,20 +44,13 @@ export const Sidebar = iso(`
       <div className="flexColumn left-side-bar">
         <div className="sidebar-header">
           <SubpageHeaderTitle>
-            Twitter Ideator
+            Tweet Ideator
           </SubpageHeaderTitle>
         </div>
         <div className="user-card">
-          <div
-            className="user-card-image"
-            style={{
-              background:
-                `url(${data.identity?.twitter?.imgUrl}) no-repeat 50% 50% / cover`,
-            }}
-          />
           <div>
-            <div>{data.identity?.twitter?.name}</div>
-            <div className="user-handle">@{data.identity?.twitter?.handle}</div>
+            <div className="bold">X user</div>
+            <div>@{data.identity?.twitter?.handle}</div>
           </div>
         </div>
         <div className="flexColumn instructions">
@@ -78,12 +73,12 @@ export const Sidebar = iso(`
             {showVerboseVoice
               ? (
                 <div>
-                  {data.identity?.voice}
+                  {data.identity?.voice?.voice}
                 </div>
               )
               : (
                 <div>
-                  {data.identity?.voiceSummary}
+                  {data.identity?.voice?.voiceSummary}
                 </div>
               )}
           </div>

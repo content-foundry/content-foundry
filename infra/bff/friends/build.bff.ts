@@ -14,6 +14,7 @@ const allowedEnvironmentVariables = [
   "LOG_LEVEL",
   "NODE_ENV",
   "NODE_PG_FORCE_NATIVE",
+  "OPENAI_BASE_URL",
   "OPENAI_API_KEY",
   "OPENAI_ORG_ID",
   "OPENAI_PROJECT_ID",
@@ -38,18 +39,15 @@ neonApiParts[0] = "api";
 const neonApiDomain = neonApiParts.join(".");
 
 const allowedNetworkDestionations = [
-  "api.assemblyai.com:443",
   "0.0.0.0",
   "127.0.0.1",
+  "api.assemblyai.com",
+  "esm.sh:443",
   "localhost",
   "openrouter.ai",
+  "api.openai.com:443",
   dbDomain,
   neonApiDomain,
-];
-
-const includableRemotes = [
-  "localhost:9444",
-  "jsr.io",
 ];
 
 const includableDirectories = [
@@ -77,11 +75,10 @@ const denoCompilationCommand = [
   `--allow-env=${allowedEnvironmentVariables.join(",")}`,
   `--allow-read=${readableLocations.join(",")}`,
   `--allow-run=${allowedBinaries.join(",")}`,
-  `--allow-import=${includableRemotes.join(",")}`,
   "packages/web/web.tsx",
 ];
 
-export async function build(): Promise<number> {
+export async function build([waitForFail]: Array<string>): Promise<number> {
   await Deno.remove("build", { recursive: true });
   await Deno.mkdir("build", { recursive: true });
   await Deno.writeFile("build/.gitkeep", new Uint8Array());
@@ -94,6 +91,7 @@ export async function build(): Promise<number> {
   if (contentResult !== 0) {
     return contentResult;
   }
+
   const result = await runShellCommand(["./packages/graphql/graphqlServer.ts"]);
   if (result) return result;
   const isographResult = await runShellCommand(
@@ -104,7 +102,11 @@ export async function build(): Promise<number> {
   const denoCompile = runShellCommand(denoCompilationCommand);
   const jsCompile = runShellCommand(["./infra/appBuild/appBuild.ts"]);
   const [denoResult, jsResult] = await Promise.all([denoCompile, jsCompile]);
-
+  if ((denoResult || jsResult) && waitForFail) {
+    return new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Build failed")), 10000);
+    });
+  }
   return denoResult || jsResult;
 }
 

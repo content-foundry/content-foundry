@@ -4,6 +4,10 @@ import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { BfDsDropzone } from "packages/bfDs/components/BfDsDropzone.tsx";
 import { getLogger } from "packages/logger.ts";
+import { useMutation } from "packages/app/hooks/isographPrototypes/useMutation.tsx";
+import { useState } from "react";
+import createVoiceMutation from "packages/app/__generated__/__isograph/Mutation/CreateVoice/entrypoint.ts";
+import { BfDsCallout } from "packages/bfDs/components/BfDsCallout.tsx";
 
 export const EntrypointTwitterIdeatorVoice = iso(`
   field BfOrganization.IdentityEditor @component {
@@ -15,7 +19,12 @@ export const EntrypointTwitterIdeatorVoice = iso(`
   function EntrypointTwitterIdeatorVoice(
     { data },
   ) {
+    const { commit } = useMutation(createVoiceMutation);
+    const [isInFlight, setIsInFlight] = useState(false);
     const EditIdentity = data.identity?.EditIdentity;
+    const [handle, setHandle] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const showZip = false;
     const logger = getLogger(import.meta);
     return (
       <div className="page">
@@ -35,30 +44,59 @@ export const EntrypointTwitterIdeatorVoice = iso(`
                 </div>
                 <BfDsInput
                   label="Twitter handle"
-                  placeholder="@George_LeVitre"
+                  placeholder="George_LeVitre"
+                  value={handle}
+                  onChange={(e) => setHandle(e.target.value)}
                 />
-                <div className="line-separator-container">
-                  <div className="line" />
-                  <div>OR</div>
-                  <div className="line" />
-                </div>
-                <div className="voice-section-text">
-                  Upload an archive of all your tweets. You can download on{" "}
-                  <a href="https://x.com/settings/download_your_data">
-                    x.com
-                  </a>
-                </div>
-                <BfDsDropzone
-                  accept="application/zip, .zip"
-                  onFileSelect={() => (logger.info("foo"))}
-                />
+                {showZip && (
+                  <>
+                    <div className="line-separator-container">
+                      <div className="line" />
+                      <div>OR</div>
+                      <div className="line" />
+                    </div>
+                    <div className="voice-section-text">
+                      Upload an archive of all your tweets. You can download on
+                      {" "}
+                      <a href="https://x.com/settings/download_your_data">
+                        x.com
+                      </a>
+                    </div>
+                    <BfDsDropzone
+                      accept="application/zip, .zip"
+                      onFileSelect={() => (logger.info("foo"))}
+                    />
+                  </>
+                )}
                 <BfDsButton
+                  disabled={handle.length === 0 || isInFlight}
                   kind="primary"
                   type="submit"
+                  showSpinner={isInFlight}
                   text="Submit"
                   xstyle={{ alignSelf: "flex-end" }}
-                  onClick={() => (logger.info("foo"))}
+                  onClick={() => {
+                    setError(null);
+                    setIsInFlight(true);
+                    commit({ handle: handle }, {
+                      onError: () => {
+                        setError("An error occurred.");
+                        setIsInFlight(false);
+                      },
+                      onComplete: (createVoiceMutationData) => {
+                        setIsInFlight(false);
+                        setHandle("");
+                        logger.debug(
+                          "voice created successfully",
+                          createVoiceMutationData,
+                        );
+                      },
+                    });
+                  }}
                 />
+                {error && (
+                  <BfDsCallout kind="error" header="Error" body={error} />
+                )}
               </>
             )}
           </div>

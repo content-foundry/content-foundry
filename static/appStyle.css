@@ -68,7 +68,7 @@
   background: var(--background);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 20px;
+  padding: 20px 48px;
 }
 .voice-section-header {
   display: flex;
@@ -229,6 +229,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border: 1px solid var(--border);
 }
 .steps{
   gap: 10px;
@@ -273,7 +274,6 @@
   justify-content: space-between;
 }
 .current-events-header-container-text {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -509,8 +509,8 @@
   font-size: 14px;
   background: var(--pageBackground);
   border: 1px solid var(--border);
-  padding: 12px;
-  border-radius: 4px;
+  padding: 20px 32px;
+  border-radius: 6px;
   position: relative;
   width: 100%;
   box-sizing: border-box;

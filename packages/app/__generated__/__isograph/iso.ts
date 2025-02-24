@@ -17,8 +17,6 @@ import { type BfCurrentViewerLoggedOut__LoginAndRegisterForm__param } from './Bf
 import { type BfCurrentViewerLoggedOut__LoginButton__param } from './BfCurrentViewerLoggedOut/LoginButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__RegisterButton__param } from './BfCurrentViewerLoggedOut/RegisterButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentViewerLoggedOut/WelcomeVideo/param_type.ts';
-import { type BfDocs__DocsList__param } from './BfDocs/DocsList/param_type.ts';
-import { type BfDocs__DocsPostList__param } from './BfDocs/DocsPostList/param_type.ts';
 import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
 import { type BfOrganization__HistorySidebar__param } from './BfOrganization/HistorySidebar/param_type.ts';
 import { type BfOrganization__IdentityEditor__param } from './BfOrganization/IdentityEditor/param_type.ts';
@@ -31,9 +29,11 @@ import { type BfOrganization_Identity__EditIdentity__param } from './BfOrganizat
 import { type BfOrganization_Research__Topics__param } from './BfOrganization_Research/Topics/param_type.ts';
 import { type BfOrganization_Research__Topic__param } from './BfOrganization_Research/Topic/param_type.ts';
 import { type Mutation__CheckEmail__param } from './Mutation/CheckEmail/param_type.ts';
+import { type Mutation__CreateVoice__param } from './Mutation/CreateVoice/param_type.ts';
 import { type Mutation__GetLoginOptions__param } from './Mutation/GetLoginOptions/param_type.ts';
 import { type Mutation__LoginAsDemoPerson__param } from './Mutation/LoginAsDemoPerson/param_type.ts';
 import { type Mutation__Login__param } from './Mutation/Login/param_type.ts';
+import { type Mutation__MakeTweets__param } from './Mutation/MakeTweets/param_type.ts';
 import { type Mutation__Register__param } from './Mutation/Register/param_type.ts';
 import { type Mutation__RegistrationOptions__param } from './Mutation/RegistrationOptions/param_type.ts';
 import { type Mutation__SubmitYcForm__param } from './Mutation/SubmitYcForm/param_type.ts';
@@ -172,14 +172,6 @@ export function iso<T>(
 ): IdentityWithParamComponent<BfCurrentViewerLoggedOut__WelcomeVideo__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfDocs.DocsList', T>
-): IdentityWithParamComponent<BfDocs__DocsList__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfDocs.DocsPostList', T>
-): IdentityWithParam<BfDocs__DocsPostList__param>;
-
-export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfDocsPost.DocsPostListItem', T>
 ): IdentityWithParamComponent<BfDocsPost__DocsPostListItem__param>;
 
@@ -228,6 +220,10 @@ export function iso<T>(
 ): IdentityWithParam<Mutation__CheckEmail__param>;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Mutation.CreateVoice', T>
+): IdentityWithParam<Mutation__CreateVoice__param>;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.GetLoginOptions', T>
 ): IdentityWithParam<Mutation__GetLoginOptions__param>;
 
@@ -238,6 +234,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.Login', T>
 ): IdentityWithParam<Mutation__Login__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Mutation.MakeTweets', T>
+): IdentityWithParam<Mutation__MakeTweets__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.Register', T>
@@ -308,6 +308,10 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CreateVoice', T>
+): void;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.GetLoginOptions', T>
 ): void;
 
@@ -317,6 +321,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.Login', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Mutation.MakeTweets', T>
 ): void;
 
 export function iso<T>(
@@ -360,11 +368,19 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink', T>
+): void;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorWorkshop', T>
 ): void;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeator', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointTwitterIdeatorResearchPermalink', T>
 ): void;
 
 export function iso<T>(

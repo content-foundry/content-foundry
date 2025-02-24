@@ -22,6 +22,13 @@
   font-weight: normal;
   line-height: 1em;
 }
+.tools-h1 a {
+  color: var(--text);
+  text-decoration: none;
+}
+.tools-h1 a:hover {
+  color: var(--secondaryColor);
+}
 
 .tools-logo {
   width: 224px;

@@ -13,7 +13,10 @@ const queryText = 'query EntrypointTwitterIdeatorWorkshop  {\
       __typename,\
       creation {\
         originalText,\
-        suggestions,\
+        suggestions {\
+          explanation,\
+          tweet,\
+        },\
       },\
       identity {\
         twitter {\
@@ -21,8 +24,10 @@ const queryText = 'query EntrypointTwitterIdeatorWorkshop  {\
           imgUrl,\
           name,\
         },\
-        voice,\
-        voiceSummary,\
+        voice {\
+          voice,\
+          voiceSummary,\
+        },\
       },\
     },\
   },\
@@ -75,9 +80,22 @@ const normalizationAst: NormalizationAst = {
                   arguments: null,
                 },
                 {
-                  kind: "Scalar",
+                  kind: "Linked",
                   fieldName: "suggestions",
                   arguments: null,
+                  concreteType: "Suggestion",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "explanation",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "tweet",
+                      arguments: null,
+                    },
+                  ],
                 },
               ],
             },
@@ -111,14 +129,22 @@ const normalizationAst: NormalizationAst = {
                   ],
                 },
                 {
-                  kind: "Scalar",
+                  kind: "Linked",
                   fieldName: "voice",
                   arguments: null,
-                },
-                {
-                  kind: "Scalar",
-                  fieldName: "voiceSummary",
-                  arguments: null,
+                  concreteType: "Voice",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "voice",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "voiceSummary",
+                      arguments: null,
+                    },
+                  ],
                 },
               ],
             },

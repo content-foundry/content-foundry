@@ -1,5 +1,4 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
-import type { RouteEntrypoint } from "packages/app/routes.ts";
 import { getLogger } from "packages/logger.ts";
 
 const _logger = getLogger(import.meta);
@@ -19,17 +18,17 @@ export const EntrypointTwitterIdeatorWorkshopPermalink = iso(`
   }
 `)(
   function EntrypointTwitterIdeatorWorkshopPermalink(
-    { data },
-  ): RouteEntrypoint {
-    let Body;
+    // { data },
+  ) {
+    // let Body;
 
-    Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice;
-    Body ??= () => null;
+    // Body ??= data?.me?.asBfCurrentViewerLoggedIn?.storyBank?.CreateVoice;
+    // Body ??= () => null;
 
     // a future api suggestion:
     // if (Body == null) {
     //   return { redirectToLogin: true };
     // }
-    return { Body, title: "Twitter Workshopping" };
+    return { Body: () => null, title: "Twitter Workshopping" };
   },
 );

@@ -4,7 +4,7 @@ import { BlogFrame } from "packages/app/components/BfBlog/BlogFrame.tsx";
 export const Blog = iso(`
   field BfCurrentViewer.Blog @component {
     blog {
-     BlogPostList
+      BlogPostList
     }
   }
 `)(function Blog({ data }) {
