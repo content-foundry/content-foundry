@@ -118,16 +118,12 @@ export const createVoiceMutation = mutationField("createVoice", {
     if (!org) {
       throw new Error("No organization found");
     }
-    // TODO: get twitter name and picture
-    // const twitterResponse...
     const voiceResponse = await getVoice(handle);
     org.props = {
       ...org.props,
       identity: {
         twitter: {
           handle,
-          // name: twitterResponse.name,
-          // imgUrl: twitterResponse.imgUrl,
         },
         voice: voiceResponse,
       },

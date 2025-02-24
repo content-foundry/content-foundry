@@ -6,7 +6,6 @@ import { classnames } from "lib/classnames.ts";
 import { BfDsTextArea } from "packages/bfDs/components/BfDsTextArea.tsx";
 import { getLogger } from "packages/logger.ts";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
-
 const logger = getLogger(import.meta);
 
 export const EditIdentity = iso(`
@@ -27,13 +26,14 @@ export const EditIdentity = iso(`
       highlight: !showChanges,
     },
   ]);
+
   return (
     <>
       <h2 className="voice-section-header">
         How does this look?
       </h2>
       <div className={sectionClasses}>
-        {data?.voice?.voice ?? ""}
+        {data.voice?.voice ?? ""}
       </div>
       {!showChanges &&
         (
