@@ -1,5 +1,4 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
-import type { RouteEntrypoint } from "packages/app/routes.ts";
 import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
@@ -15,7 +14,7 @@ export const EntrypointBlogPost = iso(`
       }
     }
   }
-`)(function EntrypointBlogPost({ data }): RouteEntrypoint {
+`)(function EntrypointBlogPost({ data }){
   const Body = data?.me?.blog?.post?.BlogPostListItem ?? (() => "nope");
   logger.debug("data", data);
   const title = "Blog Post";
