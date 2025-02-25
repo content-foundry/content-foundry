@@ -7,6 +7,7 @@ import { hydrateRoot } from "react-dom/client";
 import { BfDsProvider } from "packages/bfDs/contexts/BfDsContext.tsx";
 import { ErrorBoundary } from "packages/app/components/ErrorBoundary.tsx";
 import { getLogger } from "packages/logger.ts";
+import { AppSidebar } from "packages/app/components/AppSidebar.tsx";
 const logger = getLogger(import.meta);
 
 export function ClientRoot(
@@ -19,7 +20,10 @@ export function ClientRoot(
     <BfDsProvider>
       <ErrorBoundary>
         <AppEnvironmentProvider {...appEnvironment}>
-          {children}
+          {/* I know this is the wrong place... wip */}
+          <AppSidebar>
+            {children}
+          </AppSidebar>
         </AppEnvironmentProvider>
       </ErrorBoundary>
     </BfDsProvider>
