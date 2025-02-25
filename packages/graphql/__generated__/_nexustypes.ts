@@ -61,8 +61,21 @@ export interface NexusGenObjects {
     tbd?: string | null; // String
   }
   BfBlog: { // root type
+    description?: string | null; // String
     id: string; // ID!
+    isPublic?: boolean | null; // Boolean
     name?: string | null; // String
+    slug?: string | null; // String
+  }
+  BfBlogConnection: { // root type
+    count?: number | null; // Int
+    edges?: Array<NexusGenRootTypes['BfBlogEdge'] | null> | null; // [BfBlogEdge]
+    nodes?: Array<NexusGenRootTypes['BfBlog'] | null> | null; // [BfBlog]
+    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
+  }
+  BfBlogEdge: { // root type
+    cursor: string; // String!
+    node?: NexusGenRootTypes['BfBlog'] | null; // BfBlog
   }
   BfBlogPost: { // root type
     author?: string | null; // String
@@ -77,10 +90,10 @@ export interface NexusGenObjects {
     count?: number | null; // Int
     edges?: Array<NexusGenRootTypes['BfBlogPostEdge'] | null> | null; // [BfBlogPostEdge]
     nodes?: Array<NexusGenRootTypes['BfBlogPost'] | null> | null; // [BfBlogPost]
-    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
+    pageInfo?: NexusGenRootTypes['PageInfo'] | null; // PageInfo
   }
   BfBlogPostEdge: { // root type
-    cursor: string; // String!
+    cursor?: string | null; // String
     node?: NexusGenRootTypes['BfBlogPost'] | null; // BfBlogPost
   }
   BfCurrentViewerLoggedIn: { // root type
@@ -199,10 +212,25 @@ export interface NexusGenFieldTypes {
     tbd: string | null; // String
   }
   BfBlog: { // field return type
+    description: string | null; // String
+    featuredPosts: NexusGenRootTypes['BfBlogPostConnection'] | null; // BfBlogPostConnection
     id: string; // ID!
+    isPublic: boolean | null; // Boolean
     name: string | null; // String
     post: NexusGenRootTypes['BfBlogPost'] | null; // BfBlogPost
     posts: NexusGenRootTypes['BfBlogPostConnection'] | null; // BfBlogPostConnection
+    slug: string | null; // String
+    url: string | null; // String
+  }
+  BfBlogConnection: { // field return type
+    count: number | null; // Int
+    edges: Array<NexusGenRootTypes['BfBlogEdge'] | null> | null; // [BfBlogEdge]
+    nodes: Array<NexusGenRootTypes['BfBlog'] | null> | null; // [BfBlog]
+    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
+  }
+  BfBlogEdge: { // field return type
+    cursor: string; // String!
+    node: NexusGenRootTypes['BfBlog'] | null; // BfBlog
   }
   BfBlogPost: { // field return type
     author: string | null; // String
@@ -210,27 +238,34 @@ export interface NexusGenFieldTypes {
     cta: string | null; // String
     href: string | null; // String
     id: string; // ID!
+    isPublished: boolean | null; // Boolean
+    publishedAt: string | null; // String
     slug: string | null; // String
     summary: string | null; // String
+    tags: Array<string | null> | null; // [String]
     title: string | null; // String
   }
   BfBlogPostConnection: { // field return type
     count: number | null; // Int
     edges: Array<NexusGenRootTypes['BfBlogPostEdge'] | null> | null; // [BfBlogPostEdge]
     nodes: Array<NexusGenRootTypes['BfBlogPost'] | null> | null; // [BfBlogPost]
-    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
+    pageInfo: NexusGenRootTypes['PageInfo'] | null; // PageInfo
   }
   BfBlogPostEdge: { // field return type
-    cursor: string; // String!
+    cursor: string | null; // String
+    featured: boolean | null; // Boolean
     node: NexusGenRootTypes['BfBlogPost'] | null; // BfBlogPost
+    order: number | null; // Int
   }
   BfCurrentViewerLoggedIn: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
+    blogs: NexusGenRootTypes['BfBlogConnection'] | null; // BfBlogConnection
     id: string; // ID!
     organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
   BfCurrentViewerLoggedOut: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
+    blogs: NexusGenRootTypes['BfBlogConnection'] | null; // BfBlogConnection
     id: string; // ID!
     organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
@@ -339,6 +374,7 @@ export interface NexusGenFieldTypes {
   }
   BfCurrentViewer: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
+    blogs: NexusGenRootTypes['BfBlogConnection'] | null; // BfBlogConnection
     id: string; // ID!
     organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
@@ -355,10 +391,25 @@ export interface NexusGenFieldTypeNames {
     tbd: 'String'
   }
   BfBlog: { // field return type name
+    description: 'String'
+    featuredPosts: 'BfBlogPostConnection'
     id: 'ID'
+    isPublic: 'Boolean'
     name: 'String'
     post: 'BfBlogPost'
     posts: 'BfBlogPostConnection'
+    slug: 'String'
+    url: 'String'
+  }
+  BfBlogConnection: { // field return type name
+    count: 'Int'
+    edges: 'BfBlogEdge'
+    nodes: 'BfBlog'
+    pageInfo: 'PageInfo'
+  }
+  BfBlogEdge: { // field return type name
+    cursor: 'String'
+    node: 'BfBlog'
   }
   BfBlogPost: { // field return type name
     author: 'String'
@@ -366,8 +417,11 @@ export interface NexusGenFieldTypeNames {
     cta: 'String'
     href: 'String'
     id: 'ID'
+    isPublished: 'Boolean'
+    publishedAt: 'String'
     slug: 'String'
     summary: 'String'
+    tags: 'String'
     title: 'String'
   }
   BfBlogPostConnection: { // field return type name
@@ -378,15 +432,19 @@ export interface NexusGenFieldTypeNames {
   }
   BfBlogPostEdge: { // field return type name
     cursor: 'String'
+    featured: 'Boolean'
     node: 'BfBlogPost'
+    order: 'Int'
   }
   BfCurrentViewerLoggedIn: { // field return type name
     blog: 'BfBlog'
+    blogs: 'BfBlogConnection'
     id: 'ID'
     organization: 'BfOrganization'
   }
   BfCurrentViewerLoggedOut: { // field return type name
     blog: 'BfBlog'
+    blogs: 'BfBlogConnection'
     id: 'ID'
     organization: 'BfOrganization'
   }
@@ -495,6 +553,7 @@ export interface NexusGenFieldTypeNames {
   }
   BfCurrentViewer: { // field return type name
     blog: 'BfBlog'
+    blogs: 'BfBlogConnection'
     id: 'ID'
     organization: 'BfOrganization'
   }
@@ -508,10 +567,36 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   BfBlog: {
+    featuredPosts: { // args
+      after?: string | null; // String
+      before?: string | null; // String
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
     post: { // args
       id?: string | null; // ID
+      slug?: string | null; // String
     }
     posts: { // args
+      after?: string | null; // String
+      before?: string | null; // String
+      featured?: boolean | null; // Boolean
+      first?: number | null; // Int
+      last?: number | null; // Int
+      limit?: number | null; // Int
+      status?: string | null; // String
+    }
+  }
+  BfCurrentViewerLoggedIn: {
+    blogs: { // args
+      after?: string | null; // String
+      before?: string | null; // String
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
+  }
+  BfCurrentViewerLoggedOut: {
+    blogs: { // args
       after?: string | null; // String
       before?: string | null; // String
       first?: number | null; // Int
@@ -551,6 +636,14 @@ export interface NexusGenArgTypes {
   Query: {
     bfNode: { // args
       id?: string | null; // ID
+    }
+  }
+  BfCurrentViewer: {
+    blogs: { // args
+      after?: string | null; // String
+      before?: string | null; // String
+      first?: number | null; // Int
+      last?: number | null; // Int
     }
   }
 }

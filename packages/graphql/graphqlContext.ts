@@ -18,6 +18,11 @@ import type {
   RegistrationResponseJSON,
 } from "@simplewebauthn/server";
 import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
+import { BfBlog } from "packages/bfDb/models/BfBlog.ts";
+import { BfBlogPost } from "packages/bfDb/models/BfBlogPost.ts";
+import type { BfEdge } from "packages/bfDb/coreModels/BfEdge.ts";
+import type { Connection, ConnectionArguments } from "graphql-relay";
+import { bfQueryItemsForGraphQLConnection } from "packages/bfDb/bfDb.ts";
 
 const logger = getLogger(import.meta);
 
@@ -63,6 +68,22 @@ export type Context = {
   getResponseHeaders(): Headers;
   loginDemoUser(): Promise<BfCurrentViewer>;
   findOrganizationForCurrentViewer(): Promise<BfOrganization | null>;
+  queryConnectionForGraphql<
+    TProps extends BfNodeBaseProps,
+    TBfClass extends typeof BfNode<TProps>,
+    TEdgeClass extends typeof BfEdge,
+  >(
+    SourceNodeClass: TBfClass,
+    TargetNodeClass: TBfClass,
+    EdgeClass: TEdgeClass,
+    sourceId: BfGid,
+    args: ConnectionArguments,
+    filters?: {
+      edgeProps?: Record<string, unknown>;
+      targetProps?: Record<string, unknown>;
+    },
+  ): Promise<Connection<InstanceType<TBfClass>> & { count: number }>;
+  getMainBlog(): Promise<BfBlog>;
 };
 
 export async function createContext(request: Request): Promise<Context> {
@@ -130,7 +151,6 @@ export async function createContext(request: Request): Promise<Context> {
     getRequestHeader(name: string) {
       return request.headers.get(name);
     },
-    // responseHeaders,
 
     getCvForGraphql() {
       return currentViewer.toGraphql();
@@ -198,6 +218,75 @@ export async function createContext(request: Request): Promise<Context> {
         { bfCid: currentViewer.bfGid },
       );
       return orgs[0];
+    },
+
+    /**
+     * Query a connection for GraphQL, handling edges and pagination
+     */
+    async queryConnectionForGraphql<
+      TProps extends BfNodeBaseProps,
+      TBfClass extends typeof BfNode<TProps>,
+      TEdgeClass extends typeof BfEdge,
+    >(
+      SourceNodeClass: TBfClass,
+      TargetNodeClass: TBfClass,
+      EdgeClass: TEdgeClass,
+      sourceId: BfGid,
+      args: ConnectionArguments,
+      filters?: {
+        edgeProps?: Record<string, unknown>;
+        targetProps?: Record<string, unknown>;
+      },
+    ): Promise<Connection<InstanceType<TBfClass>> & { count: number }> {
+      logger.debug("Querying connection for GraphQL", {
+        sourceClass: SourceNodeClass.name,
+        targetClass: TargetNodeClass.name,
+        edgeClass: EdgeClass.name,
+        sourceId,
+        args,
+        filters,
+      });
+
+      // First, get the source node
+      const sourceNode = await this.findX(SourceNodeClass, sourceId);
+
+      // Get all edges from source to targets of the specified class
+      const edges = await EdgeClass.findBySource(
+        currentViewer,
+        sourceNode,
+        TargetNodeClass.name,
+      );
+
+      // Filter edges by properties if specified
+      let filteredEdges = edges;
+      if (filters?.edgeProps) {
+        filteredEdges = edges.filter((edge) => {
+          return Object.entries(filters.edgeProps).every(([key, value]) => {
+            return edge.props[key] === value;
+          });
+        });
+      }
+
+      // Get all target IDs
+      const targetIds = filteredEdges.map((edge) => edge.targetId);
+
+      // Query the connection using bfQueryItemsForGraphQLConnection
+      const connection = await bfQueryItemsForGraphQLConnection(
+        {
+          className: TargetNodeClass.name,
+          bfOid: currentViewer.bfOid,
+        },
+        filters?.targetProps || {},
+        args,
+        targetIds,
+      );
+
+      return connection;
+    },
+
+    // Helper method to get the main blog
+    async getMainBlog() {
+      return await BfBlog.getMainBlog(currentViewer);
     },
   };
   return ctx;

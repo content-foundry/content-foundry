@@ -4,9 +4,6 @@ export type BfBlog__BlogPostList__param = {
   readonly data: {
     readonly __typename: string,
     readonly posts: ({
-      /**
-Flattened list of BfBlogPost type
-      */
       readonly nodes: (ReadonlyArray<({
         readonly BlogPostListItem: BfBlogPost__BlogPostListItem__output_type,
       } | null)> | null),

@@ -8,11 +8,8 @@ type Analytics {
 }
 
 type BfBlog implements BfNode & Node {
-  """Unique identifier for the resource"""
-  id: ID!
-  name: String
-  post(id: ID): BfBlogPost
-  posts(
+  description: String
+  featuredPosts(
     """Returns the elements in the list that come after the specified cursor"""
     after: String
 
@@ -25,6 +22,55 @@ type BfBlog implements BfNode & Node {
     """Returns the last n elements from the list."""
     last: Int
   ): BfBlogPostConnection
+
+  """Unique identifier for the resource"""
+  id: ID!
+  isPublic: Boolean
+  name: String
+  post(id: ID, slug: String): BfBlogPost
+  posts(
+    """Returns the elements in the list that come after the specified cursor"""
+    after: String
+
+    """Returns the elements in the list that come before the specified cursor"""
+    before: String
+    featured: Boolean
+
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+    limit: Int
+    status: String
+  ): BfBlogPostConnection
+  slug: String
+  url: String
+}
+
+type BfBlogConnection {
+  count: Int
+
+  """
+  https://facebook.github.io/relay/graphql/connections.htm#sec-Edge-Types
+  """
+  edges: [BfBlogEdge]
+
+  """Flattened list of BfBlog type"""
+  nodes: [BfBlog]
+
+  """
+  https://facebook.github.io/relay/graphql/connections.htm#sec-undefined.PageInfo
+  """
+  pageInfo: PageInfo!
+}
+
+type BfBlogEdge {
+  """https://facebook.github.io/relay/graphql/connections.htm#sec-Cursor"""
+  cursor: String!
+
+  """https://facebook.github.io/relay/graphql/connections.htm#sec-Node"""
+  node: BfBlog
 }
 
 type BfBlogPost implements BfNode & Node {
@@ -35,38 +81,43 @@ type BfBlogPost implements BfNode & Node {
 
   """Unique identifier for the resource"""
   id: ID!
+  isPublished: Boolean
+  publishedAt: String
   slug: String
   summary: String
+  tags: [String]
   title: String
 }
 
 type BfBlogPostConnection {
   count: Int
-
-  """
-  https://facebook.github.io/relay/graphql/connections.htm#sec-Edge-Types
-  """
   edges: [BfBlogPostEdge]
-
-  """Flattened list of BfBlogPost type"""
   nodes: [BfBlogPost]
-
-  """
-  https://facebook.github.io/relay/graphql/connections.htm#sec-undefined.PageInfo
-  """
-  pageInfo: PageInfo!
+  pageInfo: PageInfo
 }
 
 type BfBlogPostEdge {
-  """https://facebook.github.io/relay/graphql/connections.htm#sec-Cursor"""
-  cursor: String!
-
-  """https://facebook.github.io/relay/graphql/connections.htm#sec-Node"""
+  cursor: String
+  featured: Boolean
   node: BfBlogPost
+  order: Int
 }
 
 interface BfCurrentViewer implements Node {
   blog: BfBlog
+  blogs(
+    """Returns the elements in the list that come after the specified cursor"""
+    after: String
+
+    """Returns the elements in the list that come before the specified cursor"""
+    before: String
+
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+  ): BfBlogConnection
 
   """Unique identifier for the resource"""
   id: ID!
@@ -75,6 +126,19 @@ interface BfCurrentViewer implements Node {
 
 type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
   blog: BfBlog
+  blogs(
+    """Returns the elements in the list that come after the specified cursor"""
+    after: String
+
+    """Returns the elements in the list that come before the specified cursor"""
+    before: String
+
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+  ): BfBlogConnection
 
   """Unique identifier for the resource"""
   id: ID!
@@ -83,6 +147,19 @@ type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
 
 type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
   blog: BfBlog
+  blogs(
+    """Returns the elements in the list that come after the specified cursor"""
+    after: String
+
+    """Returns the elements in the list that come before the specified cursor"""
+    before: String
+
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+  ): BfBlogConnection
 
   """Unique identifier for the resource"""
   id: ID!
