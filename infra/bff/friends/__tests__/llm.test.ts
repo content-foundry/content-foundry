@@ -63,6 +63,30 @@ Deno.test("llm - cxml mode", async () => {
   }
 });
 
+Deno.test("llm - xml escaping in cxml mode", async () => {
+  const testDir = await Deno.makeTempDir({ prefix: "llm_test_" });
+
+  try {
+    // Create a file with a name containing XML special characters
+    const specialFile = join(testDir, "file&with<special>chars.ts");
+    await Deno.writeTextFile(specialFile, `console.log("<xml>tag</xml>");`);
+
+    const output = await runLlmAndCapture([testDir, "-c"]);
+    const joinedOutput = output.join("\n");
+
+    // Check that the file path is properly escaped in the XML
+    assertStringIncludes(joinedOutput, "<source>");
+    assertStringIncludes(joinedOutput, "&lt;special&gt;");
+    assertStringIncludes(joinedOutput, "&amp;with");
+
+    // Content should NOT be escaped - Claude expects raw content
+    assertStringIncludes(joinedOutput, 'console.log("<xml>tag</xml>");');
+    assertStringIncludes(joinedOutput, "</document_content>");
+  } finally {
+    await emptyDir(testDir);
+  }
+});
+
 Deno.test("llm - line numbers", async () => {
   const testDir = await Deno.makeTempDir({ prefix: "llm_test_" });
 
