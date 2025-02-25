@@ -81,73 +81,87 @@ async function countTokens(text: string): Promise<number> {
 }
 
 /**
+ * Escapes XML special characters in a string.
+ * This is used for file paths and other metadata that appears in XML attributes.
+ */
+function escapeXmlForAttributes(unsafe: string): string {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+/**
+ * Collects and processes files into the Claude-friendly XML format.
+ * Returns the complete output as a single string.
+ */
+async function collectFilesOutput(
+  opts: LlmOptions,
+): Promise<string> {
+  const outputParts: string[] = [];
+
+  // Start with XML header if in cxml mode
+  if (opts.cxml) {
+    outputParts.push("<documents>");
+  }
+
+  // Get gitignore patterns
+  const globalGitignorePatterns = new Set<string>();
+  if (!opts.ignoreGitignore) {
+    for (const p of opts.paths) {
+      await collectGitignorePatterns(p, globalGitignorePatterns);
+    }
+  }
+
+  // Process all requested paths
+  let docIndex = 1;
+  for (const p of opts.paths) {
+    // For each path, process files
+    const pathResult = await processFolderOrFile(
+      p,
+      opts,
+      globalGitignorePatterns,
+      docIndex,
+    );
+    // Append results to the output and update the document index
+    outputParts.push(...pathResult.parts);
+    docIndex = pathResult.nextIndex;
+  }
+
+  // Close XML if in cxml mode
+  if (opts.cxml) {
+    outputParts.push("</documents>");
+  }
+
+  // Return the complete content as a single string
+  return outputParts.join("\n");
+}
+
+/**
  * Main command: bff llm
  */
 export async function llm(args: string[]): Promise<number> {
   try {
     const opts = parseArgs(args);
 
-    let outputFileHandle: Deno.FsFile | undefined;
-    if (opts.outputFile) {
+    // Collect all output into a single string
+    const output = await collectFilesOutput(opts);
+
+    // Output based on chosen mode
+    if (opts.stdOut) {
+      logger.info(output);
+    } else if (opts.outputFile) {
       logger.info(`Writing to ${opts.outputFile}`);
-      outputFileHandle = await Deno.open(opts.outputFile, {
-        write: true,
-        create: true,
-        truncate: true,
-      });
-    }
+      await Deno.writeTextFile(opts.outputFile, output);
 
-    const writer = async (line: string) => {
-      if (outputFileHandle) {
-        await outputFileHandle.write(new TextEncoder().encode(line + "\n"));
-      } else {
-        logger.info(line);
-      }
-    };
-
-    // If cxml mode, open the <documents> tag
-    if (opts.cxml) {
-      await writer("<documents>");
-    }
-
-    const globalGitignorePatterns = new Set<string>();
-    if (!opts.ignoreGitignore) {
-      for (const p of opts.paths) {
-        await collectGitignorePatterns(p, globalGitignorePatterns);
-      }
-    }
-
-    // Process all requested paths
-    let docIndex = 1;
-    for (const p of opts.paths) {
-      docIndex = await processPath(
-        p,
-        opts,
-        globalGitignorePatterns,
-        writer,
-        docIndex,
-      );
-    }
-
-    // close cxml
-    if (opts.cxml) {
-      await writer("</documents>");
-    }
-
-    if (outputFileHandle) {
-      outputFileHandle.close();
-    }
-
-    // If no output file was specified, there's nothing to count tokens on
-    if (!opts.outputFile) {
+      // Count tokens if we have an output file
+      const totalTokens = await countTokens(output);
+      logger.warn(`Total tokens: ${totalTokens}`);
+    } else {
       logger.warn("No --output file specified; skipping token count.");
-      return 0;
     }
-
-    // Count total tokens
-    const allContent = await Deno.readTextFile(opts.outputFile);
-    const totalTokens = await countTokens(allContent);
-    logger.warn(`Total tokens: ${totalTokens}`);
 
     return 0;
   } catch (err) {
@@ -253,19 +267,31 @@ async function isDirectory(p: string): Promise<boolean> {
   return info.isDirectory;
 }
 
-async function processPath(
+/**
+ * Process a folder or file and return the resulting output parts
+ * and the next document index to use.
+ */
+async function processFolderOrFile(
   startPath: string,
   opts: LlmOptions,
   gitignorePatterns: Set<string>,
-  writer: (line: string) => Promise<void>,
   initialDocIndex: number,
-): Promise<number> {
+): Promise<{ parts: string[]; nextIndex: number }> {
+  const outputParts: string[] = [];
   let docIndex = initialDocIndex;
+
   const dirCheck = await isDirectory(startPath);
   if (!dirCheck) {
-    return await outputOneFile(startPath, writer, opts, docIndex);
+    // Process single file case
+    const fileResult = await processFile(startPath, opts, docIndex);
+    if (fileResult) {
+      outputParts.push(...fileResult.parts);
+      docIndex = fileResult.nextIndex;
+    }
+    return { parts: outputParts, nextIndex: docIndex };
   }
 
+  // Process directory case
   for await (
     const entry of walk(startPath, {
       maxDepth: Infinity,
@@ -275,26 +301,28 @@ async function processPath(
   ) {
     const filename = basename(entry.path);
 
-    // 1) skip hidden files unless --include-hidden
+    // Apply filters
     if (!opts.includeHidden && filename.startsWith(".")) continue;
-    // 2) skip if pattern matched
     if (shouldIgnore(entry.path, opts.ignorePatterns, opts.ignoreFilesOnly)) {
       continue;
     }
-    // 3) skip if matches .gitignore
     if (
       !opts.ignoreGitignore && matchesGitignore(entry.path, gitignorePatterns)
     ) continue;
-    // 4) skip if extension not in list
     if (opts.extensions.length > 0) {
       const fext = extname(entry.path);
       if (!opts.extensions.includes(fext)) continue;
     }
 
-    docIndex = await outputOneFile(entry.path, writer, opts, docIndex);
+    // Process each file
+    const fileResult = await processFile(entry.path, opts, docIndex);
+    if (fileResult) {
+      outputParts.push(...fileResult.parts);
+      docIndex = fileResult.nextIndex;
+    }
   }
 
-  return docIndex;
+  return { parts: outputParts, nextIndex: docIndex };
 }
 
 async function isBinaryFile(filePath: string): Promise<boolean> {
@@ -319,62 +347,52 @@ async function isBinaryFile(filePath: string): Promise<boolean> {
   }
 }
 
-async function outputOneFile(
+/**
+ * Process a single file and return its output parts + next index
+ */
+async function processFile(
   filePath: string,
-  writer: (line: string) => Promise<void>,
   opts: LlmOptions,
   docIndex: number,
-): Promise<number> {
+): Promise<{ parts: string[]; nextIndex: number } | null> {
+  // Skip binary files
   if (await isBinaryFile(filePath)) {
-    return docIndex; // skip
+    return null;
   }
 
+  // Try to read the file
   let content: string;
   try {
     content = await Deno.readTextFile(filePath);
   } catch {
-    return docIndex;
+    return null;
   }
 
-  const outputLines: string[] = [];
+  const parts: string[] = [];
+
+  if (opts.lineNumbers) {
+    content = addLineNumbers(content);
+  }
+
+  // Format based on options
   if (opts.cxml) {
-    outputLines.push(`<document index="${docIndex}">`);
-    outputLines.push(`<source>${filePath}</source>`);
-    outputLines.push(`<document_content>`);
-    if (opts.lineNumbers) {
-      outputLines.push(addLineNumbers(content));
-    } else {
-      outputLines.push(content);
-    }
-    outputLines.push(`</document_content>`);
-    outputLines.push(`</document>`);
+    // Claude XML mode with proper escaping of file paths
+    parts.push(`<document index="${docIndex}">`);
+    parts.push(`<source>${escapeXmlForAttributes(filePath)}</source>`);
+    parts.push(`<document_content>`);
+    parts.push(content);
+    parts.push(`</document_content>`);
+    parts.push(`</document>`);
   } else {
-    outputLines.push(filePath);
-    outputLines.push("---");
-    if (opts.lineNumbers) {
-      outputLines.push(addLineNumbers(content));
-    } else {
-      outputLines.push(content);
-    }
-    outputLines.push("---");
-    outputLines.push("");
+    // Plain text mode
+    parts.push(filePath);
+    parts.push("---");
+    parts.push(content);
+    parts.push("---");
+    parts.push("");
   }
 
-  const outputContent = outputLines.join("\n");
-  if (opts.stdOut) {
-    await writer(outputContent);
-  } else {
-    if (opts.outputFile) {
-      const existingContent = await Deno.readTextFile(opts.outputFile).catch(
-        () => "",
-      );
-      await Deno.writeTextFile(
-        opts.outputFile,
-        existingContent + outputContent,
-      );
-    }
-  }
-  return docIndex + 1;
+  return { parts, nextIndex: docIndex + 1 };
 }
 
 function shouldIgnore(
