@@ -103,6 +103,11 @@ function generateColors(dark = false) {
     primaryButtonHover: color(pallette.primary, -adjustment),
     secondaryButton: color(pallette.background, -adjustment * 2),
     secondaryButtonHover: color(pallette.background, -adjustment * 3),
+    secondaryButtonBackground: color(pallette.background, -adjustment * 12),
+    secondaryButtonBackgroundHover: color(
+      pallette.background,
+      -adjustment * 14,
+    ),
     accentButton: color(pallette.fourthary),
     accentButtonHover: color(pallette.fourthary, -adjustment),
     sidebarBackground: color(pallette.tertiaryDark),
