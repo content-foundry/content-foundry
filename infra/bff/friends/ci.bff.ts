@@ -239,8 +239,10 @@ async function ciCommand(options: string[]) {
   // 5) Format check
   const fmtResult = await runFormatStep(useGithub);
 
+  const untrackedResult = await checkUntrackedFiles();
+
   const hasErrors = Boolean(
-    installResult || buildResult || lintResult || testResult || fmtResult,
+    installResult || buildResult || lintResult || testResult || fmtResult
   );
 
   logger.info("\n📊 CI Checks Summary:");
@@ -249,6 +251,7 @@ async function ciCommand(options: string[]) {
   logger.info(`Lint:      ${lintResult === 0 ? "✅" : "❌"}`);
   logger.info(`Test:      ${testResult === 0 ? "✅" : "❌"}`);
   logger.info(`Format:    ${fmtResult === 0 ? "✅" : "❌"}`);
+  logger.info(`Untracked: ${untrackedResult === 0 ? "✅" : "❌"}`);
 
   if (hasErrors) {
     logCI.error("CI checks failed");
@@ -257,6 +260,19 @@ async function ciCommand(options: string[]) {
     logger.info("All CI checks passed");
     return 0;
   }
+}
+
+async function checkUntrackedFiles() {
+  const { code, stdout } = await runShellCommandWithOutput([
+    "git",
+    "status",
+    "--porcelain",
+  ]);
+  const noChanges = code === 0 && stdout.trim() === "";
+  if (!noChanges) {
+    logger.info(stdout)
+  }
+  return code || noChanges ? 0 : 1;
 }
 
 register(
