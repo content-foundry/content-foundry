@@ -157,10 +157,9 @@ export async function bfPutItem<
 >(
   itemProps: TProps,
   itemMetadata: BfMetadataNode | BfMetadataEdge,
+  sortValue = Date.now(),
 ): Promise<void> {
   logger.trace({ itemProps, itemMetadata });
-
-  const sortValue = Date.now();
 
   try {
     let createdAtTimestamp, lastUpdatedTimestamp;

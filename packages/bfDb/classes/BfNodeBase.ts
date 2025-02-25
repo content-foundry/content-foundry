@@ -36,7 +36,7 @@ export class BfNodeBase<
   private _metadata: TMetadata;
 
   static generateSortValue() {
-    return `${Date.now()}`;
+    return Date.now();
   }
 
   static generateMetadata<
