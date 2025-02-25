@@ -16,6 +16,7 @@ export type BfMetadataBase = {
   bfGid: BfGid;
   bfOid: BfGid;
   className: string;
+  sortValue: number;
 };
 
 export type BfNodeCache<
@@ -35,7 +36,7 @@ export class BfNodeBase<
   private _metadata: TMetadata;
 
   static generateSortValue() {
-    return `${Date.now()}`;
+    return Date.now();
   }
 
   static generateMetadata<

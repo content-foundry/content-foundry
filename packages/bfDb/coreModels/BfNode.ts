@@ -19,7 +19,6 @@ export type BfMetadataNode = BfMetadataBase & {
   bfCid: BfGid;
   createdAt: Date;
   lastUpdated: Date;
-  sortValue: string;
 };
 
 /**
