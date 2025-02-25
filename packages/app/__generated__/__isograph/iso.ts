@@ -3,6 +3,7 @@ import { type BfBlog__BlogPostList__param } from './BfBlog/BlogPostList/param_ty
 import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostListItem/param_type.ts';
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
 import { type BfCurrentViewer__Docs__param } from './BfCurrentViewer/Docs/param_type.ts';
+import { type BfCurrentViewer__Home__param } from './BfCurrentViewer/Home/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep1/param_type.ts';
 import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep2/param_type.ts';
@@ -43,6 +44,7 @@ import { type Query__EntrypointBlog__param } from './Query/EntrypointBlog/param_
 import { type Query__EntrypointContentFoundryApp__param } from './Query/EntrypointContentFoundryApp/param_type.ts';
 import { type Query__EntrypointDocsPost__param } from './Query/EntrypointDocsPost/param_type.ts';
 import { type Query__EntrypointDocs__param } from './Query/EntrypointDocs/param_type.ts';
+import { type Query__EntrypointHome__param } from './Query/EntrypointHome/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorCompose__param } from './Query/EntrypointTwitterIdeatorCompose/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorVoice__param } from './Query/EntrypointTwitterIdeatorVoice/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorWorkshopPermalink__param } from './Query/EntrypointTwitterIdeatorWorkshopPermalink/param_type.ts';
@@ -114,6 +116,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.Docs', T>
 ): IdentityWithParamComponent<BfCurrentViewer__Docs__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.Home', T>
+): IdentityWithParamComponent<BfCurrentViewer__Home__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
@@ -276,6 +282,10 @@ export function iso<T>(
 ): IdentityWithParam<Query__EntrypointDocs__param>;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Query.EntrypointHome', T>
+): IdentityWithParam<Query__EntrypointHome__param>;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeatorCompose', T>
 ): IdentityWithParam<Query__EntrypointTwitterIdeatorCompose__param>;
 
@@ -357,6 +367,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointDocs', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointHome', T>
 ): void;
 
 export function iso<T>(
