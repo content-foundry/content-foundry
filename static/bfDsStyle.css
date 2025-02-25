@@ -34,7 +34,7 @@ hr {
   z-index: 1001;
 }
 .dark {
-  color: var(--textOnDark);
+  color: var(--alwaysLight);
 }
 
 a,

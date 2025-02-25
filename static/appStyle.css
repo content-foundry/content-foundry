@@ -1,3 +1,57 @@
+:root {
+  /* concave inverted radius corners  */
+  --concave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M6 6H0C3.314 6 6 3.314 6 0V6Z' fill='var(--alwaysDark)'/%3E%3C/svg%3E");
+}
+
+.App {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+.AppSidebar {
+  width: 250px;
+  padding: 10px;
+  background: var(--alwaysDark);
+  position: relative;
+  box-sizing: border-box;
+  transition: 250ms margin-left ease;
+  margin-left: -240px; /* show 10px */
+}
+.AppSidebar.active {
+  margin-left: 0;
+}
+.sidebarButton {
+  cursor: poiter;
+  position: absolute;
+  top: 16px;
+  right: -16px;
+  background: var(--alwaysDark);
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 0 8px 8px 0;
+}
+.sidebarButton::before,
+.sidebarButton::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  width: 6px;
+  height: 6px;
+  background-color: transparent;
+  background-image: var(--concave);
+}
+.sidebarButton::before {
+  top: -6px;
+  transform: rotate(90deg);
+}
+.sidebarButton::after {
+  bottom: -6px;
+  transform: rotate(180deg);
+}
+.AppContent {
+  flex: 1;
+}
+
 .appPage {
   height: 100vh;
   background: var(--pageBackground) url(/static/assets/images/bf-symbol-angle-right_bw.jpg) no-repeat 0% 100% / auto 110%;
