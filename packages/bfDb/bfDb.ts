@@ -4,34 +4,16 @@ import { getLogger } from "packages/logger.ts";
 import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
-import type { BfMetadataEdge } from "packages/bfDb/coreModels/BfEdge.ts";
 import type { BfMetadataNode } from "packages/bfDb/coreModels/BfNode.ts";
+import type { BfMetadataEdge } from "packages/bfDb/coreModels/BfEdge.ts";
+import type {
+  Connection,
+  ConnectionArguments,
+  Edge,
+  PageInfo,
+} from "graphql-relay";
 
 const logger = getLogger(import.meta);
-
-export type EdgeRecord<
-  T extends Record<string, unknown> = Record<string, unknown>,
-  C = string | null | undefined,
-> = {
-  cursor: C;
-  node: T;
-};
-
-export type EdgeRecords<
-  T extends Record<string, unknown> = Record<string, unknown>,
-  C = string | null | undefined,
-> = Array<EdgeRecord<T, C>>;
-
-// export type PageInfo = {
-//   endCursor: string | null | undefined;
-//   hasNextPage: boolean;
-//   hasPreviousPage: boolean;
-//   startCursor: string | null | undefined;
-// };
-
-// export type ConnectionInterface<
-//   T extends Record<string, unknown> = Record<string, unknown>,
-// > = { pageInfo: PageInfo; edges: Array<EdgeRecord<T>>; count: number };
 
 type BfDbMetadata = BfMetadataNode & Partial<BfMetadataEdge>;
 
@@ -46,7 +28,6 @@ if (!databaseUrl) {
 }
 const sql = neon(databaseUrl);
 
-// const pool = new Pool({ connectionString });
 export type JSONValue =
   | string
   | number
@@ -70,163 +51,8 @@ type Row<
   class_name: string;
   created_at: string;
   last_updated: string;
-  sort_value: string;
+  sort_value: number;
 };
-
-// export type BfModelUpdateNotification = {
-//   operation: "INSERT" | "UPDATE" | "DELETE";
-//   bfGid: BfGid;
-//   bfOid: BfOid;
-// };
-
-// export type BfConnectionUpdateNotification = BfModelUpdateNotification & {
-//   bfTid: BfTid;
-//   bfTClassName: BfClassName;
-//   sortValue: number;
-//   cursor: string;
-// };
-
-// type NotificationResponseMessage = {
-//   length: number;
-//   processId: number;
-//   channel: string;
-//   payload: string;
-//   name: string;
-// };
-
-// type BfClassName = string;
-
-// const bfModelUpdateSubjects = new Map<
-//   BfOid,
-//   Map<BfGid, Set<Subject<BfModelUpdateNotification>>>
-// >();
-
-// const bfConnectionUpdateSubjects = new Map<
-//   BfOid,
-//   Map<BfSid, Map<BfClassName, Set<Subject<BfConnectionUpdateNotification>>>>
-// >();
-
-// function respondToConnectionChangeNotification(
-//   message: NotificationResponseMessage,
-// ) {
-//   logger.debug(message);
-//   const { operation, bf_oid, bf_sid, bf_t_class_name, bf_tid, sort_value } =
-//     JSON.parse(message.payload);
-//   const oidSubscribers = bfConnectionUpdateSubjects.get(bf_oid);
-//   if (!oidSubscribers) {
-//     return;
-//   }
-//   const sidSubscribers = oidSubscribers.get(bf_sid);
-//   if (!sidSubscribers) {
-//     return;
-//   }
-//   const classNameSubscribers = sidSubscribers.get(bf_t_class_name);
-//   if (!classNameSubscribers) {
-//     return;
-//   }
-//   logger.info(`Notifying ${classNameSubscribers.size} subscribers`);
-//   classNameSubscribers.forEach((subject) =>
-//     subject.next({
-//       operation,
-//       bfOid: bf_oid,
-//       bfGid: bf_sid,
-//       bfTClassName: bf_t_class_name,
-//       bfTid: bf_tid,
-//       sortValue: sort_value,
-//       cursor: sortValueToCursor(sort_value),
-//     })
-//   );
-// }
-
-// function respondToNotification(message: NotificationResponseMessage) {
-//   logger.debug(`Received notification: `, message);
-//   const { operation, bf_gid, bf_oid, bf_sid, bf_t_class_name } = JSON.parse(
-//     message.payload,
-//   );
-//   if (bf_sid && bf_t_class_name) {
-//     return respondToConnectionChangeNotification(message);
-//   }
-//   const oidSubscribers = bfModelUpdateSubjects.get(bf_oid);
-//   if (oidSubscribers) {
-//     const gidSubjects = oidSubscribers.get(bf_gid);
-//     if (gidSubjects) {
-//       gidSubjects.forEach((subject) =>
-//         subject.next({ operation, bfGid: bf_gid, bfOid: bf_oid })
-//       );
-//     }
-//   }
-// }
-
-// let areNotificationsInitialized = false;
-// async function initializeSubscriptions() {
-//   if (areNotificationsInitialized) {
-//     logger.debug("Notifications are already configured");
-//     return;
-//   }
-//   areNotificationsInitialized = true;
-//   const client = await pool.connect();
-//   client.on("end", () => {
-//     logger.debug("Client disconnected");
-//   });
-//   client.on("error", (error) => {
-//     logger.error("Client error", error);
-//   })
-//   await client.connect();
-//   // @ts-expect-error this must be out of date or something... not sure why it doesn't know about notif type
-//   client.on("notification", respondToNotification);
-//   await client.query("LISTEN item_changes");
-//   logger.info("Notifications configured.");
-// }
-
-// export function bfSubscribeToItemChanges(bfOid: BfOid, bfGid: BfGid) {
-//   if (!areNotificationsInitialized) {
-//     initializeSubscriptions();
-//   }
-//   if (!bfModelUpdateSubjects.has(bfOid)) {
-//     bfModelUpdateSubjects.set(bfOid, new Map());
-//   }
-//   const oidSubscribers = bfModelUpdateSubjects.get(bfOid)!;
-//   if (!oidSubscribers.has(bfGid)) {
-//     oidSubscribers.set(bfGid, new Set());
-//   }
-//   const gidSubjects = oidSubscribers.get(bfGid)!;
-//   const subject = new Subject<BfModelUpdateNotification>();
-//   gidSubjects.add(subject);
-//   // send a first one so the listener gets something immediately.
-//   setTimeout(() => {
-//     subject.next({ operation: "UPDATE", bfGid, bfOid });
-//   }, 0);
-//   return observableToAsyncIterable<BfModelUpdateNotification>(
-//     subject.asObservable(),
-//   );
-// }
-
-// export function bfSubscribeToConnectionChanges(
-//   bfOid: BfOid,
-//   bfSid: BfSid,
-//   bfTClassName: BfClassName,
-// ) {
-//   if (!areNotificationsInitialized) {
-//     initializeSubscriptions();
-//   }
-//   if (!bfConnectionUpdateSubjects.has(bfOid)) {
-//     bfConnectionUpdateSubjects.set(bfOid, new Map());
-//   }
-//   const oidSubscribers = bfConnectionUpdateSubjects.get(bfOid)!;
-//   if (!oidSubscribers.has(bfSid)) {
-//     oidSubscribers.set(bfSid, new Map());
-//   }
-//   const sidSubscribers = oidSubscribers.get(bfSid)!;
-//   if (!sidSubscribers.has(bfTClassName)) {
-//     sidSubscribers.set(bfTClassName, new Set());
-//   }
-//   const classNameSubscribers = sidSubscribers.get(bfTClassName)!;
-//   const subject = new Subject<BfConnectionUpdateNotification>();
-//   classNameSubscribers.add(subject);
-//   return observableToAsyncIterable<BfConnectionUpdateNotification>(
-//     subject.asObservable(),
-//   );
-// }
 
 function rowToMetadata(row: Row): BfDbMetadata {
   return {
@@ -738,112 +564,115 @@ export async function bfDeleteItem(bfOid: BfGid, bfGid: BfGid): Promise<void> {
   }
 }
 
-// export async function bfQueryItemsForGraphQLConnection<
-//   TProps extends Props = Props,
-//   TMetadata extends BfBaseModelMetadata = BfBaseModelMetadata,
-// >(
-//   metadata: Partial<TMetadata>,
-//   props: Partial<TProps> = {},
-//   connectionArgs: ConnectionArguments,
-//   bfGids: Array<string>,
-// ): Promise<ConnectionInterface<DbItem<TProps>> & { count: number }> {
-//   logger.debug({ metadata, props, connectionArgs });
-//   const { first, last, after, before } = connectionArgs;
+export async function bfQueryItemsForGraphQLConnection<
+  TProps extends Props = Props,
+  TMetadata extends BfDbMetadata = BfDbMetadata,
+>(
+  metadata: Partial<TMetadata>,
+  props: Partial<TProps> = {},
+  connectionArgs: ConnectionArguments,
+  bfGids: Array<string>,
+): Promise<Connection<DbItem<TProps>> & { count: number }> {
+  logger.debug({ metadata, props, connectionArgs });
+  const { first, last, after, before } = connectionArgs;
 
-//   let orderDirection: "ASC" | "DESC" = "ASC";
-//   let cursorValue: number | undefined;
-//   let limit: number = 10;
+  let orderDirection: "ASC" | "DESC" = "ASC";
+  let cursorValue: number | undefined;
+  let limit: number = 10;
 
-//   if (first != undefined) {
-//     orderDirection = "ASC";
-//     limit = first + 1; // Fetch one extra for next page check
-//     if (after) {
-//       cursorValue = cursorToSortValue(after);
-//     }
-//   } else if (last != undefined) {
-//     orderDirection = "DESC";
-//     limit = last + 1; // Fetch one extra for previous page check
-//     if (before) {
-//       cursorValue = cursorToSortValue(before);
-//     }
-//   }
+  if (first != undefined) {
+    orderDirection = "ASC";
+    limit = first + 1; // Fetch one extra for next page check
+    if (after) {
+      cursorValue = cursorToSortValue(after);
+    }
+  } else if (last != undefined) {
+    orderDirection = "DESC";
+    limit = last + 1; // Fetch one extra for previous page check
+    if (before) {
+      cursorValue = cursorToSortValue(before);
+    }
+  }
 
-//   const results = await bfQueryItemsUnified<TProps, TMetadata>(
-//     metadata,
-//     props,
-//     bfGids,
-//     orderDirection,
-//     "sort_value",
-//     {
-//       useSizeLimit: false,
-//       cursorValue,
-//       batchSize: 4,
-//       totalLimit: limit,
-//     },
-//   );
+  const results = await bfQueryItemsUnified(
+    metadata,
+    props,
+    bfGids,
+    orderDirection,
+    "sort_value",
+    {
+      useSizeLimit: false,
+      cursorValue,
+      batchSize: 4,
+      totalLimit: limit,
+    },
+  );
 
-//   const edges: EdgeRecords<DbItem<TProps>> = results.map((
-//     item,
-//   ) => ({
-//     cursor: sortValueToCursor(item.metadata.sortValue),
-//     node: item as DbItem<TProps>,
-//   }));
+  const edges: Array<Edge<DbItem<TProps>>> = results.map((
+    item,
+  ) => ({
+    cursor: sortValueToCursor(item.metadata.sortValue),
+    node: item as DbItem<TProps>,
+  }));
 
-//   let hasNextPage = false;
-//   let hasPreviousPage = false;
+  let hasNextPage = false;
+  let hasPreviousPage = false;
 
-//   if (first != undefined && edges.length > first) {
-//     hasNextPage = true;
-//     edges.pop(); // Remove the extra item
-//   } else if (last != undefined && edges.length > last) {
-//     hasPreviousPage = true;
-//     edges.shift(); // Remove the extra item from the beginning
-//   }
+  if (first != undefined && edges.length > first) {
+    hasNextPage = true;
+    edges.pop(); // Remove the extra item
+  } else if (last != undefined && edges.length > last) {
+    hasPreviousPage = true;
+    edges.shift(); // Remove the extra item from the beginning
+  }
 
-//   const pageInfo: PageInfo = {
-//     startCursor: edges.length > 0 ? edges[0].cursor : null,
-//     endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
-//     hasNextPage,
-//     hasPreviousPage,
-//   };
+  const startCursor = edges.length > 0 ? edges[0].cursor : null;
+  const endCursor = edges.length > 0 ? edges[edges.length - 1].cursor : null;
 
-//   const arrayWithEmptyElements = await bfQueryItemsUnified<TProps, TMetadata>(
-//     metadata,
-//     props,
-//     bfGids,
-//     orderDirection,
-//     "sort_value",
-//     {
-//       countOnly: true,
-//     },
-//   );
-//   const count = arrayWithEmptyElements.length;
-//   return {
-//     edges,
-//     pageInfo,
-//     count,
-//   };
-// }
+  const pageInfo = {
+    startCursor,
+    endCursor,
+    hasNextPage,
+    hasPreviousPage,
+  } as PageInfo;
 
-// // Function to convert sortValue to base64 cursor
-// export function sortValueToCursor(sortValue: number = Date.now()): string {
-//   // Convert number to string and then Uint8Array
-//   const uint8Array = new TextEncoder().encode(sortValue.toString());
-//   // Convert Uint8Array to base64
-//   return btoa(String.fromCharCode(...uint8Array));
-// }
+  const arrayWithEmptyElements = await bfQueryItemsUnified(
+    metadata,
+    props,
+    bfGids,
+    orderDirection,
+    "sort_value",
+    {
+      countOnly: true,
+    },
+  );
+  const count = arrayWithEmptyElements.length;
+  return {
+    edges,
+    pageInfo,
+    count,
+  };
+}
 
-// // Function to convert base64 cursor back to sortValue
-// function cursorToSortValue(cursor: string): number {
-//   // Convert base64 to string
-//   const decodedString = atob(cursor);
-//   // Convert string to Uint8Array
-//   const uint8Array = new Uint8Array(
-//     [...decodedString].map((char) => char.charCodeAt(0)),
-//   );
-//   // Decode Uint8Array to original string and convert to number
-//   return parseInt(new TextDecoder().decode(uint8Array), 10);
-// }
+// Function to convert sortValue to base64 cursor
+export function sortValueToCursor(sortValue: number = Date.now()): string {
+  // Convert number to string and then Uint8Array
+  const uint8Array = new TextEncoder().encode(sortValue.toString());
+  // Convert Uint8Array to base64
+  return btoa(String.fromCharCode(...uint8Array));
+}
+
+// Function to convert base64 cursor back to sortValue
+function cursorToSortValue(cursor: string): number {
+  // Convert base64 to string
+  const decodedString = atob(cursor);
+  // Convert string to Uint8Array
+  const uint8Array = new Uint8Array(
+    [...decodedString].map((char) => char.charCodeAt(0)),
+  );
+  // Decode Uint8Array to original string and convert to number
+  return parseInt(new TextDecoder().decode(uint8Array), 10);
+}
 
 export async function CLEAR_FOR_DEBUGGING() {
   if (getConfigurationVariable("BF_ENV") === "DEVELOPMENT") {
