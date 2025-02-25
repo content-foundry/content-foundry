@@ -21,17 +21,58 @@ import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { graphqlBfOrganizationType } from "packages/graphql/types/graphqlBfOrganization.ts";
 const logger = getLogger(import.meta);
 
+// This is a partial update to the graphqlBfCurrentViewer.ts file
+// Only showing the blog field modifications
+
 export const graphqlBfCurrentViewerType = interfaceType({
   name: "BfCurrentViewer",
   definition(t) {
     t.implements(graphqlNode);
+
+    // Updated blog field to use the getMainBlog helper
     t.field("blog", {
       type: graphqlBfBlogType,
       resolve: async (_parent, _args, ctx) => {
-        const blog = await ctx.findX(BfBlog, "the-blog" as BfGid);
-        return blog.toGraphql();
+        try {
+          const blog = await ctx.getMainBlog();
+          return blog.toGraphql();
+        } catch (error) {
+          logger.error("Error fetching main blog:", error);
+          return null;
+        }
       },
     });
+
+    // Add a blogs field to get all blogs accessible to the user
+    t.connectionField("blogs", {
+      type: graphqlBfBlogType,
+      resolve: async (_parent, args, ctx) => {
+        try {
+          // Get all blogs for the current user
+          const blogs = await BfBlog.query(ctx.getCvForGraphql(), {
+            bfOid: ctx.getCvForGraphql().id,
+          });
+
+          // Convert to GraphQL-friendly objects
+          const blogNodes = blogs.map((blog) => blog.toGraphql());
+
+          // Create a connection from the array
+          return connectionFromArray(blogNodes, args);
+        } catch (error) {
+          logger.error("Error fetching blogs:", error);
+          return {
+            edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          };
+        }
+      },
+    });
+
     t.field("organization", {
       type: graphqlBfOrganizationType,
       resolve: async (_parent, _args, ctx) => {
