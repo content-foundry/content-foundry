@@ -35,8 +35,6 @@ import {
   entrypointBlog,
   entrypointBlogPost,
   entrypointContentFoundryApp,
-  entrypointDocs,
-  entrypointDocsPost,
   entrypointHome,
   entrypointTwitterIdeator,
   entrypointTwitterIdeatorCompose,
@@ -61,8 +59,6 @@ export const isographAppRoutes = new Map<string, IsographRoute>([
   ["/login", entrypointContentFoundryApp],
   ["/blog/:slug", entrypointBlogPost],
   ["/blog", entrypointBlog],
-  ["/docs/:docsSlug", entrypointDocsPost],
-  ["/docs", entrypointDocs],
   ...loggedInAppRoutes,
 ]);
 
