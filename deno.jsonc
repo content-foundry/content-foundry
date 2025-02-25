@@ -49,6 +49,9 @@
   ],
   "exclude": [
     ".cache",
+    ".sl",
+    ".direnv",
+    ".git",
     "build",
     "static",
     "**/__TEMPLATE__.*"
