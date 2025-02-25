@@ -1,9 +1,9 @@
 import * as React from "react";
 
-type BaseProps = {
+export type ToggleBaseProps = {
   disabled?: boolean;
   label?: string;
-  value: boolean;
+  value?: boolean;
   size?: "small" | "medium" | "large";
   style?: React.CSSProperties;
   className?: string;
@@ -11,14 +11,14 @@ type BaseProps = {
   name?: string;
   required?: boolean;
   testId?: string; // for identifying the element in posthog
-};
+} & React.HTMLAttributes<HTMLInputElement>;
 
-type EditableProps = BaseProps & {
+type EditableProps = ToggleBaseProps & {
   readonly?: false;
   onChange: (checked: boolean) => void;
 };
 
-type ReadonlyProps = BaseProps & {
+type ReadonlyProps = ToggleBaseProps & {
   readonly: true;
   onChange?: never;
 };
@@ -138,6 +138,7 @@ export function BfDsToggle(
     readonly,
     size = "large",
     testId,
+    ...props
   }: BfDsToggleProps,
 ) {
   const slider = (
@@ -169,6 +170,7 @@ export function BfDsToggle(
       data-bf-testid={testIdValue}
     >
       <input
+        {...props}
         type="checkbox"
         checked={value}
         disabled={disabled}
