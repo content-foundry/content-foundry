@@ -15,6 +15,7 @@ export const FormatterEditorPanel = iso(`
   function FormatterEditorPanel(
     { data },
   ) {
+    logger.info("FormatterEditorPanel", data.__typename);
     const [blogPost, setBlogPost] = useState("");
     const { commit } = useMutation(reviseBlogMutation);
     return (

@@ -199,12 +199,12 @@
 }
 .right-side-bar{
   background-color: var(--pageBackground);
-  min-width: 250px;
-  flex:0;
+  max-width: 250px;
   border-left: 1px solid var(--border);
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 
@@ -606,4 +606,21 @@
   gap: 5px;
   display: flex;
   flex-direction: column;
+}
+
+/* REVISIONS  */
+.revisions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 250px;
+}
+
+.revision-title {
+  font-weight: bold;
+}
+.revision-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
