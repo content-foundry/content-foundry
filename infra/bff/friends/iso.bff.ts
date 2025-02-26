@@ -26,7 +26,6 @@ export async function isoCommand(options: string[]): Promise<number> {
       options = options.filter((opt) => opt !== "--verbose");
       const { stdout, stderr, code } = await runShellCommandWithOutput(
         ["deno", "run", "-A", "npm:@isograph/compiler", ...options],
-        workingDir,
       );
 
       if (stdout) logger.info(stdout);
@@ -65,10 +64,5 @@ register(
   "iso",
   "Run the isograph compiler to generate code from GraphQL",
   isoCommand,
-  [
-    {
-      name: "--verbose",
-      description: "Show detailed output from the isograph compiler",
-    },
-  ],
+  [],
 );

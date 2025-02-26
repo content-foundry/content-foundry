@@ -61,7 +61,7 @@ if (import.meta.main) {
   try {
     await Deno.mkdir("build", { recursive: true });
   } catch (e) {
-    if (e.name !== "AlreadyExists") {
+    if ((e as Error).name !== "AlreadyExists") {
       throw e;
     }
   }
