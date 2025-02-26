@@ -9,18 +9,24 @@ export type RouteEntrypoint = {
 iso(`entrypoint Query.EntrypointBlogPost`)
 iso(`entrypoint Query.EntrypointBlog`)
 iso(`entrypoint Query.EntrypointContentFoundryApp`)
+iso(`entrypoint Query.EntrypointFormatterVoice`)
+iso(`entrypoint Query.EntrypointFormatter`)
 iso(`entrypoint Query.EntrypointHome`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorCompose`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorVoice`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshop`)
 iso(`entrypoint Query.EntrypointTwitterIdeator`)
+iso(`entrypoint Query.entrypointFormatterEditor`)
 iso(`entrypoint Query.entrypointTwitterIdeatorResearchPermalink`)
 iso(`entrypoint Query.entrypointTwitterIdeatorResearch`)
 
 import entrypointBlog from "packages/app/__generated__/__isograph/Query/EntrypointBlog/entrypoint.ts"
 import entrypointBlogPost from "packages/app/__generated__/__isograph/Query/EntrypointBlogPost/entrypoint.ts"
 import entrypointContentFoundryApp from "packages/app/__generated__/__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts"
+import entrypointFormatter from "packages/app/__generated__/__isograph/Query/EntrypointFormatter/entrypoint.ts"
+import entrypointFormatterEditor from "packages/app/__generated__/__isograph/Query/entrypointFormatterEditor/entrypoint.ts"
+import entrypointFormatterVoice from "packages/app/__generated__/__isograph/Query/EntrypointFormatterVoice/entrypoint.ts"
 import entrypointHome from "packages/app/__generated__/__isograph/Query/EntrypointHome/entrypoint.ts"
 import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts"
 import entrypointTwitterIdeatorCompose from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorCompose/entrypoint.ts"
@@ -33,6 +39,9 @@ import entrypointTwitterIdeatorWorkshopPermalink from "packages/app/__generated_
 export {entrypointBlogPost};
 export {entrypointBlog};
 export {entrypointContentFoundryApp};
+export {entrypointFormatterEditor};
+export {entrypointFormatterVoice};
+export {entrypointFormatter};
 export {entrypointHome};
 export {entrypointTwitterIdeatorCompose};
 export {entrypointTwitterIdeatorResearchPermalink};

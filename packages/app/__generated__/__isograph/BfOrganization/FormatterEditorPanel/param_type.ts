@@ -1,5 +1,5 @@
 
-export type Query__ContentOS__param = {
+export type BfOrganization__FormatterEditorPanel__param = {
   readonly data: {
     readonly __typename: string,
   },
