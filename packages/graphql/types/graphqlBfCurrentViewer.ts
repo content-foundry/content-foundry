@@ -19,6 +19,7 @@ import { graphqlBfBlogType } from "packages/graphql/types/graphqlBfBlog.ts";
 import { BfBlog } from "packages/bfDb/models/BfBlog.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { graphqlBfOrganizationType } from "packages/graphql/types/graphqlBfOrganization.ts";
+import { graphqlBfContentCollectionType } from "packages/graphql/types/graphqlBfContentCollection.ts";
 const logger = getLogger(import.meta);
 
 export const graphqlBfCurrentViewerType = interfaceType({
@@ -40,6 +41,24 @@ export const graphqlBfCurrentViewerType = interfaceType({
           throw new Error("No organization found for current viewer");
         }
         return org.toGraphql();
+      },
+    });
+    t.field("contentCollection", {
+      type: graphqlBfContentCollectionType,
+      args: {
+        slug: stringArg(),
+      },
+      resolve: (_parent, args, _ctx) => {
+        const { slug } = args;
+        // For now, return mock data
+        // In a real implementation, you would fetch from a database
+        return {
+          __typename: "BfContentCollection",
+          id: `collection-${slug}`,
+          name: `${slug?.charAt(0).toUpperCase()}${slug?.slice(1)} Collection`,
+          slug: slug || "default",
+          description: `Content collection for ${slug || "default"}`,
+        };
       },
     });
   },
