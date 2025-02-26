@@ -4,6 +4,7 @@ import React from "react";
 import { BfDsIcon } from "packages/bfDs/components/BfDsIcon.tsx";
 import { classnames } from "lib/classnames.ts";
 import { useRouter } from "packages/app/contexts/RouterContext.tsx";
+import { useFeatureFlagEnabled } from "packages/app/hooks/useFeatureFlagHooks.ts";
 
 const sidebarRoutes = [
   {
@@ -31,6 +32,10 @@ const sidebarRoutes = [
 export function AppSidebar({ children }: React.PropsWithChildren) {
   const { currentPath, navigate } = useRouter();
   const [showSidebar, setShowSidebar] = React.useState(false);
+  const enableSidebar = useFeatureFlagEnabled("enable_sidebar");
+  if (!enableSidebar) {
+    return children;
+  }
 
   const appSidebarClasses = classnames([
     "AppSidebar",
