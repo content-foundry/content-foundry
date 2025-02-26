@@ -1,5 +1,6 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { CfLogo } from "packages/app/resources/CfLogo.tsx";
+import { useFeatureFlagEnabled } from "packages/app/hooks/useFeatureFlagHooks.ts";
 
 export const Home = iso(`
   field BfCurrentViewer.Home @component {
@@ -25,6 +26,7 @@ export const Home = iso(`
   const collection = data?.contentCollection;
   const contentItems = collection?.items?.edges?.map((edge) => edge?.node) ||
     [];
+  const showComingSoon = useFeatureFlagEnabled("show_coming_soon");
 
   return (
     <div className="appPage flexCenter">
@@ -40,7 +42,7 @@ export const Home = iso(`
       </div>
 
       <div className="loginBox">
-        {collection
+        {collection && !showComingSoon
           ? (
             <div className="content-collection">
               <h2>{collection.name}</h2>
@@ -51,9 +53,12 @@ export const Home = iso(`
                   ? (
                     contentItems.map((item, index) => (
                       <div key={index} className="content-item">
-                        <h3 className="content-item-title">{item.title}</h3>
-                        <p className="content-item-body">{item.body}</p>
-                        <a href={item.href} className="content-item-link">
+                        <h3 className="content-item-title">{item?.title}</h3>
+                        <p className="content-item-body">{item?.body}</p>
+                        <a
+                          href={item?.href ?? ""}
+                          className="content-item-link"
+                        >
                           Read more
                         </a>
                       </div>

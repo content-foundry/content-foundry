@@ -1,7 +1,12 @@
+// Updates to packages/graphql/types/graphqlBfContentCollection.ts
+
 import { arg, objectType, stringArg } from "nexus";
 import { connectionFromArray } from "graphql-relay";
 import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
 import { getLogger } from "packages/logger.ts";
+import { BfContentCollection } from "packages/bfDb/models/BfContentCollection.ts";
+import { BfContentItem } from "packages/bfDb/models/BfContentItem.ts";
+import { BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 
 const logger = getLogger(import.meta);
 
@@ -13,7 +18,6 @@ export const graphqlBfContentItemType = objectType({
     t.string("title");
     t.string("body");
     t.string("slug");
-    // Add additional fields as needed
     t.string("href", {
       resolve: (parent) => `/content/${parent.slug || parent.id || ""}`,
     });
@@ -33,26 +37,30 @@ export const graphqlBfContentCollectionType = objectType({
     t.connectionField("items", {
       type: graphqlBfContentItemType,
       resolve: async (parent, args, ctx) => {
-        // In a real implementation, you would fetch items from a database
-        // For now, return an empty array as a placeholder
-        logger.debug(`Fetching content items for collection: ${parent.slug}`);
-        const mockItems = [
-          // Mock data until we implement the DB side
-          {
-            id: "item1",
-            title: "Example Content 1",
-            body: "This is example content 1",
-            slug: "example-1",
-          },
-          {
-            id: "item2",
-            title: "Example Content 2",
-            body: "This is example content 2",
-            slug: "example-2",
-          },
-        ];
+        try {
+          // Use the context to find the collection by ID
+          const collection = await ctx.findX(
+            BfContentCollection,
+            parent.id as BfGid,
+          );
 
-        return connectionFromArray(mockItems, args);
+          // Get the content items from the collection
+          const contentItems = collection.getContentItems();
+
+          // Map to proper objects with IDs that match what our system expects
+          const items = contentItems.map((item) => ({
+            __typename: "BfContentItem",
+            id: `item-${item.slug}`,
+            ...item,
+          }));
+
+          return connectionFromArray(items, args);
+        } catch (error) {
+          logger.error(
+            `Error fetching content items: ${(error as Error).message}`,
+          );
+          return connectionFromArray([], args);
+        }
       },
     });
   },
