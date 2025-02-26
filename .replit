@@ -123,6 +123,15 @@ task = "shell.exec"
 args = "chmod +x ./packages/web/tools.tsx && ./packages/web/tools.tsx"
 waitForPort = 9999
 
+[[workflows.workflow]]
+name = "Restart language server"
+mode = "sequential"
+author = 33272860
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bff restartLsp"
+
 [[ports]]
 localPort = 3011
 externalPort = 3001
