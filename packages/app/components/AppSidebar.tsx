@@ -7,6 +7,10 @@ import { useRouter } from "packages/app/contexts/RouterContext.tsx";
 
 const sidebarRoutes = [
   {
+    name: "Formatter",
+    rootPath: "formatter",
+  },
+  {
     name: "Tweet ideator",
     rootPath: "twitter",
   },

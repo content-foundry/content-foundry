@@ -35,6 +35,9 @@ import {
   entrypointBlog,
   entrypointBlogPost,
   entrypointContentFoundryApp,
+  entrypointFormatter,
+  entrypointFormatterEditor,
+  entrypointFormatterVoice,
   entrypointHome,
   entrypointTwitterIdeator,
   entrypointTwitterIdeatorCompose,
@@ -44,6 +47,9 @@ import {
 } from "packages/app/__generated__/builtRoutes.ts";
 
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
+  ["/formatter", entrypointFormatter],
+  ["/formatter/editor/:editorSlug?", entrypointFormatterEditor],
+  ["/formatter/voice", entrypointFormatterVoice],
   ["/twitter", entrypointTwitterIdeator],
   ["/twitter/voice", entrypointTwitterIdeatorVoice],
   ["/twitter/research/:researchSlug?", entrypointTwitterIdeatorResearch],
