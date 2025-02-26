@@ -236,6 +236,7 @@ register(
       try {
         const decoder = new TextDecoder("utf-8");
         const yamlPath = "/home/runner/workspace/.config/gh/hosts.yml";
+
         const fileContent = await Deno.readFile(yamlPath);
         const yamlText = decoder.decode(fileContent);
 
@@ -247,6 +248,9 @@ register(
           const oauthToken = match[1];
           logger.info("OAuth token successfully read.");
           // You can now use the oauthToken as needed
+
+          const xdgGitPath = `${Deno.env.get("XDG_CONFIG_HOME")}/git`;
+          await Deno.mkdir(xdgGitPath, { recursive: true });
 
           await runShellCommand([
             "git",
