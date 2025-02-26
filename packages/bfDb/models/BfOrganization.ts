@@ -37,6 +37,15 @@ type Props = {
         explanation: string;
       }>
       | null;
+    draftBlog?: string | null;
+    revisions?:
+      | Array<{
+        revisionTitle: string;
+        original: string;
+        revised: string;
+        explanation: string;
+      }>
+      | null;
   };
   distribution?: Record<string, JSONValue>;
   analytics?: Record<string, JSONValue>;

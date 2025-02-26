@@ -11,6 +11,7 @@ import { type BfCurrentViewerLoggedOut__LoginAndRegisterForm__param } from './Bf
 import { type BfCurrentViewerLoggedOut__LoginButton__param } from './BfCurrentViewerLoggedOut/LoginButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__RegisterButton__param } from './BfCurrentViewerLoggedOut/RegisterButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentViewerLoggedOut/WelcomeVideo/param_type.ts';
+import { type BfOrganization__BlogRevisionsSidebar__param } from './BfOrganization/BlogRevisionsSidebar/param_type.ts';
 import { type BfOrganization__FormatterEditorPanel__param } from './BfOrganization/FormatterEditorPanel/param_type.ts';
 import { type BfOrganization__FormatterEditor__param } from './BfOrganization/FormatterEditor/param_type.ts';
 import { type BfOrganization__FormatterSidebar__param } from './BfOrganization/FormatterSidebar/param_type.ts';
@@ -32,6 +33,7 @@ import { type Mutation__Login__param } from './Mutation/Login/param_type.ts';
 import { type Mutation__MakeTweets__param } from './Mutation/MakeTweets/param_type.ts';
 import { type Mutation__Register__param } from './Mutation/Register/param_type.ts';
 import { type Mutation__RegistrationOptions__param } from './Mutation/RegistrationOptions/param_type.ts';
+import { type Mutation__ReviseBlog__param } from './Mutation/ReviseBlog/param_type.ts';
 import { type Mutation__SubmitYcForm__param } from './Mutation/SubmitYcForm/param_type.ts';
 import { type Query__EntrypointBlogPost__param } from './Query/EntrypointBlogPost/param_type.ts';
 import { type Query__EntrypointBlog__param } from './Query/EntrypointBlog/param_type.ts';
@@ -145,6 +147,10 @@ export function iso<T>(
 ): IdentityWithParamComponent<BfCurrentViewerLoggedOut__WelcomeVideo__param>;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.BlogRevisionsSidebar', T>
+): IdentityWithParamComponent<BfOrganization__BlogRevisionsSidebar__param>;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfOrganization.FormatterEditorPanel', T>
 ): IdentityWithParamComponent<BfOrganization__FormatterEditorPanel__param>;
 
@@ -227,6 +233,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.RegistrationOptions', T>
 ): IdentityWithParam<Mutation__RegistrationOptions__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Mutation.ReviseBlog', T>
+): IdentityWithParam<Mutation__ReviseBlog__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Mutation.SubmitYcForm', T>
@@ -318,6 +328,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.RegistrationOptions', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Mutation.ReviseBlog', T>
 ): void;
 
 export function iso<T>(
