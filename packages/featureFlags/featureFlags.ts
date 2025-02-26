@@ -20,7 +20,7 @@ export async function getFeatureFlagEnabled(
   personBfGraphId?: string,
 ): Promise<boolean> {
   // Attempt to set up PostHog
-  const { frontendClient, backendClient } = await getCurrentClients();
+  const { frontendClient, backendClient } = getCurrentClients();
 
   // If we have a client on the front-end (client-side), use it
   if (frontendClient) {
