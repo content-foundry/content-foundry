@@ -3,7 +3,7 @@ import {
   type BfNodeBaseProps,
   type BfNodeCache,
 } from "packages/bfDb/classes/BfNodeBase.ts";
-import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
+import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
@@ -100,14 +100,15 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
   /**
    * Get or initialize the collections cache
    */
-  static async getCollectionsCache(): Promise<Map<BfGid, BfContentCollection>> {
+  static async getCollectionsCache(
+    cv: BfCurrentViewer,
+  ): Promise<Map<BfGid, BfContentCollection>> {
     if (this._collectionsCache) {
       return this._collectionsCache;
     }
 
     // Initialize the cache
     this._collectionsCache = new Map();
-    const loggedOutCV = BfCurrentViewer.createLoggedOut(import.meta);
 
     // Populate with mock data
     for (const [id, collectionData] of Object.entries(this.MOCK_COLLECTIONS)) {
@@ -115,7 +116,7 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
       logger.debug(`Creating content collection with id: ${id}`);
 
       const collection = await this.__DANGEROUS__createUnattached(
-        loggedOutCV,
+        cv,
         collectionData,
         { bfGid },
       );
@@ -134,11 +135,11 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
     TProps extends BfNodeBaseProps,
     T extends BfNodeBase<TProps>,
   >(
-    _cv: BfCurrentViewer,
+    cv: BfCurrentViewer,
     id: BfGid,
     _cache?: BfNodeCache,
   ): Promise<T> {
-    const collectionsCache = await this.getCollectionsCache();
+    const collectionsCache = await this.getCollectionsCache(cv);
     const collection = collectionsCache.get(id);
 
     if (collection) {
@@ -155,8 +156,8 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
   static override async query<
     TProps extends BfNodeBaseProps,
     T extends BfNodeBase<TProps>,
-  >(): Promise<Array<T>> {
-    const collectionsCache = await this.getCollectionsCache();
+  >(cv: BfCurrentViewer): Promise<Array<T>> {
+    const collectionsCache = await this.getCollectionsCache(cv);
     return Array.from(collectionsCache.values()) as unknown as Array<T>;
   }
 
@@ -165,5 +166,15 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
    */
   getContentItems(): BfContentItemProps[] {
     return this.props.items || [];
+  }
+
+  override save() {
+    return Promise.resolve(this);
+  }
+  override delete() {
+    return Promise.resolve(false);
+  }
+  override load() {
+    return Promise.resolve(this);
   }
 }
