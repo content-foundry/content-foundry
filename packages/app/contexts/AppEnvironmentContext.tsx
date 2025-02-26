@@ -6,7 +6,6 @@ import {
 // import AppStateProvider from "packages/client/contexts/AppStateContext.tsx";
 // import { featureFlags, featureVariants } from "packages/features/list.ts";
 
-import { posthog } from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
 // import { RelayEnvironmentProvider } from "react-relay";
@@ -18,16 +17,16 @@ import {
 // import type { Environment } from "relay-runtime";
 import { getEnvironment } from "packages/app/isographEnvironment.ts";
 import { getLogger } from "packages/logger.ts";
-import { useEffect } from "react";
+import { getCurrentClients } from "lib/posthog.ts";
 
 const logger = getLogger(import.meta);
 
-const AppEnvironmentContext = React.createContext<AppEnvironmentProps>({
-  posthogKey: "",
-});
+const AppEnvironmentContext = React.createContext<AppEnvironmentProps>({});
 
 export type AppEnvironmentProps = {
-  posthogKey: string;
+  POSTHOG_API_KEY?: string;
+  personBfGid?: string;
+  featureFlags?: Record<string, string | boolean>;
 };
 
 export type ServerProps =
@@ -49,10 +48,10 @@ export function AppEnvironmentProvider(
     queryParams,
     initialPath,
     isographServerEnvironment,
+    personBfGid,
     ...appEnvironment
   }: React.PropsWithChildren<ServerProps>,
 ) {
-  const { posthogKey } = appEnvironment;
   const isographEnvironment = isographServerEnvironment ?? getEnvironment();
 
   logger.debug("AppEnvironmentProvider: props", routeParams, queryParams);
@@ -61,16 +60,10 @@ export function AppEnvironmentProvider(
     isographServerEnvironment,
     IsographEnvironmentProvider,
   );
-
-  // Initialize PostHog in the browser
-  useEffect(() => {
-    if (posthogKey && typeof window !== "undefined") {
-      posthog.init(posthogKey, {
-        api_host: "https://app.posthog.com",
-      });
-      logger.debug("Initialized PostHog with key:", posthogKey);
-    }
-  }, [posthogKey]);
+  const { frontendClient, backendClient } = React.useMemo(getCurrentClients, [
+    personBfGid,
+  ]);
+  const posthog = frontendClient ?? backendClient;
 
   return (
     <AppEnvironmentContext.Provider value={appEnvironment}>

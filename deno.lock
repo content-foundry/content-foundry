@@ -74,8 +74,8 @@
     "npm:nexus@^1.3.0": "1.3.0_graphql@16.10.0",
     "npm:notebookjs@~0.8.3": "0.8.3",
     "npm:openai@*": "4.79.1_zod@3.24.1",
-    "npm:posthog-js@^1.215.6": "1.215.6",
-    "npm:posthog-node@^4.5.0": "4.5.0",
+    "npm:posthog-js@^1.223.5": "1.223.5_@rrweb+types@2.0.0-alpha.17",
+    "npm:posthog-node@^4.7.0": "4.7.0",
     "npm:react-dom@19": "19.0.0_react@19.0.0",
     "npm:react@*": "19.0.0",
     "npm:react@19": "19.0.0",
@@ -988,6 +988,12 @@
     "@root/encoding@1.0.1": {
       "integrity": "sha512-OaEub02ufoU038gy6bsNHQOjIn8nUjGiLcaRmJ40IUykneJkIW5fxDqKxQx48cszuNflYldsJLPPXCrGfHs8yQ=="
     },
+    "@rrweb/types@2.0.0-alpha.17": {
+      "integrity": "sha512-AfDTVUuCyCaIG0lTSqYtrZqJX39ZEYzs4fYKnexhQ+id+kbZIpIJtaut5cto6dWZbB3SEe4fW0o90Po3LvTmfg==",
+      "dependencies": [
+        "rrweb-snapshot@2.0.0-alpha.18"
+      ]
+    },
     "@sentry/core@8.54.0": {
       "integrity": "sha512-03bWf+D1j28unOocY/5FDB6bUHtYlm6m6ollVejhg45ZmK9iPjdtxNWbrLsjT1WRym0Tjzowu+A3p+eebYEv0Q=="
     },
@@ -1212,8 +1218,8 @@
     "asynckit@0.4.0": {
       "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q=="
     },
-    "axios@1.7.9": {
-      "integrity": "sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==",
+    "axios@1.8.1": {
+      "integrity": "sha512-NN+fvwH/kV01dYUQ3PTOZns4LWtWhOFCAhQ/pHb88WQ1hNe5V/dvFwc4VJcDL11LT9xSX0QtsR8sWUuyOuOq7g==",
       "dependencies": [
         "follow-redirects",
         "form-data",
@@ -2159,6 +2165,9 @@
     "ms@2.1.3": {
       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="
     },
+    "nanoid@3.3.8": {
+      "integrity": "sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w=="
+    },
     "nexus@1.3.0_graphql@16.10.0": {
       "integrity": "sha512-w/s19OiNOs0LrtP7pBmD9/FqJHvZLmCipVRt6v1PM8cRUYIbhEswyNKGHVoC4eHZGPSnD+bOf5A3+gnbt0A5/A==",
       "dependencies": [
@@ -2243,6 +2252,17 @@
         "postgres-range"
       ]
     },
+    "picocolors@1.1.1": {
+      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="
+    },
+    "postcss@8.5.3": {
+      "integrity": "sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==",
+      "dependencies": [
+        "nanoid",
+        "picocolors",
+        "source-map-js"
+      ]
+    },
     "postgres-array@3.0.2": {
       "integrity": "sha512-6faShkdFugNQCLwucjPcY5ARoW1SlbnrZjmGl0IrrqewpvxvhSLHimCVzqeuULCbG0fQv7Dtk1yDbG3xv7Veog=="
     },
@@ -2261,23 +2281,24 @@
     "postgres-range@1.1.4": {
       "integrity": "sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w=="
     },
-    "posthog-js@1.215.6": {
-      "integrity": "sha512-OWfLYXaGNZDfKnNo9h2jifV1rsqhSfZzHw6/W6IOSk8Cq2nidIPUm89mutk7zbzPPmnVTV8eqPCfhFaoHZZKLw==",
+    "posthog-js@1.223.5_@rrweb+types@2.0.0-alpha.17": {
+      "integrity": "sha512-QCapVOZ0zusWR2BryAc3utuEwlsK4xhbpaHWi56cUJwdHOi3gThmXL/bpS5KZtYAJN3UUEwN5Ef3IcfDLp9fMQ==",
       "dependencies": [
+        "@rrweb/types",
         "core-js",
         "fflate@0.4.8",
         "preact",
         "web-vitals@4.2.4"
       ]
     },
-    "posthog-node@4.5.0": {
-      "integrity": "sha512-h1WTHYvgOZ7kBGH0XfKVOVsSyFgCEbgzC2RIw7fetsW6RrSvxPYcaycKUDfqa5EGbvU0SYLbqAeeqNZjPDaznA==",
+    "posthog-node@4.7.0": {
+      "integrity": "sha512-RgdUKSW8MfMOkjUa8cYVqWndNjPePNuuxlGbrZC6z1WRBsVc6TdGl8caidmC10RW8mu/BOfmrGbP4cRTo2jARg==",
       "dependencies": [
         "axios"
       ]
     },
-    "preact@10.25.4": {
-      "integrity": "sha512-jLdZDb+Q+odkHJ+MpW/9U5cODzqnB+fy2EiHSZES7ldV5LK7yjlVzTp7R8Xy6W6y75kfK8iWYtFVH7lvjwrCMA=="
+    "preact@10.26.2": {
+      "integrity": "sha512-0gNmv4qpS9HaN3+40CLBAnKe0ZfyE4ZWo5xKlC1rVrr0ckkEvJvAQqKaHANdFKsGstoxrY4AItZ7kZSGVoVjgg=="
     },
     "property-information@6.5.0": {
       "integrity": "sha512-PgTgs/BlvHxOu8QuEN7wi5A0OmXaBcHpmCSTehcs6Uuu9IkDIEo13Hy7n898RHfrQ49vKCoGeWZSaAK01nwVig=="
@@ -2441,6 +2462,12 @@
     "rrweb-snapshot@1.1.14": {
       "integrity": "sha512-eP5pirNjP5+GewQfcOQY4uBiDnpqxNRc65yKPW0eSoU1XamDfc4M8oqpXGMyUyvLyxFDB0q0+DChuxxiU2FXBQ=="
     },
+    "rrweb-snapshot@2.0.0-alpha.18": {
+      "integrity": "sha512-hBHZL/NfgQX6wO1D9mpwqFu1NJPpim+moIcKhFEjVTZVRUfCln+LOugRc4teVTCISYHN8Cw5e2iNTWCSm+SkoA==",
+      "dependencies": [
+        "postcss"
+      ]
+    },
     "rrweb@1.1.3": {
       "integrity": "sha512-F2qp8LteJLyycsv+lCVJqtVpery63L3U+/ogqMA0da8R7Jx57o6gT+HpjrzdeeGMIBZR7kKNaKyJwDupTTu5KA==",
       "dependencies": [
@@ -2449,7 +2476,7 @@
         "base64-arraybuffer",
         "fflate@0.4.8",
         "mitt",
-        "rrweb-snapshot"
+        "rrweb-snapshot@1.1.14"
       ]
     },
     "safe-buffer@5.2.1": {
@@ -2703,6 +2730,7 @@
   "remote": {
     "https://esm.sh/@codemirror/state@6.5.1/denonext/state.mjs": "2547fab4ecaed30592ecb7ea398b7a8081b3b7e9797ebd6b2a696e69b25a3816",
     "https://esm.sh/@codemirror/state@6.5.1?target=denonext": "3473608c32947dfd4186a76b11a50df5c90c4111f0a9092290c5114914e7b12a",
+    "https://esm.sh/@hyperdx/browser@0.19.3": "0184d801303c295e405144508feda8254ab67f7f2ed2c027b6a43e8e2367e428",
     "https://esm.sh/@marijn/find-cluster-break@1.0.2/denonext/find-cluster-break.mjs": "740e4a2ff6fbcd7f619e556d06b4ab21bfafc6c69472ee84999739c3e26c9e46",
     "https://esm.sh/@marijn/find-cluster-break@1.0.2?target=denonext": "8ee05755b904d18303ebb157ad8f96a86de0e20738e0836493defd76a62898dc",
     "https://esm.sh/@noble/curves@1.8.1/abstract/utils?target=denonext": "79e169929f69743d74a45b76c6625320dba1e522ea55e12ebc5b3504340b7de2",
@@ -2720,6 +2748,7 @@
     "https://esm.sh/@noble/hashes@1.7.1/denonext/esm/_u64.mjs": "dc18594209ec4ac8d35fd701da5aa6ad6cd30236156d7f903336206e65ebed30",
     "https://esm.sh/@noble/hashes@1.7.1/denonext/sha512.mjs": "021263a6b490613e7f778e8293c3ef6c40028f2452d2e705a4b65d21fb1e9f27",
     "https://esm.sh/@noble/hashes@1.7.1/denonext/utils.mjs": "0bb40584a0961905f21e5a0f119c6c286544f3c4385bc93c7671c8170c373698",
+    "https://esm.sh/@opentelemetry/resources@1.14.0": "6a6bdb2086a09035baabbda4f26e17465ec1554d2cbc8258edc7715ea1ae7c0b",
     "https://esm.sh/@replit/extensions@1.10.0": "8efd9e654aef77b4fe8f0d937b1c59baa927cd5c017a8fb544783b0ff71fb54a",
     "https://esm.sh/@replit/extensions@1.10.0/denonext/extensions.mjs": "33c80475d8982a8ee3fc206e7232e219807e1d4ff720796dfca0fd6149a0b595",
     "https://esm.sh/@root/asn1@1.0.2/denonext/asn1.mjs": "fb79829c6bf4a0fd71b968eed11cc57a80ce126751bf26588d56f8b0fd2279d9",
@@ -2731,7 +2760,8 @@
     "https://esm.sh/b64u-lite@1.1.0/denonext/b64u-lite.mjs": "db6ce808ff85808574dee40787ec56742e32e28418f8f295488f175c766a178f",
     "https://esm.sh/b64u-lite@1.1.0?target=denonext": "4de23bc4547f7f02aa29fd69a720d22778326c92ce0e6406b171ac0431d60487",
     "https://esm.sh/comlink@4.4.2/denonext/comlink.mjs": "71907ef59fd50ff1d01877708de6d1b57a2fb9153476d24994f90432a7b4e6f5",
-    "https://esm.sh/comlink@4.4.2?target=denonext": "35d8ebdefaff1b66c8baf771561a805db0646f1b31abae56a1d0aa0463375deb"
+    "https://esm.sh/comlink@4.4.2?target=denonext": "35d8ebdefaff1b66c8baf771561a805db0646f1b31abae56a1d0aa0463375deb",
+    "https://esm.sh/posthog-js@1.95.1": "58840b046e383b6f7e6d72c2f78de96542bbf99c0878f788b37c6fd51fd6af7d"
   },
   "workspace": {
     "dependencies": [
@@ -2777,8 +2807,8 @@
         "npm:marked@^15.0.6",
         "npm:nexus@^1.3.0",
         "npm:notebookjs@~0.8.3",
-        "npm:posthog-js@^1.215.6",
-        "npm:posthog-node@^4.5.0",
+        "npm:posthog-js@^1.223.5",
+        "npm:posthog-node@^4.7.0",
         "npm:react-dom@19",
         "npm:react@19",
         "npm:zod@^3.24.1"

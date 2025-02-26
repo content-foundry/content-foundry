@@ -18,6 +18,7 @@ import type {
   RegistrationResponseJSON,
 } from "@simplewebauthn/server";
 import { BfOrganization } from "packages/bfDb/models/BfOrganization.ts";
+import { getPosthogClient } from "lib/posthog.ts";
 
 const logger = getLogger(import.meta);
 
@@ -200,5 +201,18 @@ export async function createContext(request: Request): Promise<Context> {
       return orgs[0];
     },
   };
+
+  if (currentViewer.isLoggedIn) {
+    const { backendClient } = await getPosthogClient();
+    if (backendClient) {
+      backendClient.identify({
+        distinctId: currentViewer.bfGid,
+        properties: {
+          isLoggedIn: true,
+        },
+      });
+    }
+  }
+
   return ctx;
 }

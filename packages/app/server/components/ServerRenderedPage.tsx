@@ -75,7 +75,7 @@ export function ServerRenderedPage(
 
           if (globalThis.__REHYDRATE__) {
             console.debug("Trying to rehydrate");
-            globalThis.__REHYDRATE__(globalThis.__ENVIRONMENT__);
+            await globalThis.__REHYDRATE__(globalThis.__ENVIRONMENT__);
           } else {
             // can't rehydrate yet.
             console.warn("Rehydration fail");

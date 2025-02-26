@@ -8,6 +8,7 @@ import { BfDsProvider } from "packages/bfDs/contexts/BfDsContext.tsx";
 import { ErrorBoundary } from "packages/app/components/ErrorBoundary.tsx";
 import { getLogger } from "packages/logger.ts";
 import { AppSidebar } from "packages/app/components/AppSidebar.tsx";
+import { getPosthogClient } from "lib/posthog.ts";
 const logger = getLogger(import.meta);
 
 export function ClientRoot(
@@ -29,7 +30,8 @@ export function ClientRoot(
   );
 }
 
-export function rehydrate(props: ServerProps) {
+export async function rehydrate(props: ServerProps) {
+  await getPosthogClient(props.personBfGid, props.featureFlags);
   const root = document.querySelector("#root");
   if (root) {
     logger.debug("rehydrating root", root, props);
@@ -49,7 +51,7 @@ logger.debug("AppRoot loaded");
 if (globalThis.__ENVIRONMENT__) {
   logger.debug("found environment, rehydrating root");
   // @ts-expect-error Not typed on the window yet
-  rehydrate(globalThis.__ENVIRONMENT__);
+  await rehydrate(globalThis.__ENVIRONMENT__);
 } else {
   logger.debug("Setting rehydration callback");
   // @ts-expect-error Not typed on the window yet

@@ -5,10 +5,7 @@ import {
   featureFlagsVariant,
 } from "packages/featureFlags/featureFlagsList.ts";
 
-import {
-  ensurePosthogClientIsSetUp,
-  getCurrentClients,
-} from "packages/analytics/analytics.ts";
+import { getCurrentClients } from "lib/posthog.ts";
 
 /**
  * Return the boolean value of a feature flag from PostHog if possible;
@@ -23,7 +20,7 @@ export async function getFeatureFlagEnabled(
   personBfGraphId?: string,
 ): Promise<boolean> {
   // Attempt to set up PostHog
-  const { frontendClient, backendClient } = await ensurePosthogClientIsSetUp();
+  const { frontendClient, backendClient } = getCurrentClients();
 
   // If we have a client on the front-end (client-side), use it
   if (frontendClient) {
