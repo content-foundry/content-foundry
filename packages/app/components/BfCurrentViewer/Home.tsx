@@ -4,11 +4,27 @@ import { CfLogo } from "packages/app/resources/CfLogo.tsx";
 export const Home = iso(`
   field BfCurrentViewer.Home @component {
     __typename
-    # content(slug: "home") {
-    #   ContentBody
-    # }
+    # Isograph bug preventing string literals
+    # contentCollection(slug: "home") {
+    contentCollection {
+      name
+      description
+      items {
+        edges {
+          node {
+            title
+            body
+            href
+          }
+        }
+      }
+    }
   }
-`)(function Home() {
+`)(function Home({ data }) {
+  // Extract content items from the data
+  const collection = data?.contentCollection;
+  const contentItems = collection?.items?.edges?.map(edge => edge?.node) || [];
+
   return (
     <div className="appPage flexCenter">
       <div className="appHeader">
@@ -21,8 +37,30 @@ export const Home = iso(`
           </div>
         </div>
       </div>
+
       <div className="loginBox">
-        Coming soon.
+        {collection ? (
+          <div className="content-collection">
+            <h2>{collection.name}</h2>
+            <p className="collection-description">{collection.description}</p>
+
+            <div className="content-items">
+              {contentItems.length > 0 ? (
+                contentItems.map((item, index) => (
+                  <div key={index} className="content-item">
+                    <h3 className="content-item-title">{item.title}</h3>
+                    <p className="content-item-body">{item.body}</p>
+                    <a href={item.href} className="content-item-link">Read more</a>
+                  </div>
+                ))
+              ) : (
+                <p>No content items available.</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <p>Coming soon.</p>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,72 @@ const readerAst: ReaderAst<BfCurrentViewer__Home__param> = [
     alias: null,
     arguments: null,
   },
+  {
+    kind: "Linked",
+    fieldName: "contentCollection",
+    alias: null,
+    arguments: null,
+    condition: null,
+    selections: [
+      {
+        kind: "Scalar",
+        fieldName: "name",
+        alias: null,
+        arguments: null,
+      },
+      {
+        kind: "Scalar",
+        fieldName: "description",
+        alias: null,
+        arguments: null,
+      },
+      {
+        kind: "Linked",
+        fieldName: "items",
+        alias: null,
+        arguments: null,
+        condition: null,
+        selections: [
+          {
+            kind: "Linked",
+            fieldName: "edges",
+            alias: null,
+            arguments: null,
+            condition: null,
+            selections: [
+              {
+                kind: "Linked",
+                fieldName: "node",
+                alias: null,
+                arguments: null,
+                condition: null,
+                selections: [
+                  {
+                    kind: "Scalar",
+                    fieldName: "title",
+                    alias: null,
+                    arguments: null,
+                  },
+                  {
+                    kind: "Scalar",
+                    fieldName: "body",
+                    alias: null,
+                    arguments: null,
+                  },
+                  {
+                    kind: "Scalar",
+                    fieldName: "href",
+                    alias: null,
+                    arguments: null,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const artifact: ComponentReaderArtifact<

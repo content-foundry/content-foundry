@@ -83,6 +83,28 @@ export interface NexusGenObjects {
     cursor: string; // String!
     node?: NexusGenRootTypes['BfBlogPost'] | null; // BfBlogPost
   }
+  BfContentCollection: { // root type
+    description?: string | null; // String
+    id: string; // ID!
+    name?: string | null; // String
+    slug?: string | null; // String
+  }
+  BfContentItem: { // root type
+    body?: string | null; // String
+    id: string; // ID!
+    slug?: string | null; // String
+    title?: string | null; // String
+  }
+  BfContentItemConnection: { // root type
+    count?: number | null; // Int
+    edges?: Array<NexusGenRootTypes['BfContentItemEdge'] | null> | null; // [BfContentItemEdge]
+    nodes?: Array<NexusGenRootTypes['BfContentItem'] | null> | null; // [BfContentItem]
+    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
+  }
+  BfContentItemEdge: { // root type
+    cursor: string; // String!
+    node?: NexusGenRootTypes['BfContentItem'] | null; // BfContentItem
+  }
   BfCurrentViewerLoggedIn: { // root type
     id: string; // ID!
   }
@@ -224,13 +246,39 @@ export interface NexusGenFieldTypes {
     cursor: string; // String!
     node: NexusGenRootTypes['BfBlogPost'] | null; // BfBlogPost
   }
+  BfContentCollection: { // field return type
+    description: string | null; // String
+    id: string; // ID!
+    items: NexusGenRootTypes['BfContentItemConnection'] | null; // BfContentItemConnection
+    name: string | null; // String
+    slug: string | null; // String
+  }
+  BfContentItem: { // field return type
+    body: string | null; // String
+    href: string | null; // String
+    id: string; // ID!
+    slug: string | null; // String
+    title: string | null; // String
+  }
+  BfContentItemConnection: { // field return type
+    count: number | null; // Int
+    edges: Array<NexusGenRootTypes['BfContentItemEdge'] | null> | null; // [BfContentItemEdge]
+    nodes: Array<NexusGenRootTypes['BfContentItem'] | null> | null; // [BfContentItem]
+    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
+  }
+  BfContentItemEdge: { // field return type
+    cursor: string; // String!
+    node: NexusGenRootTypes['BfContentItem'] | null; // BfContentItem
+  }
   BfCurrentViewerLoggedIn: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
+    contentCollection: NexusGenRootTypes['BfContentCollection'] | null; // BfContentCollection
     id: string; // ID!
     organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
   BfCurrentViewerLoggedOut: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
+    contentCollection: NexusGenRootTypes['BfContentCollection'] | null; // BfContentCollection
     id: string; // ID!
     organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
@@ -339,6 +387,7 @@ export interface NexusGenFieldTypes {
   }
   BfCurrentViewer: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
+    contentCollection: NexusGenRootTypes['BfContentCollection'] | null; // BfContentCollection
     id: string; // ID!
     organization: NexusGenRootTypes['BfOrganization'] | null; // BfOrganization
   }
@@ -380,13 +429,39 @@ export interface NexusGenFieldTypeNames {
     cursor: 'String'
     node: 'BfBlogPost'
   }
+  BfContentCollection: { // field return type name
+    description: 'String'
+    id: 'ID'
+    items: 'BfContentItemConnection'
+    name: 'String'
+    slug: 'String'
+  }
+  BfContentItem: { // field return type name
+    body: 'String'
+    href: 'String'
+    id: 'ID'
+    slug: 'String'
+    title: 'String'
+  }
+  BfContentItemConnection: { // field return type name
+    count: 'Int'
+    edges: 'BfContentItemEdge'
+    nodes: 'BfContentItem'
+    pageInfo: 'PageInfo'
+  }
+  BfContentItemEdge: { // field return type name
+    cursor: 'String'
+    node: 'BfContentItem'
+  }
   BfCurrentViewerLoggedIn: { // field return type name
     blog: 'BfBlog'
+    contentCollection: 'BfContentCollection'
     id: 'ID'
     organization: 'BfOrganization'
   }
   BfCurrentViewerLoggedOut: { // field return type name
     blog: 'BfBlog'
+    contentCollection: 'BfContentCollection'
     id: 'ID'
     organization: 'BfOrganization'
   }
@@ -495,6 +570,7 @@ export interface NexusGenFieldTypeNames {
   }
   BfCurrentViewer: { // field return type name
     blog: 'BfBlog'
+    contentCollection: 'BfContentCollection'
     id: 'ID'
     organization: 'BfOrganization'
   }
@@ -516,6 +592,24 @@ export interface NexusGenArgTypes {
       before?: string | null; // String
       first?: number | null; // Int
       last?: number | null; // Int
+    }
+  }
+  BfContentCollection: {
+    items: { // args
+      after?: string | null; // String
+      before?: string | null; // String
+      first?: number | null; // Int
+      last?: number | null; // Int
+    }
+  }
+  BfCurrentViewerLoggedIn: {
+    contentCollection: { // args
+      slug?: string | null; // String
+    }
+  }
+  BfCurrentViewerLoggedOut: {
+    contentCollection: { // args
+      slug?: string | null; // String
     }
   }
   Mutation: {
@@ -553,17 +647,24 @@ export interface NexusGenArgTypes {
       id?: string | null; // ID
     }
   }
+  BfCurrentViewer: {
+    contentCollection: { // args
+      slug?: string | null; // String
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
   BfCurrentViewer: "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut"
-  BfNode: "BfBlog" | "BfBlogPost" | "BfOrganization" | "BfPerson"
-  Node: "BfBlog" | "BfBlogPost" | "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut" | "BfOrganization" | "BfPerson"
+  BfNode: "BfBlog" | "BfBlogPost" | "BfContentCollection" | "BfContentItem" | "BfOrganization" | "BfPerson"
+  Node: "BfBlog" | "BfBlogPost" | "BfContentCollection" | "BfContentItem" | "BfCurrentViewerLoggedIn" | "BfCurrentViewerLoggedOut" | "BfOrganization" | "BfPerson"
 }
 
 export interface NexusGenTypeInterfaces {
   BfBlog: "BfNode" | "Node"
   BfBlogPost: "BfNode" | "Node"
+  BfContentCollection: "BfNode" | "Node"
+  BfContentItem: "BfNode" | "Node"
   BfCurrentViewerLoggedIn: "BfCurrentViewer" | "Node"
   BfCurrentViewerLoggedOut: "BfCurrentViewer" | "Node"
   BfOrganization: "BfNode" | "Node"
