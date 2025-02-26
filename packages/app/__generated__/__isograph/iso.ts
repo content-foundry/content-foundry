@@ -4,12 +4,6 @@ import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostL
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
 import { type BfCurrentViewer__Home__param } from './BfCurrentViewer/Home/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep1/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep2/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateTwitterVoice__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateTwitterVoice/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CurrentEvent__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CurrentEvent/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_Home__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_Home/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator__param } from './BfCurrentViewerLoggedIn/TwitterIdeator/param_type.ts';
 import { type BfCurrentViewerLoggedIn__YcForm__param } from './BfCurrentViewerLoggedIn/YcForm/param_type.ts';
 import { type BfCurrentViewerLoggedOut__DemoButton__param } from './BfCurrentViewerLoggedOut/DemoButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__LoggedOutView__param } from './BfCurrentViewerLoggedOut/LoggedOutView/param_type.ts';
@@ -116,30 +110,6 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
 ): IdentityWithParamComponent<BfCurrentViewerLoggedIn__LoggedInView__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CreateStep1', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CreateStep2', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CreateTwitterVoice', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CreateTwitterVoice__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CurrentEvent', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CurrentEvent__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_Home', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_Home__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.YcForm', T>
