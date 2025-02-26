@@ -46,7 +46,6 @@ export type ButtonType = {
     width?: string | number;
     alignSelf?: "flex-start" | "flex-end";
   };
-  disabled?: boolean;
   iconLeft?: BfDsIconType;
   iconRight?: BfDsIconType;
   // if link is provided, the button will be rendered as a Link
@@ -69,10 +68,8 @@ export type ButtonType = {
   tooltipMenuDropdown?: Array<BfDsTooltipMenu>;
   tooltipPosition?: BfDsTooltipPosition;
   tooltipJustification?: BfDsTooltipJustification;
-  type?: "button" | "submit" | "reset";
   kind?: ButtonKind;
-  role?: string;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const baseStyles: Record<string, React.CSSProperties> = {
   textStyle: {
@@ -515,6 +512,7 @@ export function BfDsButton({
   kind = "primary",
   type = "button",
   role: passedRole,
+  ...props
 }: ButtonType) {
   const [hover, setHover] = React.useState(false);
   const role = passedRole ?? text;
@@ -600,6 +598,7 @@ export function BfDsButton({
   // Create button element
   const buttonElement = (
     <button
+      {...props}
       disabled={disabled}
       type={type}
       style={{

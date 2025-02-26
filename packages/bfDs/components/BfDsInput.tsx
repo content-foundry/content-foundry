@@ -2,7 +2,7 @@ import * as React from "react";
 import { fonts } from "packages/bfDs/const.tsx";
 import { BfDsSpinner } from "packages/bfDs/components/BfDsSpinner.tsx";
 
-type BaseProps = {
+export type InputBaseProps = {
   autoFocus?: boolean;
   autoSelect?: boolean;
   disabled?: boolean;
@@ -22,15 +22,15 @@ type BaseProps = {
   xstyle?: React.CSSProperties;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   onFocus?: React.FocusEventHandler<HTMLInputElement>;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
-type EditableProps = BaseProps & {
+type EditableProps = InputBaseProps & {
   readonly?: false;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
-type ReadonlyProps = BaseProps & {
+type ReadonlyProps = InputBaseProps & {
   readonly: true;
   onChange?: never;
   onKeyDown?: never;
@@ -102,6 +102,7 @@ export function BfDsInput(
     showSpinner,
     testId,
     xstyle,
+    ...props
   }: InputProps,
 ) {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -114,6 +115,7 @@ export function BfDsInput(
 
   const input = (
     <input
+      {...props}
       disabled={disabled}
       value={value}
       onBlur={onBlur}
