@@ -65,8 +65,66 @@ type BfBlogPostEdge {
   node: BfBlogPost
 }
 
+type BfContentCollection implements BfNode & Node {
+  description: String
+
+  """Unique identifier for the resource"""
+  id: ID!
+  items(
+    """Returns the elements in the list that come after the specified cursor"""
+    after: String
+
+    """Returns the elements in the list that come before the specified cursor"""
+    before: String
+
+    """Returns the first n elements from the list."""
+    first: Int
+
+    """Returns the last n elements from the list."""
+    last: Int
+  ): BfContentItemConnection
+  name: String
+  slug: String
+}
+
+type BfContentItem implements BfNode & Node {
+  body: String
+  href: String
+
+  """Unique identifier for the resource"""
+  id: ID!
+  slug: String
+  title: String
+}
+
+type BfContentItemConnection {
+  count: Int
+
+  """
+  https://facebook.github.io/relay/graphql/connections.htm#sec-Edge-Types
+  """
+  edges: [BfContentItemEdge]
+
+  """Flattened list of BfContentItem type"""
+  nodes: [BfContentItem]
+
+  """
+  https://facebook.github.io/relay/graphql/connections.htm#sec-undefined.PageInfo
+  """
+  pageInfo: PageInfo!
+}
+
+type BfContentItemEdge {
+  """https://facebook.github.io/relay/graphql/connections.htm#sec-Cursor"""
+  cursor: String!
+
+  """https://facebook.github.io/relay/graphql/connections.htm#sec-Node"""
+  node: BfContentItem
+}
+
 interface BfCurrentViewer implements Node {
   blog: BfBlog
+  contentCollection(slug: String): BfContentCollection
 
   """Unique identifier for the resource"""
   id: ID!
@@ -75,6 +133,7 @@ interface BfCurrentViewer implements Node {
 
 type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
   blog: BfBlog
+  contentCollection(slug: String): BfContentCollection
 
   """Unique identifier for the resource"""
   id: ID!
@@ -83,6 +142,7 @@ type BfCurrentViewerLoggedIn implements BfCurrentViewer & Node {
 
 type BfCurrentViewerLoggedOut implements BfCurrentViewer & Node {
   blog: BfBlog
+  contentCollection(slug: String): BfContentCollection
 
   """Unique identifier for the resource"""
   id: ID!
