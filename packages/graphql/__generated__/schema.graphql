@@ -181,7 +181,9 @@ type BfPerson implements BfNode & Node {
 }
 
 type Creation {
+  draftBlog: String
   originalText: String
+  revisions: [Revisions]
   suggestions: [Suggestion]
 }
 
@@ -205,6 +207,7 @@ type Mutation {
   makeTweets(tweet: String!): Creation
   register(attResp: JSONString!, email: String!): BfCurrentViewerLoggedIn
   registrationOptions(email: String!): JSONString
+  reviseBlog(blogPost: String!): Creation
   submitYcForm(formData: String, systemPrompt: String, taskPrompt: String): YCRecommendations
 }
 
@@ -265,6 +268,13 @@ type ResearchEntry {
 type ResearchTopic {
   entries: [ResearchEntry]
   name: String
+}
+
+type Revisions {
+  explanation: String
+  original: String
+  revision: String
+  revisionTitle: String
 }
 
 type Suggestion {
