@@ -45,7 +45,8 @@ const featureFlagsEnabledUnfrozen = {
   // Example boolean flags, keep alphabetical:
   enable_demo_button: true,
   enable_login_form: true,
-  show_coming_soon: true,
+  enable_sidebar: false,
+  show_extended_content: false,
 
   ...gatingFlags,
 };

@@ -157,8 +157,8 @@ export async function llm(args: string[]): Promise<number> {
       await Deno.writeTextFile(opts.outputFile, output);
 
       // Count tokens if we have an output file
-      const totalTokens = await countTokens(output);
-      logger.warn(`Total tokens: ${totalTokens}`);
+      // const totalTokens = await countTokens(output);
+      // logger.warn(`Total tokens: ${totalTokens}`);
     } else {
       logger.warn("No --output file specified; skipping token count.");
     }
