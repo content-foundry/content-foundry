@@ -76,7 +76,7 @@ async function encodeText(text: string): Promise<number[]> {
   return Array.from(encoding.encode(text)).map(Number);
 }
 
-async function countTokens(text: string): Promise<number> {
+async function _countTokens(text: string): Promise<number> {
   return (await encodeText(text)).length;
 }
 
