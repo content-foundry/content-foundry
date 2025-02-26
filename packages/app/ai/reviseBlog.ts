@@ -33,7 +33,7 @@ export const systemPrompty =
 `;
 
 const taskPrompty =
-  `Here is the blog post, please make revisions to it so it better suits the my voice.
+  `Here is the blog post, please make revisions to it so it better suits my voice.
 `;
 
 export async function reviseBlog(
@@ -43,9 +43,9 @@ export async function reviseBlog(
   systemPrompt = systemPrompty,
 ) {
   const options = {};
-  const content = `*BlogPost*: ${blog}
+  const content = `*BlogPost*: ${blog} to revise.
 
-  *Voice*: ${voice}`;
+  and *Voice*: ${voice} to revise it with`;
   const response = await openAi.chat.completions.create(
     {
       model: "openai/gpt-4o:online",
@@ -72,7 +72,7 @@ export async function reviseBlog(
         {
           role: "system",
           content:
-            `Please reference the user's voice in making revisions: ${voice}`,
+            `Please reference the user's voice in order make revisions: ${voice}`,
         },
       ],
     },
