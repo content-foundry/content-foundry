@@ -10,12 +10,15 @@ export async function importReactComponentForJupyter(filePath: string) {
   const module = await import(filePath);
   const returnableModule = {};
   Object.entries(module).forEach(([name, module]) => {
+    // @ts-expect-error #techdebt
     module.originalPath = filePath;
+    // @ts-expect-error #techdebt
     returnableModule[name] = module;
   });
   return returnableModule;
 }
 
+    // @ts-expect-error #techdebt
 function createElement(type, props, ...children) {
   const originalElement = OriginalReact.createElement(type, props, ...children);
 
@@ -72,7 +75,7 @@ function createElement(type, props, ...children) {
       } catch (error) {
         logger.error("Error in Jupyter display:", error);
         return {
-          "text/plain": `Error: ${error.message}`,
+          "text/plain": `Error: ${(error as Error).message}`,
         };
       }
     },
