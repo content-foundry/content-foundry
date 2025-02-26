@@ -26,7 +26,7 @@ export const Home = iso(`
   const collection = data?.contentCollection;
   const contentItems = collection?.items?.edges?.map((edge) => edge?.node) ||
     [];
-  const showComingSoon = useFeatureFlagEnabled("show_coming_soon");
+  const showExtendedContent = useFeatureFlagEnabled("show_extended_content");
 
   return (
     <div className="appPage flexCenter">
@@ -36,13 +36,13 @@ export const Home = iso(`
             Welcome to
           </div>
           <div className="appHeaderLogo">
-            <CfLogo boltColor="black" foundryColor="black" />
+            <CfLogo boltColor="blpack" foundryColor="black" />
           </div>
         </div>
       </div>
 
       <div className="loginBox">
-        {collection && !showComingSoon
+        {collection && showExtendedContent
           ? (
             <div className="content-collection">
               <h2>{collection.name}</h2>
