@@ -40,6 +40,9 @@ const defaultOptions: esbuild.BuildOptions = {
     "content/**/*.mdx",
     "content/**/*.ipynb",
   ],
+  external: [
+    "posthog-node",
+  ],
 };
 
 export async function build(
