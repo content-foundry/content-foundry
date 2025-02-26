@@ -25,6 +25,7 @@ const allowedEnvironmentVariables = [
   "OPENAI_PROJECT_ID",
   "OPEN_ROUTER_API_KEY",
   "POSTHOG_API_KEY",
+  "POSTHOG_HOST",
   "REPL_HOME",
   "REPLIT_DEV_DOMAIN",
   "RPID",
@@ -42,11 +43,11 @@ const DATABASE_STRING = getConfigurationVariable("DATABASE_URL") ?? "";
 const DEFAULT_NETWORK_DESTINATIONS = [
   "0.0.0.0",
   "127.0.0.1",
-  "api.assemblyai.com",
-  "esm.sh:443",
   "localhost",
+  "api.assemblyai.com",
   "openrouter.ai",
-  "api.openai.com:443",
+  "api.openai.com",
+  "app.posthog.com",
 ];
 
 const allowedNetworkDestionations = [...DEFAULT_NETWORK_DESTINATIONS];
