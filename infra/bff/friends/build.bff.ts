@@ -1,6 +1,11 @@
+// Modified version of infra/bff/friends/build.bff.ts
+
 import { runShellCommand } from "infra/bff/shellBase.ts";
 import { register } from "infra/bff/bff.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import { getLogger } from "packages/logger.ts";
+
+const logger = getLogger(import.meta);
 
 const allowedEnvironmentVariables = [
   "ASSEMBLY_AI_KEY",
@@ -31,14 +36,10 @@ const allowedEnvironmentVariables = [
   "WS_NO_BUFFER_UTIL",
 ];
 
+// This part is modified to avoid direct dependency on DATABASE_URL
 const DATABASE_STRING = getConfigurationVariable("DATABASE_URL") ?? "";
-const DATABASE_URL = new URL(DATABASE_STRING);
-const dbDomain = DATABASE_URL.hostname;
-const neonApiParts = dbDomain.split(".");
-neonApiParts[0] = "api";
-const neonApiDomain = neonApiParts.join(".");
-
-const allowedNetworkDestionations = [
+// Define default network destinations if DATABASE_URL isn't set
+const DEFAULT_NETWORK_DESTINATIONS = [
   "0.0.0.0",
   "127.0.0.1",
   "api.assemblyai.com",
@@ -46,9 +47,28 @@ const allowedNetworkDestionations = [
   "localhost",
   "openrouter.ai",
   "api.openai.com:443",
-  dbDomain,
-  neonApiDomain,
 ];
+
+const allowedNetworkDestionations = [...DEFAULT_NETWORK_DESTINATIONS];
+
+// Only attempt to parse DATABASE_URL if it exists
+if (DATABASE_STRING) {
+  try {
+    const DATABASE_URL = new URL(DATABASE_STRING);
+    const dbDomain = DATABASE_URL.hostname;
+    const neonApiParts = dbDomain.split(".");
+    neonApiParts[0] = "api";
+    const neonApiDomain = neonApiParts.join(".");
+
+    // Add database domains to allowed destinations
+    allowedNetworkDestionations.push(dbDomain, neonApiDomain);
+  } catch (err) {
+    logger.warn(
+      "Could not parse DATABASE_URL, continuing with default network destinations",
+      err,
+    );
+  }
+}
 
 const includableDirectories = [
   "packages",
@@ -79,18 +99,25 @@ const denoCompilationCommand = [
 ];
 
 export async function build([waitForFail]: Array<string>): Promise<number> {
-  await Deno.remove("build", { recursive: true });
+  await Deno.remove("build", { recursive: true }).catch(() => {
+    // Ignore errors if directory doesn't exist
+  });
   await Deno.mkdir("build", { recursive: true });
   await Deno.writeFile("build/.gitkeep", new Uint8Array());
-  await Deno.remove("static/build", { recursive: true });
+
+  await Deno.remove("static/build", { recursive: true }).catch(() => {
+    // Ignore errors if directory doesn't exist
+  });
   await Deno.mkdir("static/build", { recursive: true });
   await Deno.writeFile("static/build/.gitkeep", new Uint8Array());
+
   const routesBuildResult = await runShellCommand([
     "./infra/appBuild/routesBuild.ts",
   ]);
   if (routesBuildResult !== 0) {
     return routesBuildResult;
   }
+
   const contentResult = await runShellCommand([
     "./infra/appBuild/contentBuild.ts",
   ]);
@@ -105,6 +132,7 @@ export async function build([waitForFail]: Array<string>): Promise<number> {
       setTimeout(() => reject(new Error("Build failed")), 15000);
     });
   }
+
   const isographResult = await runShellCommand(
     ["deno", "run", "-A", "npm:@isograph/compiler"],
     "packages/app",
@@ -124,6 +152,7 @@ export async function build([waitForFail]: Array<string>): Promise<number> {
       setTimeout(() => reject(new Error("Build failed")), 10000);
     });
   }
+
   return denoResult || jsResult;
 }
 
