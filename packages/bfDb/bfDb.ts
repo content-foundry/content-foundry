@@ -1,4 +1,4 @@
-import { neon } from "@neondatabase/serverless";
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
 import { getLogger } from "packages/logger.ts";
 import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
@@ -22,11 +22,17 @@ type DbItem<T extends Props> = {
   metadata: BfDbMetadata;
 };
 
-const databaseUrl = getConfigurationVariable("DATABASE_URL");
-if (!databaseUrl) {
-  throw new BfErrorDb("DATABASE_URL is not set");
+let _sql: NeonQueryFunction<false, false> | null = null;
+function getSql() {
+  if (_sql === null) {
+    const databaseUrl = getConfigurationVariable("DATABASE_URL");
+    if (!databaseUrl) {
+      throw new BfErrorDb("DATABASE_URL is not set");
+    }
+    _sql = neon(databaseUrl);
+  }
+  return _sql;
 }
-const sql = neon(databaseUrl);
 
 export type JSONValue =
   | string
@@ -76,7 +82,7 @@ export async function bfGetItem<
   try {
     logger.trace("bfGetItem", bfOid, bfGid);
     const rows =
-      await sql`SELECT * FROM bfdb WHERE bf_oid = ${bfOid} AND bf_gid = ${bfGid}` as Array<
+      await getSql()`SELECT * FROM bfdb WHERE bf_oid = ${bfOid} AND bf_gid = ${bfGid}` as Array<
         Row<TProps>
       >;
 
@@ -106,9 +112,9 @@ export async function bfGetItemByBfGid<
     let queryPromise;
     if (className) {
       queryPromise =
-        sql`SELECT * FROM bfdb WHERE bf_gid = ${bfGid} AND class_name = ${className}`;
+        getSql()`SELECT * FROM bfdb WHERE bf_gid = ${bfGid} AND class_name = ${className}`;
     } else {
-      queryPromise = sql`SELECT * FROM bfdb WHERE bf_gid = ${bfGid}`;
+      queryPromise = getSql()`SELECT * FROM bfdb WHERE bf_gid = ${bfGid}`;
     }
     const rows = await queryPromise as Array<Row>;
     if (rows.length === 0) {
@@ -136,9 +142,9 @@ export async function bfGetItemsByBfGid<
     let queryPromise;
     if (className) {
       queryPromise =
-        sql`SELECT * FROM bfdb WHERE bf_gid = ANY(${bfGids}) AND class_name = ${className}`;
+        getSql()`SELECT * FROM bfdb WHERE bf_gid = ANY(${bfGids}) AND class_name = ${className}`;
     } else {
-      queryPromise = sql`SELECT * FROM bfdb WHERE bf_gid = ANY(${bfGids})`;
+      queryPromise = getSql()`SELECT * FROM bfdb WHERE bf_gid = ANY(${bfGids})`;
     }
     const rows = await queryPromise as Array<Row>;
     return rows.map((row) => {
@@ -189,7 +195,7 @@ export async function bfPutItem<
     }
 
     // Insert or Update with conditional sort_value
-    await sql`
+    await getSql()`
     INSERT INTO bfdb(
       bf_gid, bf_oid, bf_cid, bf_sid, bf_tid, class_name, created_at, last_updated, props, sort_value, bf_t_class_name, bf_s_class_name
     )
@@ -245,7 +251,7 @@ export async function bfQueryAncestorsByClassName<
   depth: number = 10,
 ): Promise<Array<DbItem<TProps>>> {
   try {
-    const rows = await sql`
+    const rows = await getSql()`
       WITH RECURSIVE AncestorTree(bf_sid, bf_s_class_name, path, depth) AS (
         SELECT 
           bf_sid, 
@@ -295,7 +301,7 @@ export async function bfQueryDescendantsByClassName<
   depth: number = 10,
 ): Promise<Array<DbItem<TProps>>> {
   try {
-    const rows = await sql`
+    const rows = await getSql()`
       WITH RECURSIVE DescendantTree(bf_tid, bf_t_class_name, path, depth) AS (
         SELECT 
           bf_tid, 
@@ -423,7 +429,7 @@ export async function bfQueryItemsUnified<
       ...propsConditions,
       ...specificIdConditions,
     ].filter(Boolean).join(" AND ");
-    const query = await sql(
+    const query = await getSql()(
       `SELECT COUNT(*) FROM bfdb WHERE ${allConditions}`,
       variables,
     );
@@ -458,7 +464,7 @@ export async function bfQueryItemsUnified<
     const query = buildQuery(offset);
     try {
       logger.debug("Executing query", query, variables);
-      const rows = await sql(query, variables) as Array<Row<TProps>>;
+      const rows = await getSql()(query, variables) as Array<Row<TProps>>;
 
       if (rows.length === 0) break; // No more results
 
@@ -552,7 +558,7 @@ export function bfQueryItemsWithSizeLimit<
 export async function bfDeleteItem(bfOid: BfGid, bfGid: BfGid): Promise<void> {
   try {
     logger.debug("bfDeleteItem", { bfOid, bfGid });
-    await sql`
+    await getSql()`
       DELETE FROM bfdb
       WHERE bf_oid = ${bfOid} AND bf_gid = ${bfGid}
     `;
@@ -675,7 +681,7 @@ function cursorToSortValue(cursor: string): number {
 
 export async function CLEAR_FOR_DEBUGGING() {
   if (getConfigurationVariable("BF_ENV") === "DEVELOPMENT") {
-    await sql`
+    await getSql()`
 WITH class_names AS (
   SELECT unnest(ARRAY['BfJob', 'BfJobLarge', 'BfMedia', 'BfCollection', 'BfMediaNode', 'BfMediaNodeVideoGoogleDriveResource', 'BfMediaNodeTranscript', 'BfMediaNodeVideo', 'BfGoogleDriveResource', 'BfMediaSequence']) AS name
 )
