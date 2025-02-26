@@ -52,42 +52,9 @@ export const graphqlBfCurrentViewerType = interfaceType({
       resolve: async (_parent, args, ctx) => {
         const { slug = "default" } = args;
 
-        try {
-          // Use the context's findX method to retrieve the collection
-          // Format the ID as expected by the model (collection-{slug})
-          const id = toBfGid(`collection-${slug}`);
-          const collection = await ctx.findX(BfContentCollection, id);
-          return collection.toGraphql();
-        } catch (error) {
-          logger.error(
-            `Error fetching content collection: ${(error as Error).message}`,
-          );
-
-          // Try the default collection if specific one not found
-          if (slug !== "default") {
-            try {
-              const defaultId = toBfGid("collection-default");
-              const defaultCollection = await ctx.findX(
-                BfContentCollection,
-                defaultId,
-              );
-              return defaultCollection.toGraphql();
-            } catch (e) {
-              logger.error(
-                `Error fetching default collection: ${(e as Error).message}`,
-              );
-            }
-          }
-
-          // Fallback if all else fails
-          return {
-            __typename: "BfContentCollection",
-            id: "collection-default",
-            name: "Default Collection",
-            slug: "default",
-            description: "Default content collection",
-          };
-        }
+        const id = toBfGid(`collection-${slug}`);
+        const collection = await ctx.find(BfContentCollection, id);
+        return collection?.toGraphql();
       },
     });
   },
