@@ -2,18 +2,21 @@ import {
   type BfDsFormValue,
   useBfDsFormContext,
 } from "packages/bfDs/components/BfDsForm/BfDsForm.tsx";
-import { BfDsInput } from "packages/bfDs/components/BfDsInput.tsx";
+import {
+  BfDsInput,
+  type InputBaseProps,
+} from "packages/bfDs/components/BfDsInput.tsx";
 
-// TODO: Implement all props:
-// autoFocus, autoSelect, disabled, label, value, onBlur, onChange, onFocus, onKeyDown, placeholder, type, className, meta, name, numberAttributes, pattern, required, readonly, showSpinner, testId, xstyle
+type Props = { id: string; title: string } & InputBaseProps;
 
 export function BfDsFormNumberInput(
-  { id, title }: { id: string; title: string },
+  { id, title, ...props }: Props,
 ) {
   const { data, onChange } = useBfDsFormContext() as BfDsFormValue;
   if (!data) return null;
   return (
     <BfDsInput
+      {...props}
       label={title}
       type="number"
       name={id}

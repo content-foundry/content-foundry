@@ -8,8 +8,7 @@ body {
   overflow: hidden;
   margin: 0;
   background-color: var(--pageBackground);
-  height: 100vh;
-  height: var(--app-height);
+  height: var(--app-height, 100vh);
   color: var(--text);
 }
 
@@ -35,7 +34,7 @@ hr {
   z-index: 1001;
 }
 .dark {
-  color: var(--textOnDark);
+  color: var(--alwaysLight);
 }
 
 a,

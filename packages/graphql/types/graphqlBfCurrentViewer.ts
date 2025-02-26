@@ -17,10 +17,10 @@ import type { RegistrationResponseJSON } from "@simplewebauthn/server";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import { graphqlBfBlogType } from "packages/graphql/types/graphqlBfBlog.ts";
 import { BfBlog } from "packages/bfDb/models/BfBlog.ts";
-import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { graphqlBfDocsType } from "packages/graphql/types/graphqlBfDocs.ts";
-import { BfDocs } from "packages/bfDb/models/BfDocs.ts";
+import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import { graphqlBfOrganizationType } from "packages/graphql/types/graphqlBfOrganization.ts";
+import { graphqlBfContentCollectionType } from "packages/graphql/types/graphqlBfContentCollection.ts";
+import { BfContentCollection } from "packages/bfDb/models/BfContentCollection.ts";
 const logger = getLogger(import.meta);
 
 export const graphqlBfCurrentViewerType = interfaceType({
@@ -34,13 +34,6 @@ export const graphqlBfCurrentViewerType = interfaceType({
         return blog.toGraphql();
       },
     });
-    t.field("docs", {
-      type: graphqlBfDocsType,
-      resolve: async (_parent, _args, ctx) => {
-        const docs = await ctx.findX(BfDocs, "the-docs" as BfGid);
-        return docs.toGraphql();
-      },
-    });
     t.field("organization", {
       type: graphqlBfOrganizationType,
       resolve: async (_parent, _args, ctx) => {
@@ -49,6 +42,52 @@ export const graphqlBfCurrentViewerType = interfaceType({
           throw new Error("No organization found for current viewer");
         }
         return org.toGraphql();
+      },
+    });
+    t.field("contentCollection", {
+      type: graphqlBfContentCollectionType,
+      args: {
+        slug: stringArg(),
+      },
+      resolve: async (_parent, args, ctx) => {
+        const { slug = "default" } = args;
+
+        try {
+          // Use the context's findX method to retrieve the collection
+          // Format the ID as expected by the model (collection-{slug})
+          const id = toBfGid(`collection-${slug}`);
+          const collection = await ctx.findX(BfContentCollection, id);
+          return collection.toGraphql();
+        } catch (error) {
+          logger.error(
+            `Error fetching content collection: ${(error as Error).message}`,
+          );
+
+          // Try the default collection if specific one not found
+          if (slug !== "default") {
+            try {
+              const defaultId = toBfGid("collection-default");
+              const defaultCollection = await ctx.findX(
+                BfContentCollection,
+                defaultId,
+              );
+              return defaultCollection.toGraphql();
+            } catch (e) {
+              logger.error(
+                `Error fetching default collection: ${(e as Error).message}`,
+              );
+            }
+          }
+
+          // Fallback if all else fails
+          return {
+            __typename: "BfContentCollection",
+            id: "collection-default",
+            name: "Default Collection",
+            slug: "default",
+            description: "Default content collection",
+          };
+        }
       },
     });
   },

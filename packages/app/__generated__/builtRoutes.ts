@@ -6,41 +6,47 @@ export type RouteEntrypoint = {
   title: string;
 };
 
-iso(`entrypoint Query.EntrypointContentFoundryApp`)
 iso(`entrypoint Query.EntrypointBlogPost`)
-iso(`entrypoint Query.entrypointTwitterIdeatorResearchPermalink`)
-iso(`entrypoint Query.EntrypointDocsPost`)
-iso(`entrypoint Query.entrypointTwitterIdeatorResearch`)
-iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink`)
+iso(`entrypoint Query.EntrypointBlog`)
+iso(`entrypoint Query.EntrypointContentFoundryApp`)
+iso(`entrypoint Query.EntrypointFormatterVoice`)
+iso(`entrypoint Query.EntrypointFormatter`)
+iso(`entrypoint Query.EntrypointHome`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorCompose`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorVoice`)
+iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink`)
 iso(`entrypoint Query.EntrypointTwitterIdeatorWorkshop`)
-iso(`entrypoint Query.EntrypointDocs`)
-iso(`entrypoint Query.EntrypointBlog`)
 iso(`entrypoint Query.EntrypointTwitterIdeator`)
+iso(`entrypoint Query.entrypointFormatterEditor`)
+iso(`entrypoint Query.entrypointTwitterIdeatorResearchPermalink`)
+iso(`entrypoint Query.entrypointTwitterIdeatorResearch`)
 
-import entrypointContentFoundryApp from "packages/app/__generated__/__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts"
+import entrypointBlog from "packages/app/__generated__/__isograph/Query/EntrypointBlog/entrypoint.ts"
 import entrypointBlogPost from "packages/app/__generated__/__isograph/Query/EntrypointBlogPost/entrypoint.ts"
-import entrypointTwitterIdeatorResearchPermalink from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearchPermalink/entrypoint.ts"
-import entrypointDocsPost from "packages/app/__generated__/__isograph/Query/EntrypointDocsPost/entrypoint.ts"
-import entrypointTwitterIdeatorResearch from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearch/entrypoint.ts"
-import entrypointTwitterIdeatorWorkshopPermalink from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshopPermalink/entrypoint.ts"
+import entrypointContentFoundryApp from "packages/app/__generated__/__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts"
+import entrypointFormatter from "packages/app/__generated__/__isograph/Query/EntrypointFormatter/entrypoint.ts"
+import entrypointFormatterEditor from "packages/app/__generated__/__isograph/Query/entrypointFormatterEditor/entrypoint.ts"
+import entrypointFormatterVoice from "packages/app/__generated__/__isograph/Query/EntrypointFormatterVoice/entrypoint.ts"
+import entrypointHome from "packages/app/__generated__/__isograph/Query/EntrypointHome/entrypoint.ts"
+import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts"
 import entrypointTwitterIdeatorCompose from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorCompose/entrypoint.ts"
+import entrypointTwitterIdeatorResearch from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearch/entrypoint.ts"
+import entrypointTwitterIdeatorResearchPermalink from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearchPermalink/entrypoint.ts"
 import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts"
 import entrypointTwitterIdeatorWorkshop from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts"
-import entrypointDocs from "packages/app/__generated__/__isograph/Query/EntrypointDocs/entrypoint.ts"
-import entrypointBlog from "packages/app/__generated__/__isograph/Query/EntrypointBlog/entrypoint.ts"
-import entrypointTwitterIdeator from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts"
+import entrypointTwitterIdeatorWorkshopPermalink from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshopPermalink/entrypoint.ts"
 
-export {entrypointContentFoundryApp};
 export {entrypointBlogPost};
-export {entrypointTwitterIdeatorResearchPermalink};
-export {entrypointDocsPost};
-export {entrypointTwitterIdeatorResearch};
-export {entrypointTwitterIdeatorWorkshopPermalink};
-export {entrypointTwitterIdeatorCompose};
-export {entrypointTwitterIdeatorVoice};
-export {entrypointTwitterIdeatorWorkshop};
-export {entrypointDocs};
 export {entrypointBlog};
+export {entrypointContentFoundryApp};
+export {entrypointFormatterEditor};
+export {entrypointFormatterVoice};
+export {entrypointFormatter};
+export {entrypointHome};
+export {entrypointTwitterIdeatorCompose};
+export {entrypointTwitterIdeatorResearchPermalink};
+export {entrypointTwitterIdeatorResearch};
+export {entrypointTwitterIdeatorVoice};
+export {entrypointTwitterIdeatorWorkshopPermalink};
+export {entrypointTwitterIdeatorWorkshop};
 export {entrypointTwitterIdeator};

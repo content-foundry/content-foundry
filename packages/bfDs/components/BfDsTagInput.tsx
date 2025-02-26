@@ -5,7 +5,7 @@ import { BfDsIcon } from "packages/bfDs/components/BfDsIcon.tsx";
 import { getLogger } from "packages/logger.ts";
 const logger = getLogger(import.meta);
 
-interface TagInputProps {
+export interface TagInputProps {
   label: string;
   name: string;
   value: Array<string>;

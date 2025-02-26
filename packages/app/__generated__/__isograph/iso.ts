@@ -2,14 +2,8 @@ import type { IsographEntrypoint } from '@isograph/react';
 import { type BfBlog__BlogPostList__param } from './BfBlog/BlogPostList/param_type.ts';
 import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostListItem/param_type.ts';
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
-import { type BfCurrentViewer__Docs__param } from './BfCurrentViewer/Docs/param_type.ts';
+import { type BfCurrentViewer__Home__param } from './BfCurrentViewer/Home/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep1/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateStep2/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CreateTwitterVoice__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CreateTwitterVoice/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_CurrentEvent__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_CurrentEvent/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator_Home__param } from './BfCurrentViewerLoggedIn/TwitterIdeator_Home/param_type.ts';
-import { type BfCurrentViewerLoggedIn__TwitterIdeator__param } from './BfCurrentViewerLoggedIn/TwitterIdeator/param_type.ts';
 import { type BfCurrentViewerLoggedIn__YcForm__param } from './BfCurrentViewerLoggedIn/YcForm/param_type.ts';
 import { type BfCurrentViewerLoggedOut__DemoButton__param } from './BfCurrentViewerLoggedOut/DemoButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__LoggedOutView__param } from './BfCurrentViewerLoggedOut/LoggedOutView/param_type.ts';
@@ -17,7 +11,10 @@ import { type BfCurrentViewerLoggedOut__LoginAndRegisterForm__param } from './Bf
 import { type BfCurrentViewerLoggedOut__LoginButton__param } from './BfCurrentViewerLoggedOut/LoginButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__RegisterButton__param } from './BfCurrentViewerLoggedOut/RegisterButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__WelcomeVideo__param } from './BfCurrentViewerLoggedOut/WelcomeVideo/param_type.ts';
-import { type BfDocsPost__DocsPostListItem__param } from './BfDocsPost/DocsPostListItem/param_type.ts';
+import { type BfOrganization__BlogRevisionsSidebar__param } from './BfOrganization/BlogRevisionsSidebar/param_type.ts';
+import { type BfOrganization__FormatterEditorPanel__param } from './BfOrganization/FormatterEditorPanel/param_type.ts';
+import { type BfOrganization__FormatterEditor__param } from './BfOrganization/FormatterEditor/param_type.ts';
+import { type BfOrganization__FormatterSidebar__param } from './BfOrganization/FormatterSidebar/param_type.ts';
 import { type BfOrganization__HistorySidebar__param } from './BfOrganization/HistorySidebar/param_type.ts';
 import { type BfOrganization__IdentityEditor__param } from './BfOrganization/IdentityEditor/param_type.ts';
 import { type BfOrganization__Research__param } from './BfOrganization/Research/param_type.ts';
@@ -36,18 +33,20 @@ import { type Mutation__Login__param } from './Mutation/Login/param_type.ts';
 import { type Mutation__MakeTweets__param } from './Mutation/MakeTweets/param_type.ts';
 import { type Mutation__Register__param } from './Mutation/Register/param_type.ts';
 import { type Mutation__RegistrationOptions__param } from './Mutation/RegistrationOptions/param_type.ts';
+import { type Mutation__ReviseBlog__param } from './Mutation/ReviseBlog/param_type.ts';
 import { type Mutation__SubmitYcForm__param } from './Mutation/SubmitYcForm/param_type.ts';
-import { type Query__ContentOS__param } from './Query/ContentOS/param_type.ts';
 import { type Query__EntrypointBlogPost__param } from './Query/EntrypointBlogPost/param_type.ts';
 import { type Query__EntrypointBlog__param } from './Query/EntrypointBlog/param_type.ts';
 import { type Query__EntrypointContentFoundryApp__param } from './Query/EntrypointContentFoundryApp/param_type.ts';
-import { type Query__EntrypointDocsPost__param } from './Query/EntrypointDocsPost/param_type.ts';
-import { type Query__EntrypointDocs__param } from './Query/EntrypointDocs/param_type.ts';
+import { type Query__EntrypointFormatterVoice__param } from './Query/EntrypointFormatterVoice/param_type.ts';
+import { type Query__EntrypointFormatter__param } from './Query/EntrypointFormatter/param_type.ts';
+import { type Query__EntrypointHome__param } from './Query/EntrypointHome/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorCompose__param } from './Query/EntrypointTwitterIdeatorCompose/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorVoice__param } from './Query/EntrypointTwitterIdeatorVoice/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorWorkshopPermalink__param } from './Query/EntrypointTwitterIdeatorWorkshopPermalink/param_type.ts';
 import { type Query__EntrypointTwitterIdeatorWorkshop__param } from './Query/EntrypointTwitterIdeatorWorkshop/param_type.ts';
 import { type Query__EntrypointTwitterIdeator__param } from './Query/EntrypointTwitterIdeator/param_type.ts';
+import { type Query__entrypointFormatterEditor__param } from './Query/entrypointFormatterEditor/param_type.ts';
 import { type Query__entrypointTwitterIdeatorResearchPermalink__param } from './Query/entrypointTwitterIdeatorResearchPermalink/param_type.ts';
 import { type Query__entrypointTwitterIdeatorResearch__param } from './Query/entrypointTwitterIdeatorResearch/param_type.ts';
 
@@ -112,36 +111,12 @@ export function iso<T>(
 ): IdentityWithParamComponent<BfCurrentViewer__Blog__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.Docs', T>
-): IdentityWithParamComponent<BfCurrentViewer__Docs__param>;
+  param: T & MatchesWhitespaceAndString<'field BfCurrentViewer.Home', T>
+): IdentityWithParamComponent<BfCurrentViewer__Home__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
 ): IdentityWithParamComponent<BfCurrentViewerLoggedIn__LoggedInView__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CreateStep1', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep1__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CreateStep2', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CreateStep2__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CreateTwitterVoice', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CreateTwitterVoice__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_CurrentEvent', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_CurrentEvent__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator_Home', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator_Home__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.TwitterIdeator', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__TwitterIdeator__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.YcForm', T>
@@ -172,8 +147,20 @@ export function iso<T>(
 ): IdentityWithParamComponent<BfCurrentViewerLoggedOut__WelcomeVideo__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfDocsPost.DocsPostListItem', T>
-): IdentityWithParamComponent<BfDocsPost__DocsPostListItem__param>;
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.BlogRevisionsSidebar', T>
+): IdentityWithParamComponent<BfOrganization__BlogRevisionsSidebar__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.FormatterEditorPanel', T>
+): IdentityWithParamComponent<BfOrganization__FormatterEditorPanel__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.FormatterEditor', T>
+): IdentityWithParamComponent<BfOrganization__FormatterEditor__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field BfOrganization.FormatterSidebar', T>
+): IdentityWithParamComponent<BfOrganization__FormatterSidebar__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfOrganization.HistorySidebar', T>
@@ -248,12 +235,12 @@ export function iso<T>(
 ): IdentityWithParam<Mutation__RegistrationOptions__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Mutation.SubmitYcForm', T>
-): IdentityWithParam<Mutation__SubmitYcForm__param>;
+  param: T & MatchesWhitespaceAndString<'field Mutation.ReviseBlog', T>
+): IdentityWithParam<Mutation__ReviseBlog__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.ContentOS', T>
-): IdentityWithParamComponent<Query__ContentOS__param>;
+  param: T & MatchesWhitespaceAndString<'field Mutation.SubmitYcForm', T>
+): IdentityWithParam<Mutation__SubmitYcForm__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.EntrypointBlogPost', T>
@@ -268,12 +255,16 @@ export function iso<T>(
 ): IdentityWithParam<Query__EntrypointContentFoundryApp__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.EntrypointDocsPost', T>
-): IdentityWithParam<Query__EntrypointDocsPost__param>;
+  param: T & MatchesWhitespaceAndString<'field Query.EntrypointFormatterVoice', T>
+): IdentityWithParam<Query__EntrypointFormatterVoice__param>;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field Query.EntrypointDocs', T>
-): IdentityWithParam<Query__EntrypointDocs__param>;
+  param: T & MatchesWhitespaceAndString<'field Query.EntrypointFormatter', T>
+): IdentityWithParam<Query__EntrypointFormatter__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Query.EntrypointHome', T>
+): IdentityWithParam<Query__EntrypointHome__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeatorCompose', T>
@@ -294,6 +285,10 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.EntrypointTwitterIdeator', T>
 ): IdentityWithParam<Query__EntrypointTwitterIdeator__param>;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'field Query.entrypointFormatterEditor', T>
+): IdentityWithParam<Query__entrypointFormatterEditor__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field Query.entrypointTwitterIdeatorResearchPermalink', T>
@@ -336,6 +331,10 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Mutation.ReviseBlog', T>
+): void;
+
+export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.SubmitYcForm', T>
 ): void;
 
@@ -352,11 +351,15 @@ export function iso<T>(
 ): void;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointDocsPost', T>
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointFormatterVoice', T>
 ): void;
 
 export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointDocs', T>
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointFormatter', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointHome', T>
 ): void;
 
 export function iso<T>(
@@ -377,6 +380,10 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeator', T>
+): void;
+
+export function iso<T>(
+  param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointFormatterEditor', T>
 ): void;
 
 export function iso<T>(

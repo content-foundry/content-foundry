@@ -232,6 +232,37 @@ register(
         await Deno.remove("./tmp/ghcode");
       }
 
+      // Read OAuth token from /home/runner/workspace/.config/gh/hosts.yml
+      try {
+        const decoder = new TextDecoder("utf-8");
+        const yamlPath = "/home/runner/workspace/.config/gh/hosts.yml";
+        const fileContent = await Deno.readFile(yamlPath);
+        const yamlText = decoder.decode(fileContent);
+
+        // Use a YAML parsing library if available, for now we extract it manually
+        const regex = /oauth_token:\s*(\S+)/;
+        const match = regex.exec(yamlText);
+
+        if (match) {
+          const oauthToken = match[1];
+          logger.info("OAuth token successfully read.");
+          // You can now use the oauthToken as needed
+
+          await runShellCommand([
+            "git",
+            "config",
+            "--file",
+            `${Deno.env.get("XDG_CONFIG_HOME")}/git/config`,
+            `url.https://${oauthToken}@github.com.insteadOf`,
+            "https://github.com",
+          ]);
+        } else {
+          logger.error("Failed to find OAuth token in hosts.yml.");
+        }
+      } catch (error) {
+        logger.error("Error reading OAuth token from hosts.yml:", error);
+      }
+
       logger.log("Starting Jupyter and Sapling web interface...");
 
       // Kill any existing Jupyter or Sapling processes

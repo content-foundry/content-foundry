@@ -1,17 +1,12 @@
 import * as React from "react";
 import { fonts } from "packages/bfDs/const.tsx";
 
-type Props = {
+export type TextAreaProps = {
+  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
   label?: string;
-  value: string | number;
-  onChange: React.ChangeEventHandler<HTMLTextAreaElement>;
-  placeholder?: string;
   className?: string;
-  name?: string;
-  required?: boolean;
-  rows?: number;
   xstyle?: React.CSSProperties;
-};
+} & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 const styles: Record<string, React.CSSProperties> = {
   textarea: {
@@ -45,7 +40,8 @@ export function BfDsTextArea(
     required,
     rows,
     xstyle,
-  }: Props,
+    ...props
+  }: TextAreaProps,
 ) {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
@@ -63,6 +59,7 @@ export function BfDsTextArea(
 
   const textarea = (
     <textarea
+      {...props}
       value={value}
       onChange={onChange}
       placeholder={placeholder}

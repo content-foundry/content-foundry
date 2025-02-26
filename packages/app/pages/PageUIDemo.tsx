@@ -20,6 +20,7 @@ import { Form } from "packages/bfDs/components/demo/Form.tsx";
 import { IconDemo } from "packages/bfDs/components/BfDsIcon.tsx";
 import { Tooltips } from "packages/bfDs/components/demo/Tooltips.tsx";
 import { getLogger } from "packages/logger.ts";
+import { KitchenSink } from "packages/bfDs/components/demo/KitchenSink.tsx";
 const _logger = getLogger(import.meta);
 
 type DemoData = {
@@ -147,10 +148,10 @@ const demoData: Array<DemoData> = [
     name: "Tooltips",
     component: <Tooltips />,
   },
-  //   {
-  //     name: "Kitchen sink",
-  //     component: <KitchenSink />,
-  //   },
+  {
+    name: "Kitchen sink",
+    component: <KitchenSink />,
+  },
 ];
 
 export function PageUIDemo() {

@@ -3,22 +3,19 @@ import { fonts } from "packages/bfDs/const.tsx";
 import {
   BfDsIcon,
   type BfDsIconType,
+  type IconSizeType,
 } from "packages/bfDs/components/BfDsIcon.tsx";
-// import { Link } from "packages/client/components/Link.tsx";
+import { RouterLink } from "packages/app/components/Router/RouterLink.tsx";
 import {
   BfDsTooltip,
-  //   BfDsTooltip,
   type BfDsTooltipJustification,
   type BfDsTooltipMenu,
   type BfDsTooltipPosition,
 } from "packages/bfDs/components/BfDsTooltip.tsx";
 import { BfDsProgress } from "packages/bfDs/components/BfDsProgress.tsx";
 import { BfDsSpinner } from "packages/bfDs/components/BfDsSpinner.tsx";
-import { RouterLink } from "packages/app/components/Router/RouterLink.tsx";
-// import { BfDsSpinner } from "packages/bfDs/BfDsSpinner.tsx";
-// import { Progress } from "packages/bfDs/Progress.tsx";
-// import FeatureMenu from "packages/client/components/FeatureMenu.tsx";
 
+// Types
 export type ButtonSizeType = "xlarge" | "large" | "medium" | "small";
 
 export type ButtonKind =
@@ -27,6 +24,7 @@ export type ButtonKind =
   | "alert"
   | "success"
   | "filled"
+  | "filledSecondary"
   | "filledAlert"
   | "filledSuccess"
   | "outline"
@@ -48,7 +46,6 @@ export type ButtonType = {
     width?: string | number;
     alignSelf?: "flex-start" | "flex-end";
   };
-  disabled?: boolean;
   iconLeft?: BfDsIconType;
   iconRight?: BfDsIconType;
   // if link is provided, the button will be rendered as a Link
@@ -67,16 +64,14 @@ export type ButtonType = {
   testId?: string; // used to identify the button in posthog
   text?: string | null;
   tooltip?: string | React.ReactNode;
-  tooltipMenu?: BfDsTooltipMenu[]; // | React.ReactElement<typeof FeatureMenu>;
-  tooltipMenuDropdown?: BfDsTooltipMenu[];
+  tooltipMenu?: Array<BfDsTooltipMenu>;
+  tooltipMenuDropdown?: Array<BfDsTooltipMenu>;
   tooltipPosition?: BfDsTooltipPosition;
   tooltipJustification?: BfDsTooltipJustification;
-  type?: "button" | "submit" | "reset";
   kind?: ButtonKind;
-  role?: string;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const styles: Record<string, React.CSSProperties> = {
+const baseStyles: Record<string, React.CSSProperties> = {
   textStyle: {
     flex: 1,
     height: "100%",
@@ -122,9 +117,380 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
+// Size configurations
+const buttonSizes = {
+  xlarge: { fontSize: 16, minHeight: 38, padding: "14px 30px" },
+  large: { fontSize: 14, minHeight: 32, padding: "0px 14px" },
+  medium: { fontSize: 12, minHeight: 26, padding: "0px 8px" },
+  small: { fontSize: 10, minHeight: 20, padding: "0px 6px" },
+};
+
+const iconButtonSizes = {
+  xlarge: { width: 64, height: 64 },
+  large: { width: 40, height: 40 },
+  medium: { width: 32, height: 32, padding: "0 2px" },
+  small: { width: 22, height: 22, padding: "0 2px" },
+};
+
+const iconSizes: Record<string, 10 | 12 | 16 | 24> = {
+  xlarge: 24,
+  large: 16,
+  medium: 16,
+  small: 12,
+};
+
+// Base style creators
+const createBaseButtonStyle = (
+  size: ButtonSizeType,
+  hover: boolean,
+  xstyle?: React.CSSProperties,
+): React.CSSProperties => ({
+  display: "inline-flex",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  flex: "none",
+  gap: 6,
+  color: "var(--textOnPrimary)",
+  backgroundColor: hover ? "var(--primaryButtonHover)" : "var(--primaryButton)",
+  borderRadius: 6,
+  borderWidth: 1,
+  borderStyle: "solid",
+  borderColor: hover ? "var(--primaryButtonHover)" : "var(--primaryButton)",
+  fontWeight: "bold",
+  fontFamily: fonts.fontFamily,
+  cursor: "pointer",
+  textAlign: "center",
+  textDecoration: "none",
+  position: "relative",
+  ...buttonSizes[size],
+  ...xstyle,
+});
+
+const createBaseIconButtonStyle = (
+  size: ButtonSizeType,
+  hover: boolean,
+  xstyle?: React.CSSProperties,
+): React.CSSProperties => ({
+  backgroundColor: hover
+    ? "var(--backgroundIconHover)"
+    : "var(--backgroundIcon)",
+  borderRadius: "50%",
+  borderWidth: 1,
+  borderStyle: "solid",
+  borderColor: hover ? "var(--backgroundIconHover)" : "var(--backgroundIcon)",
+  color: "var(--primaryButton)",
+  cursor: "pointer",
+  textAlign: "center",
+  position: "relative",
+  ...iconButtonSizes[size],
+  ...xstyle,
+});
+
+// Button style generator function
+const getButtonStyle = (
+  kind: ButtonKind,
+  size: ButtonSizeType,
+  hover: boolean,
+  isIconButton: boolean,
+  xstyle?: React.CSSProperties,
+): React.CSSProperties => {
+  // Base style creator based on button type
+  const baseStyleCreator = isIconButton
+    ? createBaseIconButtonStyle
+    : createBaseButtonStyle;
+  const baseStyle = baseStyleCreator(size, hover, xstyle);
+
+  // Apply kind-specific style modifications
+  switch (kind) {
+    case "secondary":
+      if (isIconButton) {
+        return {
+          ...baseStyle,
+          color: "var(--textOnSecondary)",
+        };
+      }
+      return {
+        ...baseStyle,
+        backgroundColor: hover
+          ? "var(--secondaryButtonHover)"
+          : "var(--secondaryButton)",
+        color: "var(--textOnSecondary)",
+        borderColor: hover
+          ? "var(--secondaryButtonHover)"
+          : "var(--secondaryButton)",
+      };
+    case "alert":
+      if (isIconButton) {
+        return {
+          ...baseStyle,
+          color: hover ? "var(--alertHover)" : "var(--alert)",
+        };
+      }
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--alertHover)" : "var(--alert)",
+        color: "var(--textOnAlert)",
+        borderColor: hover ? "var(--alertHover)" : "var(--alert)",
+      };
+    case "success":
+      if (isIconButton) {
+        return {
+          ...baseStyle,
+          color: hover ? "var(--successHover)" : "var(--success)",
+        };
+      }
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--successHover)" : "var(--success)",
+        color: "var(--textOnSuccess)",
+        borderColor: hover ? "var(--successHover)" : "var(--success)",
+      };
+    case "filled":
+      if (isIconButton) {
+        return {
+          ...baseStyle,
+          backgroundColor: hover
+            ? "var(--primaryButtonHover)"
+            : "var(--primaryButton)",
+          borderColor: hover
+            ? "var(--primaryButtonHover)"
+            : "var(--primaryButton)",
+          color: "var(--textOnPrimary)",
+        };
+      }
+      return {
+        ...baseStyle,
+      };
+    case "filledSecondary":
+      return {
+        ...baseStyle,
+        color: "var(--textOnSuccess)",
+        backgroundColor: hover
+          ? "var(--secondaryButtonBackgroundHover)"
+          : "var(--secondaryButtonBackground)",
+        borderColor: hover
+          ? "var(--secondaryButtonBackgroundHover)"
+          : "var(--secondaryButtonBackground)",
+      };
+    case "filledAlert":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--alertHover)" : "var(--alert)",
+        borderColor: hover ? "var(--alertHover)" : "var(--alert)",
+        color: "var(--textOnAlert)",
+      };
+    case "filledSuccess":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--successHover)" : "var(--success)",
+        borderColor: hover ? "var(--successHover)" : "var(--success)",
+        color: "var(--textOnSuccess)",
+      };
+    case "outline":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
+        color: "var(--text)",
+        borderColor: hover
+          ? "var(--secondaryButton)"
+          : "var(--secondaryButtonHover)",
+      };
+    case "outlineDark":
+      return {
+        ...baseStyle,
+        backgroundColor: hover
+          ? "var(--outlineDarkHover)"
+          : "var(--outlineDark)",
+        color: "var(--background)",
+        borderColor: hover ? "var(--outlineDarkHover)" : "var(--outlineDark)",
+      };
+    case "outlineAlert":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
+        color: hover ? "var(--alertHover)" : "var(--alert)",
+        borderColor: hover ? "var(--alertHover)" : "var(--background)",
+      };
+    case "outlineSuccess":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
+        color: hover ? "var(--successHover)" : "var(--success)",
+        borderColor: hover ? "var(--successHover)" : "var(--background)",
+      };
+    case "overlay":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--outlineHover)" : "transparent",
+        color: "var(--text)",
+        borderColor: hover ? "var(--outlineHover)" : "transparent",
+      };
+    case "overlayDark":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--outlineDarkHover)" : "transparent",
+        color: "var(--background)",
+        borderColor: hover ? "var(--outlineDarkHover)" : "transparent",
+      };
+    case "overlaySuccess":
+      return {
+        ...baseStyle,
+        backgroundColor: hover ? "var(--outlineHover)" : "transparent",
+        color: "var(--success)",
+        borderColor: hover ? "var(--outlineHover)" : "transparent",
+      };
+    case "accent":
+      if (isIconButton) {
+        return {
+          ...baseStyle,
+          color: hover ? "var(--accentButtonHover)" : "var(--accentButton)",
+        };
+      }
+      return {
+        ...baseStyle,
+        backgroundColor: hover
+          ? "var(--accentButtonHover)"
+          : "var(--accentButton)",
+        color: "var(--textOnAccent)",
+        borderColor: hover ? "var(--accentButtonHover)" : "var(--accentButton)",
+      };
+    case "gradientOverlay":
+      if (isIconButton) {
+        return {
+          ...baseStyle,
+          background: hover ? "var(--marketingGradient)" : "transparent",
+          color: hover ? "var(--text)" : "var(--textSecondary)",
+        };
+      }
+      return baseStyle;
+    default:
+      return baseStyle;
+  }
+};
+
+// Component definitions
+const ButtonSpinner = ({
+  kind,
+  size,
+  progress,
+  isIconButton,
+}: {
+  kind: ButtonKind;
+  size: ButtonSizeType;
+  progress?: number;
+  isIconButton: boolean;
+}) => {
+  if (isIconButton) {
+    const iconSize = iconButtonSizes[size].width;
+    const backgroundColor = (hover: boolean) =>
+      getButtonStyle(kind, size, hover, true).backgroundColor as string;
+    const spinnerColor = (hover: boolean) =>
+      getButtonStyle(kind, size, hover, true).color as string;
+
+    return (
+      <div style={baseStyles.iconSpinner}>
+        {progress != null && progress > 0
+          ? (
+            <BfDsProgress
+              size={iconSize}
+              progress={progress}
+              backgroundColor={backgroundColor(false)}
+              spinnerColor={spinnerColor(false)}
+            />
+          )
+          : (
+            <BfDsSpinner
+              size={iconSize}
+              backgroundColor={backgroundColor(false)}
+              spinnerColor={spinnerColor(false)}
+            />
+          )}
+      </div>
+    );
+  }
+
+  const buttonBg = (hover: boolean) =>
+    getButtonStyle(kind, size, hover, false).backgroundColor as string;
+  const buttonColor = (hover: boolean) =>
+    getButtonStyle(kind, size, hover, false).color as string;
+
+  return (
+    <div style={baseStyles.iconStyle}>
+      {progress != null && progress > 0
+        ? (
+          <BfDsProgress
+            size={iconSizes[size]}
+            progress={progress}
+            backgroundColor={buttonBg(false)}
+            spinnerColor={buttonColor(false)}
+          />
+        )
+        : (
+          <BfDsSpinner
+            size={iconSizes[size]}
+            backgroundColor={buttonBg(false)}
+            spinnerColor={buttonColor(false)}
+          />
+        )}
+    </div>
+  );
+};
+
+const ButtonIcon = ({
+  name,
+  color,
+  size,
+  progress,
+}: {
+  name: BfDsIconType;
+  color: string;
+  size: number;
+  progress?: number;
+}) => {
+  if (progress && progress > 0) {
+    return (
+      <div className="mono" style={{ fontSize: 12 }}>
+        {Math.round(progress)}%
+      </div>
+    );
+  }
+
+  return <BfDsIcon name={name} color={color} size={size as IconSizeType} />;
+};
+
+const DropdownArrow = ({
+  isIconButton,
+  kind,
+  hover,
+  size,
+  iconColor,
+}: {
+  isIconButton: boolean;
+  kind: ButtonKind;
+  hover: boolean;
+  size: ButtonSizeType;
+  iconColor: string;
+}) => {
+  const style = isIconButton
+    ? {
+      ...baseStyles.dropdownArrowIconButton,
+      backgroundColor: getButtonStyle(kind, size, hover, isIconButton)
+        .borderColor as string,
+    }
+    : baseStyles.dropdownArrow;
+
+  return (
+    <div style={style}>
+      <BfDsIcon name="triangleDown" color={iconColor} size={10} />
+    </div>
+  );
+};
+
+// Main Button Component
 export function BfDsButton({
   xstyle,
-  disabled,
+  disabled = false,
   iconLeft,
   iconRight,
   link,
@@ -132,8 +498,8 @@ export function BfDsButton({
   hrefTarget,
   onClick,
   progress,
-  shadow,
-  showSpinner,
+  shadow = false,
+  showSpinner = false,
   size = "large",
   subtext,
   testId,
@@ -146,414 +512,140 @@ export function BfDsButton({
   kind = "primary",
   type = "button",
   role: passedRole,
+  ...props
 }: ButtonType) {
   const [hover, setHover] = React.useState(false);
-
   const role = passedRole ?? text;
-
-  const buttonSize = {
-    xlarge: { fontSize: 16, minHeight: 38, padding: "14px 30px" },
-    large: { fontSize: 14, minHeight: 32, padding: "0px 14px" },
-    medium: { fontSize: 12, minHeight: 26, padding: "0px 8px" },
-    small: { fontSize: 10, minHeight: 20, padding: "0px 6px" },
-  };
-  const iconButtonSize = {
-    xlarge: { width: 64, height: 64 },
-    large: { width: 40, height: 40 },
-    medium: { width: 32, height: 32, padding: "0 2px" },
-    small: { width: 22, height: 22, padding: "0 2px" },
-  };
-  const iconSize: Record<string, 10 | 12 | 16 | 24> = {
-    xlarge: 24,
-    large: 16,
-    medium: 16,
-    small: 12,
-  };
-  const baseButtonStyle: React.CSSProperties = {
-    display: "inline-flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flex: "none",
-    gap: 6,
-    color: "var(--textOnPrimary)",
-    backgroundColor: hover
-      ? "var(--primaryButtonHover)"
-      : "var(--primaryButton)",
-    borderRadius: 6,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: hover ? "var(--primaryButtonHover)" : "var(--primaryButton)",
-    fontWeight: "bold",
-    fontFamily: fonts.fontFamily,
-    cursor: "pointer",
-    textAlign: "center",
-    textDecoration: "none",
-    position: "relative",
-    ...buttonSize[size],
-    ...xstyle,
-  };
-  const baseIconButtonStyle: React.CSSProperties = {
-    backgroundColor: hover
-      ? "var(--backgroundIconHover)"
-      : "var(--backgroundIcon)",
-    borderRadius: "50%",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: hover ? "var(--backgroundIconHover)" : "var(--backgroundIcon)",
-    color: "var(--primaryButton)",
-    cursor: "pointer",
-    textAlign: "center",
-    position: "relative",
-    ...iconButtonSize[size],
-    ...xstyle,
-  };
-  const buttonStyle = {
-    primary: {
-      ...baseButtonStyle,
-    },
-    secondary: {
-      ...baseButtonStyle,
-      backgroundColor: hover
-        ? "var(--secondaryButtonHover)"
-        : "var(--secondaryButton)",
-      color: "var(--textOnSecondary)",
-      borderColor: hover
-        ? "var(--secondaryButtonHover)"
-        : "var(--secondaryButton)",
-    },
-    alert: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--alertHover)" : "var(--alert)",
-      color: "var(--textOnAlert)",
-      borderColor: hover ? "var(--alertHover)" : "var(--alert)",
-    },
-    success: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--successHover)" : "var(--success)",
-      color: "var(--textOnSuccess)",
-      borderColor: hover ? "var(--successHover)" : "var(--success)",
-    },
-    filled: {
-      ...baseButtonStyle,
-      backgroundColor: hover
-        ? "var(--secondaryButtonHover)"
-        : "var(--secondaryButton)",
-      borderColor: hover
-        ? "var(--secondaryButtonHover)"
-        : "var(--secondaryButton)",
-      color: "var(--textOnSecondary)",
-    },
-    filledAlert: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--alertHover)" : "var(--alert)",
-      borderColor: hover ? "var(--alertHover)" : "var(--alert)",
-      color: "var(--textOnAlert)",
-    },
-    filledSuccess: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--successHover)" : "var(--success)",
-      borderColor: hover ? "var(--successHover)" : "var(--success)",
-      color: "var(--textOnSuccess)",
-    },
-    outline: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
-      color: "var(--text)",
-      borderColor: hover
-        ? "var(--secondaryButton)"
-        : "var(--secondaryButtonHover)",
-    },
-    outlineDark: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineDarkHover)" : "var(--outlineDark)",
-      color: "var(--background)",
-      borderColor: hover ? "var(--outlineDarkHover)" : "var(--outlineDark)",
-    },
-    outlineAlert: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
-      color: hover ? "var(--alertHover)" : "var(--alert)",
-      borderColor: hover ? "var(--alertHover)" : "var(--background)",
-    },
-    outlineSuccess: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
-      color: hover ? "var(--successHover)" : "var(--success)",
-      borderColor: hover ? "var(--successHover)" : "var(--background)",
-    },
-    overlay: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "transparent",
-      color: "var(--text)",
-      borderColor: hover ? "var(--outlineHover)" : "transparent",
-    },
-    overlayDark: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineDarkHover)" : "transparent",
-      color: "var(--background)",
-      borderColor: hover ? "var(--outlineDarkHover)" : "transparent",
-    },
-    overlaySuccess: {
-      ...baseButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "transparent",
-      color: "var(--sucess)",
-      borderColor: hover ? "var(--outlineHover)" : "transparent",
-    },
-
-    accent: {
-      ...baseButtonStyle,
-      backgroundColor: hover
-        ? "var(--accentButtonHover)"
-        : "var(--accentButton)",
-      color: "var(--textOnAccent)",
-      borderColor: hover ? "var(--accentButtonHover)" : "var(--accentButton)",
-    },
-    gradientOverlay: {
-      ...baseButtonStyle,
-    },
-  };
-  const iconButtonStyle = {
-    primary: {
-      ...baseIconButtonStyle,
-    },
-    secondary: {
-      ...baseIconButtonStyle,
-      color: "var(--textOnSecondary)",
-    },
-    alert: {
-      ...baseIconButtonStyle,
-      color: "var(--alert)",
-    },
-    success: {
-      ...baseIconButtonStyle,
-      color: "var(--success)",
-    },
-    filled: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover
-        ? "var(--secondaryButtonHover)"
-        : "var(--secondaryButton)",
-      borderColor: hover
-        ? "var(--secondaryButtonHover)"
-        : "var(--secondaryButton)",
-      color: "var(--textOnSecondary)",
-    },
-    filledAlert: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--alertHover)" : "var(--alert)",
-      borderColor: hover ? "var(--alertHover)" : "var(--alert)",
-      color: "var(--textOnAlert)",
-    },
-    filledSuccess: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--successHover)" : "var(--success)",
-      borderColor: hover ? "var(--successHover)" : "var(--success)",
-      color: "var(--textOnSuccess)",
-    },
-    outline: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
-      borderColor: hover
-        ? "var(--secondaryButton)"
-        : "var(--secondaryButtonHover)",
-      color: "var(--text)",
-    },
-    outlineDark: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineDarkHover)" : "var(--outlineDark)",
-      borderColor: hover ? "var(--outlineDarkHover)" : "var(--outlineDark)",
-      color: "var(--background)",
-    },
-    outlineAlert: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
-      borderColor: hover ? "var(--alertHover)" : "var(--background)",
-      color: hover ? "var(--alertHover)" : "var(--alert)",
-    },
-    outlineSuccess: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "var(--background)",
-      borderColor: hover ? "var(--successHover)" : "var(--background)",
-      color: hover ? "var(--successHover)" : "var(--success)",
-    },
-    overlay: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "transparent",
-      borderColor: hover ? "var(--outlineHover)" : "transparent",
-      color: "var(--textSecondary)",
-    },
-    overlayDark: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineDarkHover)" : "transparent",
-      borderColor: hover ? "var(--outlineDarkHover)" : "transparent",
-      color: "var(--background)",
-    },
-    overlaySuccess: {
-      ...baseIconButtonStyle,
-      backgroundColor: hover ? "var(--outlineHover)" : "transparent",
-      borderColor: hover ? "var(--outlineHover)" : "transparent",
-      color: "var(--success)",
-    },
-    accent: {
-      ...baseIconButtonStyle,
-      color: "var(--accent)",
-    },
-    gradientOverlay: {
-      ...baseIconButtonStyle,
-      background: hover ? "var(--marketingGradient)" : "transparent",
-      color: hover ? "var(--text)" : "var(--textSecondary)",
-    },
-  };
-
-  const onHover = () => setHover(true);
-  const onLeave = () => setHover(false);
-
   const isIconButton = !text && !subtext;
-  const iconColor = isIconButton
-    ? iconButtonStyle[kind].color
-    : buttonStyle[kind].color;
 
-  const disableButton = disabled;
+  // Get the appropriate color for icons based on button style
+  const buttonStyle = getButtonStyle(kind, size, hover, isIconButton, xstyle);
+  const iconColor = buttonStyle.color as string;
+
+  // Determine if spinner should be shown
   const shouldShowSpinner = (showSpinner || progress != null) &&
     kind !== "overlay" &&
     kind !== "outlineDark" &&
     kind !== "outline";
-  const percent = progress != null ? Math.round(progress) : 0;
 
-  const button = (
-    <button
-      disabled={disableButton}
-      type={type}
-      style={{
-        ...(isIconButton ? iconButtonStyle[kind] : buttonStyle[kind]),
-        ...(disableButton ? styles.disabledStyle : {}),
-        ...(shadow && styles.shadow),
-      }}
-      onClick={disableButton || link != null || href != null
-        ? () => null
-        : onClick}
-      onMouseOver={disableButton ? () => null : onHover}
-      onMouseOut={disableButton ? () => null : onLeave}
-      data-bf-icon={iconLeft}
-      data-bf-testid={testId}
-      role={role ?? text ?? "button"}
-    >
+  // Event handlers
+  const handleMouseOver = () => !disabled && setHover(true);
+  const handleMouseOut = () => !disabled && setHover(false);
+  const handleClick = (e: React.FormEvent) => {
+    if (disabled || link != null || href != null) return;
+    onClick?.(e);
+  };
+
+  // Render button content
+  const renderButtonContent = () => (
+    <>
       {shouldShowSpinner && isIconButton && (
-        <div style={styles.iconSpinner}>
-          {progress != null && progress > 0
-            ? (
-              <BfDsProgress
-                size={iconButtonSize[size].width}
-                progress={progress}
-                backgroundColor={iconButtonStyle[kind].backgroundColor}
-                spinnerColor={iconButtonStyle[kind].color}
-              />
-            )
-            : (
-              <BfDsSpinner
-                size={iconButtonSize[size].width}
-                backgroundColor={iconButtonStyle[kind].backgroundColor}
-                spinnerColor={iconButtonStyle[kind].color}
-              />
-            )}
-        </div>
+        <ButtonSpinner
+          kind={kind}
+          size={size}
+          progress={progress}
+          isIconButton={true}
+        />
       )}
+
       {shouldShowSpinner && !isIconButton
         ? (
-          <div style={styles.iconStyle}>
-            {progress != null && progress > 0
-              ? (
-                <BfDsProgress
-                  size={iconSize[size]}
-                  progress={progress}
-                  backgroundColor={buttonStyle[kind].backgroundColor}
-                  spinnerColor={buttonStyle[kind].color}
-                />
-              )
-              : (
-                <BfDsSpinner
-                  size={iconSize[size]}
-                  backgroundColor={buttonStyle[kind].backgroundColor}
-                  spinnerColor={buttonStyle[kind].color}
-                />
-              )}
-          </div>
+          <ButtonSpinner
+            kind={kind}
+            size={size}
+            progress={progress}
+            isIconButton={false}
+          />
         )
         : (
           iconLeft && (
-            <div style={styles.iconStyle}>
-              {progress && progress > 0
-                ? (
-                  <div className="mono" style={{ fontSize: 12 }}>
-                    {percent}%
-                  </div>
-                )
-                : (
-                  <BfDsIcon
-                    name={iconLeft}
-                    color={iconColor}
-                    size={iconSize[size]}
-                  />
-                )}
+            <div style={baseStyles.iconStyle}>
+              <ButtonIcon
+                name={iconLeft}
+                color={iconColor}
+                size={iconSizes[size]}
+                progress={progress}
+              />
             </div>
           )
         )}
+
       {!isIconButton && (
-        <div style={styles.textStyle}>
+        <div style={baseStyles.textStyle}>
           <div>{text}</div>
           {subtext && <div style={{ fontSize: "0.7em" }}>{subtext}</div>}
         </div>
       )}
+
       {iconRight && (
-        <div style={styles.iconStyle}>
-          <BfDsIcon name={iconRight} color={iconColor} size={iconSize[size]} />
+        <div style={baseStyles.iconStyle}>
+          <BfDsIcon name={iconRight} color={iconColor} size={iconSizes[size]} />
         </div>
       )}
+
       {tooltipMenuDropdown && (
-        <div
-          style={{
-            ...(isIconButton
-              ? styles.dropdownArrowIconButton
-              : styles.dropdownArrow),
-            backgroundColor: isIconButton
-              ? iconButtonStyle[kind].borderColor
-              : buttonStyle[kind].backgroundColor,
-          }}
-        >
-          <BfDsIcon name="triangleDown" color={iconColor} size={10} />
-        </div>
+        <DropdownArrow
+          isIconButton={isIconButton}
+          kind={kind}
+          hover={hover}
+          size={size}
+          iconColor={iconColor}
+        />
       )}
+    </>
+  );
+
+  // Create button element
+  const buttonElement = (
+    <button
+      {...props}
+      disabled={disabled}
+      type={type}
+      style={{
+        ...buttonStyle,
+        ...(disabled ? baseStyles.disabledStyle : {}),
+        ...(shadow ? baseStyles.shadow : {}),
+      }}
+      onClick={handleClick}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      data-bf-icon={iconLeft}
+      data-bf-testid={testId}
+      role={role ?? text ?? "button"}
+    >
+      {renderButtonContent()}
     </button>
   );
 
-  let buttonToRender = button;
-  if (link != null) {
-    buttonToRender = (
+  // Wrap with link if needed
+  let wrappedButton = buttonElement;
+  if (link) {
+    wrappedButton = (
       <RouterLink to={link} style={{ display: "block" }} target={hrefTarget}>
-        {button}
+        {buttonElement}
       </RouterLink>
     );
-  }
-
-  if (href != null) {
-    buttonToRender = (
+  } else if (href) {
+    wrappedButton = (
       <a href={href} target={hrefTarget}>
-        {button}
+        {buttonElement}
       </a>
     );
   }
 
-  return tooltip || tooltipMenu || tooltipMenuDropdown
-    ? (
+  // Wrap with tooltip if needed
+  if (tooltip || tooltipMenu || tooltipMenuDropdown) {
+    return (
       <BfDsTooltip
         menu={tooltipMenu ?? tooltipMenuDropdown}
         justification={tooltipJustification}
         position={tooltipPosition}
         text={tooltip}
       >
-        {buttonToRender}
+        {wrappedButton}
       </BfDsTooltip>
-    )
-    : buttonToRender;
+    );
+  }
+
+  return wrappedButton;
 }

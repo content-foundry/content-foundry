@@ -86,8 +86,6 @@ export type BfDsFormElementProps<
 > = TAdditionalFormElementProps & {
   id: string;
   title?: string;
-  rows?: string;
-  placeholder?: string;
 };
 
 /**
@@ -123,7 +121,7 @@ export function Example() {
       <BfDsFormTextInput id="email" title="What is your email?" />
       <BfDsFormNumberInput id="number" title="What is your favorite number?" />
       <BfDsFormToggle id="checkbox" title="Do you like cheese?" />
-      <BfDsFormTextArea id="bio" rows="2" title="Tell us about yourself" />
+      <BfDsFormTextArea id="bio" rows={2} title="Tell us about yourself" />
       <BfDsFormSubmitButton text="Submit" />
     </BfDsForm>
   );

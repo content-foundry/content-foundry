@@ -3,6 +3,7 @@ import { graphqlBfNode } from "packages/graphql/types/graphqlBfNode.ts";
 import { getLogger } from "packages/logger.ts";
 import { getVoice } from "packages/app/ai/getVoice.ts";
 import { makeTweets } from "packages/app/ai/makeTweets.ts";
+import { reviseBlog } from "packages/app/ai/reviseBlog.ts";
 
 const _logger = getLogger(import.meta);
 
@@ -65,6 +66,18 @@ export const graphqlCreationType = objectType({
         name: "Suggestion",
         definition(t) {
           t.string("tweet");
+          t.string("explanation");
+        },
+      }),
+    });
+    t.string("draftBlog");
+    t.list.field("revisions", {
+      type: objectType({
+        name: "Revisions",
+        definition(t) {
+          t.string("revisionTitle");
+          t.string("original");
+          t.string("revision");
           t.string("explanation");
         },
       }),
@@ -144,6 +157,29 @@ export const makeTweetsMutation = mutationField("makeTweets", {
       throw new Error("No organization found");
     }
     const response = await makeTweets(tweet, org.props.identity?.voice?.voice);
+    org.props = {
+      ...org.props,
+      creation: response,
+    };
+    await org.save();
+    return response;
+  },
+});
+
+export const reviseBlogMutation = mutationField("reviseBlog", {
+  args: {
+    blogPost: nonNull(stringArg()),
+  },
+  type: "Creation",
+  resolve: async (_, { blogPost }, ctx) => {
+    const org = await ctx.findOrganizationForCurrentViewer();
+    if (!org) {
+      throw new Error("No organization found");
+    }
+    const response = await reviseBlog(
+      blogPost,
+      org.props.identity?.voice?.voice,
+    );
     org.props = {
       ...org.props,
       creation: response,
