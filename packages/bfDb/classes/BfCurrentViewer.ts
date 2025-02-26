@@ -9,6 +9,7 @@ import type {
 import { Buffer } from "node:buffer";
 import { BfPerson } from "packages/bfDb/models/BfPerson.ts";
 import jwt from "jsonwebtoken";
+import { getPosthogClient } from "lib/posthog.ts";
 
 const JWT_SECRET = Buffer.from("content-foundry-secret-key");
 const JWT_EXPIRES_IN = "1h";
@@ -74,9 +75,10 @@ export abstract class BfCurrentViewer {
   static createFromRequest(
     importMeta: ImportMeta,
     request: Request,
-    responseHeaders: Headers,
+    responseHeaders?: Headers,
   ) {
     logger.debug("Creating viewer from request");
+
     const accessToken = request.headers.get("Cookie")?.match(/bfgat=([^;]+)/)
       ?.[1];
     const refreshToken = request.headers.get("Cookie")?.match(/bfgrt=([^;]+)/)
@@ -97,11 +99,11 @@ export abstract class BfCurrentViewer {
         // Generate new tokens if refresh token is valid
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           generateTokens(refreshResult.sub);
-        responseHeaders.set(
+        responseHeaders?.set(
           "Set-Cookie",
           `bfgat=${newAccessToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=900`,
         );
-        responseHeaders.set(
+        responseHeaders?.set(
           "Set-Cookie",
           `bfgrt=${newRefreshToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${604800}`,
         ); //7 days in seconds
@@ -113,11 +115,11 @@ export abstract class BfCurrentViewer {
     const userLoggedIn = !!tokenResult;
 
     if (!userLoggedIn) {
-      responseHeaders.set(
+      responseHeaders?.set(
         "Set-Cookie",
         "bfgat=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0",
       );
-      responseHeaders.set(
+      responseHeaders?.set(
         "Set-Cookie",
         "bfgrt=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0",
       );
@@ -238,7 +240,11 @@ export abstract class BfCurrentViewer {
       toBfGid(bfOid),
     );
   }
-  clear() {}
+  clear() {
+    this.getPosthogClient().then(({ backendClient }) =>
+      backendClient?.shutdown()
+    );
+  }
 
   protected constructor(
     readonly creator: ImportMeta, // the import.meta of the module that created the current viewer
@@ -260,6 +266,13 @@ export abstract class BfCurrentViewer {
   }
   get isLoggedIn(): boolean {
     return false;
+  }
+
+  getPosthogClient() {
+    return getPosthogClient(this.bfGid);
+  }
+  [Symbol.dispose]() {
+    this.clear();
   }
 }
 

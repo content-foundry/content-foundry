@@ -25,6 +25,7 @@ import {
 import { matchRouteWithParams } from "packages/app/contexts/RouterContext.tsx";
 import { AssemblyAI } from "assemblyai";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 
 const logger = getLogger(import.meta);
 
@@ -70,6 +71,15 @@ if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
   appRoutes.delete("/ui");
 }
 
+const configurationVariableKeys = [
+  "POSTHOG_API_KEY",
+];
+
+const configurationVariables = configurationVariableKeys.reduce((acc, key) => {
+  acc[key] = getConfigurationVariable(key);
+  return acc;
+}, {} as Record<string, string | undefined>);
+
 // Register each app route in the routes Map
 for (const entry of appRoutes.entries()) {
   const [path, { Component: { HeaderComponent: RouteHeaderComponent } }] =
@@ -85,7 +95,7 @@ for (const entry of appRoutes.entries()) {
       queryParams,
       routeParams,
       path,
-      posthogKey: getConfigurationVariable("POSTHOG_API_KEY") ?? "",
+      ...configurationVariables,
     };
 
     const serverEnvironment: ServerProps = {
@@ -124,15 +134,19 @@ for (const [path, entrypoint] of isographAppRoutes.entries()) {
     const initialPath = reqUrl.pathname;
     const queryParams = Object.fromEntries(reqUrl.searchParams.entries());
     const isographServerEnvironment = await getIsographEnvironment(request);
+    using cv = BfCurrentViewer.createFromRequest(import.meta, request);
     logger.debug("path", path);
     logger.debug("entrypoint", entrypoint);
+    const ph = await cv.getPosthogClient();
+    const featureFlags = await ph.backendClient?.getAllFlags(cv.bfGid);
 
     const clientEnvironment = {
       initialPath,
       queryParams,
       routeParams,
       path,
-      posthogKey: getConfigurationVariable("POSTHOG_API_KEY") ?? "",
+      featureFlags,
+      ...configurationVariables,
     };
 
     const serverEnvironment: ServerProps = {
@@ -264,51 +278,58 @@ const port = Number(Deno.env.get("WEB_PORT") ?? 8000);
 if (import.meta.main) {
   Deno.serve({ port }, async (req) => {
     const incomingUrl = new URL(req.url);
+    const timer = performance.now();
+    const resHeaders = new Headers();
+    using cv = BfCurrentViewer.createFromRequest(import.meta, req, resHeaders);
+    let res;
 
     if (incomingUrl.pathname.startsWith(staticPrefix)) {
-      return staticHandler(req);
-    }
+      res = await staticHandler(req);
+    } else {
+      try {
+        // Keep the query string, so we pass "pathname + search" to matchRoute
+        const pathWithParams = incomingUrl.pathname + incomingUrl.search;
+        const [handler, routeParams, needsRedirect, redirectTo] = matchRoute(
+          pathWithParams,
+        );
 
-    const timer = performance.now();
-    try {
-      // Keep the query string, so we pass "pathname + search" to matchRoute
-      const pathWithParams = incomingUrl.pathname + incomingUrl.search;
-      const [handler, routeParams, needsRedirect, redirectTo] = matchRoute(
-        pathWithParams,
-      );
+        if (needsRedirect && redirectTo) {
+          // Canonicalize trailing slash mismatch with a permanent redirect
+          // (could use 302 if you prefer)
+          const redirectUrl = new URL(redirectTo, req.url);
+          return Response.redirect(redirectUrl, 301);
+        }
 
-      if (needsRedirect && redirectTo) {
-        // Canonicalize trailing slash mismatch with a permanent redirect
-        // (could use 302 if you prefer)
-        const redirectUrl = new URL(redirectTo, req.url);
-        return Response.redirect(redirectUrl, 301);
+        res = await handler(req, routeParams);
+
+        // Optionally set security headers, etc.
+        // if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
+        //   res.headers.set("X-Frame-Options", "DENY");
+        //   res.headers.set(
+        //     "Content-Security-Policy",
+        //     "frame-ancestors 'self' replit.dev",
+        //   );
+        // }
+      } catch (err) {
+        logger.error("Error handling request:", err);
+        res = new Response("Internal Server Error", { status: 500 });
       }
-
-      const res = await handler(req, routeParams);
-
-      // Optionally set security headers, etc.
-      // if (getConfigurationVariable("BF_ENV") !== DeploymentEnvs.DEVELOPMENT) {
-      //   res.headers.set("X-Frame-Options", "DENY");
-      //   res.headers.set(
-      //     "Content-Security-Policy",
-      //     "frame-ancestors 'self' replit.dev",
-      //   );
-      // }
-
-      const perf = performance.now() - timer;
-      const perfInMs = Math.round(perf);
-      logger.info(
-        `[${
-          new Date().toISOString()
-        }] [${req.method}] ${res.status} ${incomingUrl} ${
-          req.headers.get("content-type") ?? ""
-        } (${perfInMs}ms)`,
-      );
-
-      return res;
-    } catch (err) {
-      logger.error("Error handling request:", err);
-      return new Response("Internal Server Error", { status: 500 });
     }
+
+    const perf = performance.now() - timer;
+    const perfInMs = Math.round(perf);
+    logger.info(
+      `[${
+        new Date().toISOString()
+      }] [${req.method}] ${res.status} ${incomingUrl} ${
+        req.headers.get("content-type") ?? ""
+      } (${perfInMs}ms) - ${cv}`,
+    );
+
+    // resHeaders.forEach((value, key) => {
+    //   res.headers.set(key, value);
+    // });
+
+    return res;
   });
 }

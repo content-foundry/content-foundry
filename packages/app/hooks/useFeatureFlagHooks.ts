@@ -1,23 +1,18 @@
 import {
   type FeatureFlagsEnabled,
   featureFlagsEnabled,
-  type FeatureFlagsVariant,
-  featureFlagsVariant,
 } from "packages/featureFlags/featureFlagsList.ts";
-
-export function useFeatureFlagVariant<T extends keyof FeatureFlagsVariant>(
-  variant: T,
-): FeatureFlagsVariant[T] {
-  // const { featureFlags } = useAppEnvironment();
-  // return featureFlags[variant];
-  return featureFlagsVariant[variant];
-}
+import { useAppEnvironment } from "packages/app/contexts/AppEnvironmentContext.tsx";
 
 export function useFeatureFlagEnabled(
   flag: keyof FeatureFlagsEnabled,
 ): boolean {
-  // const { featureFlags } = useAppEnvironment();
-  return featureFlagsEnabled[flag];
+  const { featureFlags } = useAppEnvironment();
+  let flagEnabled = featureFlagsEnabled[flag];
+  if (featureFlags && featureFlags[flag] != undefined) {
+    flagEnabled = Boolean(featureFlags[flag]);
+  }
+  return flagEnabled;
 }
 
 export function useFeatureTier(
