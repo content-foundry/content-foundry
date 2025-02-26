@@ -131,7 +131,9 @@ export interface NexusGenObjects {
     name?: string | null; // String
   }
   Creation: { // root type
+    draftBlog?: string | null; // String
     originalText?: string | null; // String
+    revisions?: Array<NexusGenRootTypes['Revisions'] | null> | null; // [Revisions]
     suggestions?: Array<NexusGenRootTypes['Suggestion'] | null> | null; // [Suggestion]
   }
   Distribution: { // root type
@@ -163,6 +165,12 @@ export interface NexusGenObjects {
   ResearchTopic: { // root type
     entries?: Array<NexusGenRootTypes['ResearchEntry'] | null> | null; // [ResearchEntry]
     name?: string | null; // String
+  }
+  Revisions: { // root type
+    explanation?: string | null; // String
+    original?: string | null; // String
+    revision?: string | null; // String
+    revisionTitle?: string | null; // String
   }
   Suggestion: { // root type
     explanation?: string | null; // String
@@ -302,7 +310,9 @@ export interface NexusGenFieldTypes {
     name: string | null; // String
   }
   Creation: { // field return type
+    draftBlog: string | null; // String
     originalText: string | null; // String
+    revisions: Array<NexusGenRootTypes['Revisions'] | null> | null; // [Revisions]
     suggestions: Array<NexusGenRootTypes['Suggestion'] | null> | null; // [Suggestion]
   }
   Distribution: { // field return type
@@ -317,6 +327,7 @@ export interface NexusGenFieldTypes {
     makeTweets: NexusGenRootTypes['Creation'] | null; // Creation
     register: NexusGenRootTypes['BfCurrentViewerLoggedIn'] | null; // BfCurrentViewerLoggedIn
     registrationOptions: NexusGenScalars['JSONString'] | null; // JSONString
+    reviseBlog: NexusGenRootTypes['Creation'] | null; // Creation
     submitYcForm: NexusGenRootTypes['YCRecommendations'] | null; // YCRecommendations
   }
   PageInfo: { // field return type
@@ -347,6 +358,12 @@ export interface NexusGenFieldTypes {
   ResearchTopic: { // field return type
     entries: Array<NexusGenRootTypes['ResearchEntry'] | null> | null; // [ResearchEntry]
     name: string | null; // String
+  }
+  Revisions: { // field return type
+    explanation: string | null; // String
+    original: string | null; // String
+    revision: string | null; // String
+    revisionTitle: string | null; // String
   }
   Suggestion: { // field return type
     explanation: string | null; // String
@@ -485,7 +502,9 @@ export interface NexusGenFieldTypeNames {
     name: 'String'
   }
   Creation: { // field return type name
+    draftBlog: 'String'
     originalText: 'String'
+    revisions: 'Revisions'
     suggestions: 'Suggestion'
   }
   Distribution: { // field return type name
@@ -500,6 +519,7 @@ export interface NexusGenFieldTypeNames {
     makeTweets: 'Creation'
     register: 'BfCurrentViewerLoggedIn'
     registrationOptions: 'JSONString'
+    reviseBlog: 'Creation'
     submitYcForm: 'YCRecommendations'
   }
   PageInfo: { // field return type name
@@ -530,6 +550,12 @@ export interface NexusGenFieldTypeNames {
   ResearchTopic: { // field return type name
     entries: 'ResearchEntry'
     name: 'String'
+  }
+  Revisions: { // field return type name
+    explanation: 'String'
+    original: 'String'
+    revision: 'String'
+    revisionTitle: 'String'
   }
   Suggestion: { // field return type name
     explanation: 'String'
@@ -635,6 +661,9 @@ export interface NexusGenArgTypes {
     }
     registrationOptions: { // args
       email: string; // String!
+    }
+    reviseBlog: { // args
+      blogPost: string; // String!
     }
     submitYcForm: { // args
       formData?: string | null; // String

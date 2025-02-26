@@ -11,6 +11,14 @@ const queryText = 'query entrypointFormatterEditor  {\
     organization {\
       id,\
       __typename,\
+      creation {\
+        revisions {\
+          explanation,\
+          original,\
+          revision,\
+          revisionTitle,\
+        },\
+      },\
       identity {\
         twitter {\
           handle,\
@@ -60,6 +68,42 @@ const normalizationAst: NormalizationAst = {
               kind: "Scalar",
               fieldName: "__typename",
               arguments: null,
+            },
+            {
+              kind: "Linked",
+              fieldName: "creation",
+              arguments: null,
+              concreteType: "Creation",
+              selections: [
+                {
+                  kind: "Linked",
+                  fieldName: "revisions",
+                  arguments: null,
+                  concreteType: "Revisions",
+                  selections: [
+                    {
+                      kind: "Scalar",
+                      fieldName: "explanation",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "original",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "revision",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "revisionTitle",
+                      arguments: null,
+                    },
+                  ],
+                },
+              ],
             },
             {
               kind: "Linked",

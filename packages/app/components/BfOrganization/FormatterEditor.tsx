@@ -7,6 +7,7 @@ export const FormatterEditor = iso(`
   field BfOrganization.FormatterEditor @component {
     FormatterSidebar
     FormatterEditorPanel
+    BlogRevisionsSidebar
   }
 `)(
   function FormatterEditor(
@@ -20,11 +21,12 @@ export const FormatterEditor = iso(`
     // }
     const FormatterSidebar = data.FormatterSidebar;
     const FormatterEditorPanel = data.FormatterEditorPanel;
+    const BlogRevisionsSidebar = data.BlogRevisionsSidebar;
     return (
       <div className="flexRow editor-container">
         {FormatterSidebar && <FormatterSidebar />}
         {FormatterEditorPanel && <FormatterEditorPanel />}
-        {/* {SessionsSidebar && <SessionsSidebar />} */}
+        {BlogRevisionsSidebar && <BlogRevisionsSidebar />}
       </div>
     );
   },
