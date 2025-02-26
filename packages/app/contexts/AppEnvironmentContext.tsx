@@ -2,7 +2,6 @@ import {
   RouterProvider,
   type RouterProviderProps,
 } from "packages/app/contexts/RouterContext.tsx";
-import { AppSidebar } from "packages/app/components/AppSidebar.tsx";
 // import clientEnvironment from "packages/client/relay/relayEnvironment.ts";
 // import AppStateProvider from "packages/client/contexts/AppStateContext.tsx";
 // import { featureFlags, featureVariants } from "packages/features/list.ts";
@@ -82,9 +81,7 @@ export function AppEnvironmentProvider(
             queryParams={queryParams}
             initialPath={initialPath}
           >
-            <AppSidebar>
-              {children}
-            </AppSidebar>
+            {children}
           </RouterProvider>
         </IsographEnvironmentProvider>
       </PostHogProvider>

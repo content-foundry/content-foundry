@@ -17,6 +17,9 @@ iso(`entrypoint Query.EntrypointTwitterIdeatorCompose`)
 iso(`entrypoint Query.entrypointTwitterIdeatorResearchPermalink`)
 iso(`entrypoint Query.entrypointTwitterIdeatorResearch`)
 iso(`entrypoint Query.EntrypointHome`)
+iso(`entrypoint Query.EntrypointFormatter`)
+iso(`entrypoint Query.EntrypointFormatterVoice`)
+iso(`entrypoint Query.entrypointFormatterEditor`)
 
 import entrypointBlog from "packages/app/__generated__/__isograph/Query/EntrypointBlog/entrypoint.ts"
 import entrypointContentFoundryApp from "packages/app/__generated__/__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts"
@@ -29,6 +32,9 @@ import entrypointTwitterIdeatorCompose from "packages/app/__generated__/__isogra
 import entrypointTwitterIdeatorResearchPermalink from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearchPermalink/entrypoint.ts"
 import entrypointTwitterIdeatorResearch from "packages/app/__generated__/__isograph/Query/entrypointTwitterIdeatorResearch/entrypoint.ts"
 import entrypointHome from "packages/app/__generated__/__isograph/Query/EntrypointHome/entrypoint.ts"
+import entrypointFormatter from "packages/app/__generated__/__isograph/Query/EntrypointFormatter/entrypoint.ts"
+import entrypointFormatterVoice from "packages/app/__generated__/__isograph/Query/EntrypointFormatterVoice/entrypoint.ts"
+import entrypointFormatterEditor from "packages/app/__generated__/__isograph/Query/entrypointFormatterEditor/entrypoint.ts"
 
 export {entrypointBlog};
 export {entrypointContentFoundryApp};
@@ -41,3 +47,6 @@ export {entrypointTwitterIdeatorCompose};
 export {entrypointTwitterIdeatorResearchPermalink};
 export {entrypointTwitterIdeatorResearch};
 export {entrypointHome};
+export {entrypointFormatter};
+export {entrypointFormatterVoice};
+export {entrypointFormatterEditor};
