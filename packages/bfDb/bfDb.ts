@@ -1,8 +1,8 @@
 import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
 import { getLogger } from "packages/logger.ts";
-import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
 import { type BfGid, toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 import type { BfMetadataNode } from "packages/bfDb/coreModels/BfNode.ts";
 import type { BfMetadataEdge } from "packages/bfDb/coreModels/BfEdge.ts";
@@ -13,6 +13,10 @@ import type {
   PageInfo,
 } from "graphql-relay";
 
+// Import the abstract backend interface and concrete implementations
+import type { DatabaseBackend } from "packages/bfDb/backend/DatabaseBackend.ts";
+import { DatabaseBackendPostgres } from "packages/bfDb/backend/DatabaseBackendPostgres.ts";
+
 const logger = getLogger(import.meta);
 
 type BfDbMetadata = BfMetadataNode & Partial<BfMetadataEdge>;
@@ -22,19 +26,7 @@ type DbItem<T extends Props> = {
   metadata: BfDbMetadata;
 };
 
-let _sql: NeonQueryFunction<false, false> | null = null;
-function getSql() {
-  if (_sql === null) {
-    const databaseUrl = getConfigurationVariable("DATABASE_URL");
-    if (!databaseUrl) {
-      throw new BfErrorDb("DATABASE_URL is not set");
-    }
-    _sql = neon(databaseUrl);
-  }
-  return _sql;
-}
-
-export type JSONValue =
+type JSONValue =
   | string
   | number
   | boolean
@@ -76,155 +68,218 @@ function rowToMetadata(row: Row): BfDbMetadata {
   };
 }
 
-export async function bfGetItem<
-  TProps extends Props,
->(bfOid: BfGid, bfGid: BfGid): Promise<DbItem<TProps> | null> {
-  try {
-    logger.trace("bfGetItem", bfOid, bfGid);
-    const rows =
-      await getSql()`SELECT * FROM bfdb WHERE bf_oid = ${bfOid} AND bf_gid = ${bfGid}` as Array<
-        Row<TProps>
-      >;
+// Singleton instance of the database backend
+let databaseBackend: DatabaseBackend | null = null;
 
-    if (rows.length === 0) {
-      return null;
-    }
-    const firstRow = rows[0];
-    const props: TProps = firstRow.props;
-    logger.trace(firstRow);
-    const metadata = rowToMetadata(firstRow);
-
-    return { props, metadata };
-  } catch (e) {
-    logger.error(e);
-    throw e;
+/**
+ * Get the appropriate database backend based on environment configuration
+ */
+function getBackend(): DatabaseBackend {
+  if (databaseBackend) {
+    return databaseBackend;
   }
-}
 
-export async function bfGetItemByBfGid<
-  TProps extends Props = Props,
->(
-  bfGid: string,
-  className?: string,
-): Promise<DbItem<TProps> | null> {
-  try {
-    logger.trace("bfGetItemByBfGid", { bfGid, className });
-    let queryPromise;
-    if (className) {
-      queryPromise =
-        getSql()`SELECT * FROM bfdb WHERE bf_gid = ${bfGid} AND class_name = ${className}`;
-    } else {
-      queryPromise = getSql()`SELECT * FROM bfdb WHERE bf_gid = ${bfGid}`;
-    }
-    const rows = await queryPromise as Array<Row>;
-    if (rows.length === 0) {
-      return null;
-    }
-    const firstRow = rows[0];
-    const props = firstRow.props as TProps;
-    logger.trace(props);
-    const metadata = rowToMetadata(firstRow);
-    return { props, metadata };
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  }
-}
+  logger.info("Using PostgreSQL database backend");
+  databaseBackend = new DatabaseBackendPostgres();
 
-export async function bfGetItemsByBfGid<
-  TProps extends Props = Props,
->(
-  bfGids: Array<string>,
-  className?: string,
-): Promise<Array<DbItem<TProps>>> {
-  try {
-    logger.trace("bfGetItemsByBfGid", { bfGids, className });
-    let queryPromise;
-    if (className) {
-      queryPromise =
-        getSql()`SELECT * FROM bfdb WHERE bf_gid = ANY(${bfGids}) AND class_name = ${className}`;
-    } else {
-      queryPromise = getSql()`SELECT * FROM bfdb WHERE bf_gid = ANY(${bfGids})`;
-    }
-    const rows = await queryPromise as Array<Row>;
-    return rows.map((row) => {
-      const props = row.props as TProps;
-      const metadata = rowToMetadata(row);
-      return { props: props, metadata };
+  // Initialize the backend
+  databaseBackend.initialize()
+    .catch((error) => {
+      logger.error("Failed to initialize database backend", error);
+      throw new BfErrorDb("Failed to initialize database backend");
     });
-  } catch (e) {
-    logger.error(e);
-    throw e;
+
+  return databaseBackend;
+}
+
+/**
+ * Put an item into the database
+ */
+export async function bfPutItem(
+  props: Record<string, unknown>,
+  metadata: {
+    className: string;
+    bfGid: BfGid;
+    bfOid: BfGid;
+    bfCid: BfGid;
+    bfSClassName?: string;
+    bfSid?: BfGid;
+    bfTClassName?: string;
+    bfTid?: BfGid;
+    sortValue: number;
+  },
+): Promise<void> {
+  try {
+    await getBackend().putItem(
+      metadata.className,
+      metadata.bfGid,
+      props,
+      metadata.sortValue,
+      metadata.bfSClassName,
+      metadata.bfSid,
+      metadata.bfTClassName,
+      metadata.bfTid,
+    );
+  } catch (error) {
+    logger.error("Error in bfPutItem:", error);
+    throw error;
   }
 }
 
-export async function bfPutItem<
-  TProps extends Props = Props,
->(
-  itemProps: TProps,
-  itemMetadata: BfMetadataNode | BfMetadataEdge,
-  sortValue = Date.now(),
-): Promise<void> {
-  logger.trace({ itemProps, itemMetadata });
-
+/**
+ * Get an item from the database by ID
+ */
+export async function bfGetItem(
+  bfOid: BfGid,
+  bfGid: BfGid,
+): Promise<
+  {
+    props: Record<string, unknown>;
+    metadata: {
+      className: string;
+      bfGid: BfGid;
+      bfOid: BfGid;
+      bfCid: BfGid;
+      bfSClassName?: string;
+      bfSid?: BfGid;
+      bfTClassName?: string;
+      bfTid?: BfGid;
+      sortValue: number;
+      createdAt: Date;
+      lastUpdated: Date;
+    };
+  } | null
+> {
   try {
-    let createdAtTimestamp, lastUpdatedTimestamp;
-
-    if (itemMetadata.createdAt instanceof Date) {
-      createdAtTimestamp = itemMetadata.createdAt.toISOString();
-    } else if (typeof itemMetadata.createdAt === "number") {
-      createdAtTimestamp = new Date(itemMetadata.createdAt).toISOString();
-    }
-
-    if (itemMetadata.lastUpdated instanceof Date) {
-      lastUpdatedTimestamp = itemMetadata.lastUpdated.toISOString();
-    } else if (typeof itemMetadata.lastUpdated === "number") {
-      lastUpdatedTimestamp = new Date(itemMetadata.lastUpdated).toISOString();
-    }
-
-    let bfSid: BfGid | null = null;
-    let bfTid: BfGid | null = null;
-    let bfSClassName: string | null = null;
-    let bfTClassName: string | null = null;
-
-    if ("bfTid" in itemMetadata) {
-      bfSid = itemMetadata.bfSid;
-      bfTid = itemMetadata.bfTid;
-      bfSClassName = itemMetadata.bfSClassName;
-      bfTClassName = itemMetadata.bfTClassName;
-    }
-
-    // Insert or Update with conditional sort_value
-    await getSql()`
-    INSERT INTO bfdb(
-      bf_gid, bf_oid, bf_cid, bf_sid, bf_tid, class_name, created_at, last_updated, props, sort_value, bf_t_class_name, bf_s_class_name
-    )
-    VALUES(
-      ${itemMetadata.bfGid}, ${itemMetadata.bfOid}, ${itemMetadata.bfCid}, ${bfSid}, ${bfTid}, ${itemMetadata.className}, ${createdAtTimestamp}, ${lastUpdatedTimestamp}, ${
-      JSON.stringify(itemProps)
-    }, ${sortValue}, ${bfTClassName}, ${bfSClassName}
-    ) 
-    ON CONFLICT (bf_gid) DO UPDATE SET
-      bf_oid = EXCLUDED.bf_oid,
-      bf_cid = EXCLUDED.bf_cid,
-      bf_sid = EXCLUDED.bf_sid,
-      bf_tid = EXCLUDED.bf_tid,
-      class_name = EXCLUDED.class_name,
-      created_at = EXCLUDED.created_at,
-      last_updated = CURRENT_TIMESTAMP,
-      props = EXCLUDED.props,
-      sort_value = CASE WHEN bfdb.created_at IS NULL THEN EXCLUDED.sort_value ELSE bfdb.sort_value END,
-      bf_t_class_name = EXCLUDED.bf_t_class_name,
-      bf_s_class_name = EXCLUDED.bf_s_class_name;`;
-    logger.trace(
-      `bfPutItem: Successfully inserted or updated item with ${
-        JSON.stringify(itemMetadata)
-      }`,
+    const item = await getBackend().getItem(
+      bfOid.toString(),
+      bfGid,
     );
-  } catch (e) {
-    logger.error("Error in bfPutItem:", e);
-    logger.trace(e);
-    throw e;
+
+    if (!item) {
+      return null;
+    }
+
+    return {
+      props: item.props,
+      metadata: {
+        className: item.id.toString().split("/")[0],
+        bfGid: item.id,
+        bfOid: bfOid,
+        bfCid: toBfGid(item.id.toString().split("/")[1]),
+        bfSClassName: item.s_className,
+        bfSid: item.sid,
+        bfTClassName: item.t_className,
+        bfTid: item.tid,
+        sortValue: item.sortValue,
+        createdAt: new Date(),
+        lastUpdated: new Date(),
+      },
+    };
+  } catch (error) {
+    logger.error("Error in bfGetItem:", error);
+    throw error;
+  }
+}
+
+/**
+ * Query items from the database based on metadata and props
+ */
+export async function bfQueryItems(
+  metadata: Record<string, unknown>,
+  props?: Record<string, unknown>,
+  bfGids?: Array<BfGid>,
+): Promise<
+  Array<{
+    props: Record<string, unknown>;
+    metadata: {
+      className: string;
+      bfGid: BfGid;
+      bfOid: BfGid;
+      bfCid: BfGid;
+      bfSClassName?: string;
+      bfSid?: BfGid;
+      bfTClassName?: string;
+      bfTid?: BfGid;
+      sortValue: number;
+      createdAt: Date;
+      lastUpdated: Date;
+    };
+  }>
+> {
+  try {
+    // Extract the className from metadata
+    const className = metadata.className as string;
+    if (!className) {
+      throw new BfErrorDb("className is required for query");
+    }
+
+    // Build query parameters
+    const queryParams: Record<string, unknown> = {};
+
+    // Add metadata fields to the query
+    for (const [key, value] of Object.entries(metadata)) {
+      if (key !== "className" && value !== undefined) {
+        queryParams[key] = value;
+      }
+    }
+
+    // Add props to the query if provided
+    if (props) {
+      for (const [key, value] of Object.entries(props)) {
+        if (value !== undefined) {
+          queryParams[key] = value;
+        }
+      }
+    }
+
+    // Get items from the backend
+    const items = await getBackend().queryItems(className, queryParams);
+
+    // Filter by bfGids if provided
+    let filteredItems = items;
+    if (bfGids && bfGids.length > 0) {
+      const gidStrings = bfGids.map((gid) => gid.toString());
+      filteredItems = items.filter((item) =>
+        gidStrings.includes(item.id.toString())
+      );
+    }
+
+    // Convert to the expected return format
+    return filteredItems.map((item) => ({
+      props: item.props,
+      metadata: {
+        className,
+        bfGid: item.id,
+        bfOid: toBfGid(metadata.bfOid as string),
+        bfCid: toBfGid(item.id.toString().split("/")[1]),
+        bfSClassName: item.s_className,
+        bfSid: item.sid,
+        bfTClassName: item.t_className,
+        bfTid: item.tid,
+        sortValue: item.sortValue,
+        createdAt: new Date(),
+        lastUpdated: new Date(),
+      },
+    }));
+  } catch (error) {
+    logger.error("Error in bfQueryItems:", error);
+    throw error;
+  }
+}
+
+/**
+ * Delete an item from the database
+ */
+export async function bfDeleteItem(
+  className: string,
+  bfGid: BfGid,
+): Promise<void> {
+  try {
+    await getBackend().deleteItem(className, bfGid);
+  } catch (error) {
+    logger.error("Error in bfDeleteItem:", error);
+    throw error;
   }
 }
 
@@ -253,31 +308,31 @@ export async function bfQueryAncestorsByClassName<
   try {
     const rows = await getSql()`
       WITH RECURSIVE AncestorTree(bf_sid, bf_s_class_name, path, depth) AS (
-        SELECT 
-          bf_sid, 
-          bf_s_class_name, 
-          ARRAY[bf_tid::text, bf_sid::text]::text[] AS path, 
+        SELECT
+          bf_sid,
+          bf_s_class_name,
+          ARRAY[bf_tid::text, bf_sid::text]::text[] AS path,
           1 AS depth
         FROM bfdb
         WHERE bf_tid = ${targetBfGid} AND bf_oid = ${bfOid}
         UNION ALL
-        SELECT 
-          b.bf_sid, 
-          b.bf_s_class_name, 
-          at.path || b.bf_sid::text, 
+        SELECT
+          b.bf_sid,
+          b.bf_s_class_name,
+          at.path || b.bf_sid::text,
           at.depth + 1
         FROM bfdb AS b
         INNER JOIN AncestorTree AS at ON b.bf_tid = at.bf_sid
-        WHERE 
-          at.depth < ${depth} AND 
-          b.bf_oid = ${bfOid} AND 
+        WHERE
+          at.depth < ${depth} AND
+          b.bf_oid = ${bfOid} AND
           NOT b.bf_sid::text = ANY(at.path)
       )
       SELECT b.*, at.depth
       FROM bfdb b
       JOIN AncestorTree at ON b.bf_gid = at.bf_sid
-      WHERE 
-        at.bf_s_class_name = ${sourceBfClassName} AND 
+      WHERE
+        at.bf_s_class_name = ${sourceBfClassName} AND
         b.bf_gid != ${targetBfGid}
       ORDER BY at.depth ASC;
     `;
@@ -303,31 +358,31 @@ export async function bfQueryDescendantsByClassName<
   try {
     const rows = await getSql()`
       WITH RECURSIVE DescendantTree(bf_tid, bf_t_class_name, path, depth) AS (
-        SELECT 
-          bf_tid, 
-          bf_t_class_name, 
-          ARRAY[bf_sid::text, bf_tid::text]::text[] AS path, 
+        SELECT
+          bf_tid,
+          bf_t_class_name,
+          ARRAY[bf_sid::text, bf_tid::text]::text[] AS path,
           1 AS depth
         FROM bfdb
         WHERE bf_sid = ${sourceBfGid} AND bf_oid = ${bfOid}
         UNION ALL
-        SELECT 
-          b.bf_tid, 
-          b.bf_t_class_name, 
-          dt.path || b.bf_tid::text, 
+        SELECT
+          b.bf_tid,
+          b.bf_t_class_name,
+          dt.path || b.bf_tid::text,
           dt.depth + 1
         FROM bfdb AS b
         INNER JOIN DescendantTree AS dt ON b.bf_sid = dt.bf_tid
-        WHERE 
-          dt.depth < ${depth} AND 
-          b.bf_oid = ${bfOid} AND 
+        WHERE
+          dt.depth < ${depth} AND
+          b.bf_oid = ${bfOid} AND
           NOT b.bf_tid::text = ANY(dt.path)
       )
       SELECT b.*, dt.depth
       FROM bfdb b
       JOIN DescendantTree dt ON b.bf_gid = dt.bf_tid
-      WHERE 
-        dt.bf_t_class_name = ${targetBfClassName} AND 
+      WHERE
+        dt.bf_t_class_name = ${targetBfClassName} AND
         b.bf_gid != ${sourceBfGid}
       ORDER BY dt.depth ASC;
     `;
@@ -499,35 +554,6 @@ export async function bfQueryItemsUnified<
   return allItems;
 }
 
-export function bfQueryItems<
-  TProps extends Props = Props,
->(
-  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
-  propsToQuery: Partial<TProps> = {},
-  bfGids?: Array<string>,
-  orderDirection: "ASC" | "DESC" = "ASC",
-  orderBy: keyof Row = "sort_value",
-): Promise<Array<DbItem<TProps>>> {
-  logger.debug({
-    metadataToQuery,
-    propsToQuery,
-    bfGids,
-    orderDirection,
-    orderBy,
-  });
-
-  return bfQueryItemsUnified(
-    metadataToQuery,
-    propsToQuery,
-    bfGids,
-    orderDirection,
-    orderBy,
-    {
-      useSizeLimit: false,
-    },
-  );
-}
-
 export function bfQueryItemsWithSizeLimit<
   TProps extends Props = Props,
 >(
@@ -553,20 +579,6 @@ export function bfQueryItemsWithSizeLimit<
       batchSize,
     },
   );
-}
-
-export async function bfDeleteItem(bfOid: BfGid, bfGid: BfGid): Promise<void> {
-  try {
-    logger.debug("bfDeleteItem", { bfOid, bfGid });
-    await getSql()`
-      DELETE FROM bfdb
-      WHERE bf_oid = ${bfOid} AND bf_gid = ${bfGid}
-    `;
-    logger.debug(`Deleted item with bfOid: ${bfOid} and bfGid: ${bfGid}`);
-  } catch (e) {
-    logger.error(e);
-    throw new BfErrorDb(`Failed to delete item ${bfGid} from the database`);
-  }
 }
 
 export async function bfQueryItemsForGraphQLConnection<
@@ -677,6 +689,18 @@ function cursorToSortValue(cursor: string): number {
   );
   // Decode Uint8Array to original string and convert to number
   return parseInt(new TextDecoder().decode(uint8Array), 10);
+}
+
+let _sql: NeonQueryFunction<false, false> | null = null;
+function getSql() {
+  if (_sql === null) {
+    const databaseUrl = getConfigurationVariable("DATABASE_URL");
+    if (!databaseUrl) {
+      throw new BfErrorDb("DATABASE_URL is not set");
+    }
+    _sql = neon(databaseUrl);
+  }
+  return _sql;
 }
 
 export async function CLEAR_FOR_DEBUGGING() {
