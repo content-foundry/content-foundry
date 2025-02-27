@@ -12,12 +12,12 @@ import type {
   Edge,
   PageInfo,
 } from "graphql-relay";
+import type { BfDbMetadata } from "packages/bfDb/backend/DatabaseBackend.ts";
 
 const logger = getLogger(import.meta);
 
-type BfDbMetadata = BfMetadataNode & Partial<BfMetadataEdge>;
 
-type DbItem<T extends Props> = {
+export type DbItem<T extends Props> = {
   props: T;
   metadata: BfDbMetadata;
 };
@@ -42,8 +42,8 @@ export type JSONValue =
   | { [key: string]: JSONValue }
   | Array<JSONValue>;
 
-type Props = Record<string, JSONValue>;
-type Row<
+export type Props = Record<string, JSONValue>;
+export type Row<
   TProps extends Props = Props,
 > = {
   props: TProps;
