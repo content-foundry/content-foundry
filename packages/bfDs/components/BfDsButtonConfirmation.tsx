@@ -117,7 +117,7 @@ export function BfDsButtonConfirmation({
           >
             <BfDsIcon
               name={iconSelected}
-              color={"var(--outlineDark)"}
+              color="var(--outlineDark)"
               size={iconSize}
             />
           </div>

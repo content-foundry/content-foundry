@@ -99,7 +99,7 @@ export function BfDsFullPageSpinner({ xstyle = {} }: FullPageProps) {
         ...xstyle,
       }}
     >
-      <BfDsSpinner backgroundColor={"var(--pageBackground)"} waitIcon={true} />
+      <BfDsSpinner backgroundColor="var(--pageBackground)" waitIcon />
     </div>
   );
 }

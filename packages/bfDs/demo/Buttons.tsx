@@ -233,9 +233,9 @@ const generateSpecialButtons = () => [
     component: (
       <BfDsButtonGroup
         buttons={[
-          <BfDsButton text="Left" kind="secondary" />,
-          <BfDsButton text="Middle" kind="primary" />,
-          <BfDsButton text="Right" kind="secondary" />,
+          <BfDsButton text="Left" kind="secondary" key="left" />,
+          <BfDsButton text="Middle" kind="primary" key="middle" />,
+          <BfDsButton text="Right" kind="secondary" key="right" />,
         ]}
       />
     ),

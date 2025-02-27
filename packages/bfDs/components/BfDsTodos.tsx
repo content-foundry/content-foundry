@@ -116,7 +116,7 @@ export function BfDsTodos({ header, initialData }: Props) {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") saveEdit(); // Save on Enter key
                     }}
-                    autoFocus={true}
+                    autoFocus
                     style={{ flex: 1 }}
                   />
                 </div>
@@ -141,12 +141,14 @@ export function BfDsTodos({ header, initialData }: Props) {
                     kind="secondary"
                     size="small"
                     onClick={() => handleEdit(index)}
+                    key="pencil"
                   />,
                   <BfDsButton
                     iconLeft="trash"
                     kind="alert"
                     size="small"
                     onClick={() => deleteTodo(index)}
+                    key="trash"
                   />,
                 ]}
                 iconLeft={todo.completed ? "checkCircleSolid" : "checkCircle"}

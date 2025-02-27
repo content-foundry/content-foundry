@@ -303,7 +303,7 @@ function MenuItem({ menuItem, hovering }: MenuItemProps) {
       )}
       <div style={styles.menuItemRow}>
         {menuItem.selected
-          ? <BfDsIcon color={"var(--success)"} name="check" size={12} />
+          ? <BfDsIcon color="var(--success)" name="check" size={12} />
           : <div style={styles.checkPlaceholder} />}
         <div className="tooltip-menu-item-label" style={styles.menuItemText}>
           {menuItem.label}

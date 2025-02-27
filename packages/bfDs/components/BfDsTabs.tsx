@@ -73,7 +73,7 @@ export function BfDsTabs({ tabs, onTabSelected }: Props) {
             >
               {tab.name}
               {Number(tab.count) > 0 && (
-                <span style={styles.tabNumber}>{" "}{tab.count}</span>
+                <span style={styles.tabNumber}>{tab.count}</span>
               )}
             </div>
           );
