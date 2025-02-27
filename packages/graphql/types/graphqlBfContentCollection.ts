@@ -44,13 +44,15 @@ export const graphqlBfContentCollectionType = objectType({
           );
 
           // Get the content items from the collection
-          const contentItems = collection.getContentItems();
+          const contentItems = await collection.getContentItems();
 
           // Map to proper objects with IDs that match what our system expects
           const items = contentItems.map((item) => ({
             __typename: "BfContentItem",
-            id: `item-${item.slug}`,
-            ...item,
+            id: item.metadata.bfGid,
+            title: item.title,
+            body: item.content,
+            slug: item.props.slug
           }));
 
           return connectionFromArray(items, args);
