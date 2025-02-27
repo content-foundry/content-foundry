@@ -463,7 +463,39 @@ The application uses a custom database abstraction layer:
 
 - Core models in `packages/bfDb/coreModels/`
 - Business models in `packages/bfDb/models/`
-- PostgreSQL via Neon for database storage
+- Backend implementations in `packages/bfDb/backend/`
+  - PostgreSQL backend (default) using Neon
+  - SQLite backend (alternative) for local development
+- Configure backend with environment variable `USE_SQLITE_BACKEND=true`
+
+#### Database Backend Architecture
+
+Content Foundry's database layer supports multiple backends through a clean abstraction:
+
+- `DatabaseBackend` interface defines the core methods required for any backend implementation:
+  - `initialize()`: Set up necessary tables and indexes
+  - `putItem()`: Insert or update items
+  - `getItem()`: Retrieve an item by ID
+  - `queryItems()`: Query items with filters
+  - `deleteItem()`: Remove an item from the database
+
+- Concrete implementations:
+  - `PostgresBackend`: Uses Neon serverless Postgres
+  - `SqliteBackend`: Uses SQLite for local development or testing
+
+#### Switching Between Backends
+
+To use the SQLite backend for development or testing:
+
+```bash
+# Set environment variable to use SQLite backend
+export USE_SQLITE_BACKEND=true
+
+# Optionally, set the SQLite database file path
+export SQLITE_DB_PATH="./data/bfdb.sqlite"
+```
+
+The default backend is PostgreSQL, which requires a valid `DATABASE_URL` environment variable pointing to a Neon or compatible PostgreSQL database.
 
 ### GraphQL API
 
@@ -504,6 +536,38 @@ Key context methods:
 - `ctx.findX(Class, id)`: Find an object by ID (throws error if not found)
 - `ctx.findCurrentUser()`: Get the current authenticated user
 - `ctx.login()`, `ctx.register()`: Authentication methods
+
+### Database Backends
+
+Content Foundry supports multiple database backends through an abstraction layer:
+
+#### Backend Architecture
+
+- Database operations are abstracted through the `DatabaseBackend` interface
+- The database backend is selected based on environment configuration
+- Both PostgreSQL and SQLite backends implement the same interface
+
+#### Switching Database Backends
+
+To switch from the default PostgreSQL backend to SQLite:
+
+```bash
+# Set environment variable to use SQLite backend
+export USE_SQLITE_BACKEND=true
+
+# Optionally, set the SQLite database file path
+export SQLITE_DB_PATH="./data/bfdb.sqlite"
+```
+
+SQLite provides a lightweight alternative that doesn't require a remote database connection, making it ideal for local development or testing.
+
+#### Implementing Custom Backends
+
+The database abstraction makes it easy to add new backend implementations:
+
+1. Implement the `DatabaseBackend` interface in a new class
+2. Add backend selection logic to the `getBackend()` function in `bfDb.ts`
+3. Use environment variables to control backend selection
 
 ### Additional Modules
 
@@ -808,3 +872,4 @@ that includes the content path prefix.
 6. **Use typed interfaces** for better reliability
 7. **Use `deno add`** for managing dependencies
 8. **Leverage Nix** for consistent environments
+9. **Use project root-relative paths** in imports and file references, not relative to the current file. For example, use `import { X } from "packages/web/component.ts"` instead of `import { X } from "../web/component.ts"`.
