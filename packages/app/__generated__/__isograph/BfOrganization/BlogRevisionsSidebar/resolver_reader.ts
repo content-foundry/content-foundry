@@ -35,6 +35,13 @@ const readerAst: ReaderAst<BfOrganization__BlogRevisionsSidebar__param> = [
           },
           {
             kind: "Scalar",
+            fieldName: "instructions",
+            alias: null,
+            arguments: null,
+            isUpdatable: false,
+          },
+          {
+            kind: "Scalar",
             fieldName: "revision",
             alias: null,
             arguments: null,

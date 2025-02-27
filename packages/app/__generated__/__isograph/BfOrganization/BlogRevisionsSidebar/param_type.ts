@@ -5,6 +5,7 @@ export type BfOrganization__BlogRevisionsSidebar__param = {
       readonly revisions: (ReadonlyArray<({
         readonly revisionTitle: (string | null),
         readonly original: (string | null),
+        readonly instructions: (string | null),
         readonly revision: (string | null),
         readonly explanation: (string | null),
       } | null)> | null),

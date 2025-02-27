@@ -77,6 +77,7 @@ export const graphqlCreationType = objectType({
         definition(t) {
           t.string("revisionTitle");
           t.string("original");
+          t.string("instructions");
           t.string("revision");
           t.string("explanation");
         },

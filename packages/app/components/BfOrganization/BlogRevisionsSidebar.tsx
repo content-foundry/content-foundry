@@ -1,6 +1,7 @@
 import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { useState } from "react";
+import { BfDsTabs } from "packages/bfDs/components/BfDsTabs.tsx";
 
 export const BlogRevisionsSidebar = iso(`
   field BfOrganization.BlogRevisionsSidebar @component {
@@ -8,6 +9,7 @@ export const BlogRevisionsSidebar = iso(`
        revisions{
          revisionTitle
          original
+         instructions
          revision
          explanation
        }
@@ -18,24 +20,19 @@ export const BlogRevisionsSidebar = iso(`
     { data },
   ) {
     const [showExplanation, setShowExplanation] = useState(false);
+    const tabs = [{ name: "Tips" }, { name: "Suggestions" }];
     return (
       <div className="flexColumn right-side-bar">
-        <BfDsButton
-          iconLeft="check"
-          kind="outlineSuccess"
-          xstyle={{ alignSelf: "flex-end" }}
-        />
         <div className="revisions-container">
           {data?.creation?.revisions?.map((revision, _index) => {
             const [showExpanded, setShowExpanded] = useState(false);
+            const [selectedTab, setSelectedTab] = useState("Tips");
             return (
               <div className="revision-item">
                 <div className="flexRow">
                   <div className="revision-title">
                     {revision?.revisionTitle ?? ""}
                   </div>
-                  <BfDsButton kind="outlineSuccess" iconLeft="check" />
-                  <BfDsButton kind="outlineAlert" iconLeft="cross" />
                   <BfDsButton
                     iconLeft={showExpanded ? "arrowDown" : "arrowLeft"}
                     kind="overlay"
@@ -47,37 +44,44 @@ export const BlogRevisionsSidebar = iso(`
                 {showExpanded &&
                   (
                     <div className="revision-item">
-                      <div>
-                        <div className="revision-title">Original text:</div>
-                        {" "}
-                        {revision?.original ?? ""}
+                      <div>{revision?.original}</div>
+                      <div className="flexRow">
+                        <BfDsTabs tabs={tabs} onTabSelected={setSelectedTab} />
                       </div>
-                      <div>
-                        <div className="revision-title">Revision:</div>{" "}
-                        {revision?.revision ?? ""}
-                      </div>
-                      {showExplanation
-                        ? (
-                          <div className="suggestion-details">
-                            <div className="suggestion-details-close">
-                              <BfDsButton
-                                kind="overlaySuccess"
-                                size="medium"
-                                iconLeft="exclamationCircle"
-                                onClick={() => setShowExplanation(false)}
-                              />
-                            </div>
-                            {revision?.explanation}
-                          </div>
-                        )
+                      {selectedTab === "Tips"
+                        ? <div>{revision?.instructions}</div>
                         : (
-                          <BfDsButton
-                            kind="overlay"
-                            size="medium"
-                            iconLeft="exclamationCircle"
-                            onClick={() => setShowExplanation(true)}
-                            xstyle={{ alignSelf: "flex-end" }}
-                          />
+                          <div>
+                            {revision?.revision}
+                            {showExplanation
+                              ? (
+                                <>
+                                  <div className="suggestion-details">
+                                    <div className="suggestion-details-close">
+                                      <BfDsButton
+                                        kind="overlaySuccess"
+                                        size="medium"
+                                        iconLeft="exclamationCircle"
+                                        onClick={() =>
+                                          setShowExplanation(false)}
+                                      />
+                                    </div>
+                                    {revision?.explanation}
+                                  </div>
+                                </>
+                              )
+                              : (
+                                <div style={{ textAlign: "right" }}>
+                                  <BfDsButton
+                                    kind="overlay"
+                                    size="medium"
+                                    iconLeft="exclamationCircle"
+                                    onClick={() => setShowExplanation(true)}
+                                    xstyle={{ alignSelf: "flex-end" }}
+                                  />
+                                </div>
+                              )}
+                          </div>
                         )}
                     </div>
                   )}
