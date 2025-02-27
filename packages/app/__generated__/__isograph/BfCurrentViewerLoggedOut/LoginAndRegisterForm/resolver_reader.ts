@@ -26,7 +26,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfCurrentViewerLoggedOut.LoginAndRegisterForm",
+  fieldName: "BfCurrentViewerLoggedOut.LoginAndRegisterForm",
   resolver,
   readerAst,
   hasUpdatable: false,

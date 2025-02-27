@@ -9,6 +9,7 @@ const readerAst: ReaderAst<BfOrganization__FormatterSidebar__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -16,24 +17,28 @@ const readerAst: ReaderAst<BfOrganization__FormatterSidebar__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Scalar",
             fieldName: "handle",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "name",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "imgUrl",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -43,18 +48,21 @@ const readerAst: ReaderAst<BfOrganization__FormatterSidebar__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Scalar",
             fieldName: "voiceSummary",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "voice",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -67,7 +75,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.FormatterSidebar",
+  fieldName: "BfOrganization.FormatterSidebar",
   resolver,
   readerAst,
   hasUpdatable: false,

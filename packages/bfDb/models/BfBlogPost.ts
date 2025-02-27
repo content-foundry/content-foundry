@@ -28,6 +28,20 @@ type BlogPostFrontmatter = Partial<{
 
 type MaybeBlogPostFrontmatter = Partial<BlogPostFrontmatter>;
 
+/**
+ * Default frontmatter values for blog posts
+ */
+export const DEFAULT_BLOG_POST_FRONTMATTER: BlogPostFrontmatter = {
+  author: "Unknown",
+  cta: "Read more",
+  summary: "No summary provided",
+  title: "Untitled",
+  status: BlogPostStatus.Draft,
+};
+
+// Import safeExtractFrontmatter from our utils
+// No longer using safeExtractFrontmatter directly
+
 type BfBlogPostProps = MaybeBlogPostFrontmatter & {
   content: string;
   status: BlogPostStatus;

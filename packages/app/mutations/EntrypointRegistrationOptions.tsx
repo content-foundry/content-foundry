@@ -3,7 +3,6 @@ import { getLogger } from "packages/logger.ts";
 
 const _logger = getLogger(import.meta);
 
-iso(`entrypoint Mutation.RegistrationOptions`);
 export const RegistrationOptions = iso(`
   field Mutation.RegistrationOptions($email: String!) {
     registrationOptions(email: $email)

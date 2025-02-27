@@ -112,7 +112,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Query__EntrypointTwitterIdeatorCompose__param,
-  Query__EntrypointTwitterIdeatorCompose__output_type
+  Query__EntrypointTwitterIdeatorCompose__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

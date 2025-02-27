@@ -11,6 +11,7 @@ const readerAst: ReaderAst<Query__EntrypointBlogPost__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -18,6 +19,7 @@ const readerAst: ReaderAst<Query__EntrypointBlogPost__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Linked",
@@ -30,12 +32,14 @@ const readerAst: ReaderAst<Query__EntrypointBlogPost__param> = [
               ],
             ],
             condition: null,
+            isUpdatable: false,
             selections: [
               {
                 kind: "Scalar",
                 fieldName: "__typename",
                 alias: null,
                 arguments: null,
+                isUpdatable: false,
               },
               {
                 kind: "Resolver",
@@ -57,6 +61,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointBlogPost__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointBlogPost",
   resolver,
   readerAst,
   hasUpdatable: false,

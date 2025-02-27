@@ -3,7 +3,6 @@ import { getLogger } from "packages/logger.ts";
 
 const _logger = getLogger(import.meta);
 
-iso(`entrypoint Mutation.LoginAsDemoPerson`);
 export const LoginAsDemoPersonMutation = iso(`
   field Mutation.LoginAsDemoPerson {
     loginAsDemoPerson {

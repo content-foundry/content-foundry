@@ -14,6 +14,7 @@ const readerAst: ReaderAst<Query__EntrypointContentFoundryApp__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -21,6 +22,7 @@ const readerAst: ReaderAst<Query__EntrypointContentFoundryApp__param> = [
         alias: null,
         arguments: null,
         condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
+        isUpdatable: false,
         selections: [
           {
             kind: "Resolver",
@@ -37,6 +39,7 @@ const readerAst: ReaderAst<Query__EntrypointContentFoundryApp__param> = [
         alias: null,
         arguments: null,
         condition: BfCurrentViewerLoggedOut__asBfCurrentViewerLoggedOut__resolver_reader,
+        isUpdatable: false,
         selections: [
           {
             kind: "Resolver",
@@ -56,6 +59,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointContentFoundryApp__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointContentFoundryApp",
   resolver,
   readerAst,
   hasUpdatable: false,

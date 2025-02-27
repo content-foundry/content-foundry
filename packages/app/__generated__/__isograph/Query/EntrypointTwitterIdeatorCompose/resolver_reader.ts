@@ -11,6 +11,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorCompose__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -18,6 +19,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorCompose__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Resolver",
@@ -37,6 +39,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointTwitterIdeatorCompose__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointTwitterIdeatorCompose",
   resolver,
   readerAst,
   hasUpdatable: false,

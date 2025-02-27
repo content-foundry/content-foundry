@@ -34,7 +34,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.FormatterEditor",
+  fieldName: "BfOrganization.FormatterEditor",
   resolver,
   readerAst,
   hasUpdatable: false,

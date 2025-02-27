@@ -10,6 +10,7 @@ const readerAst: ReaderAst<BfCurrentViewer__Blog__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Resolver",
@@ -27,7 +28,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfCurrentViewer.Blog",
+  fieldName: "BfCurrentViewer.Blog",
   resolver,
   readerAst,
   hasUpdatable: false,
