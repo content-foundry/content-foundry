@@ -222,7 +222,7 @@ export class DatabaseBackendNeon implements DatabaseBackend {
 
   private static readonly defaultClause = "1=1";
 
-  async queryItems<TProps extends Props = Props>(
+  queryItems<TProps extends Props = Props>(
     metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
     propsToQuery: Partial<TProps> = {},
     bfGids?: Array<string>,
@@ -241,7 +241,7 @@ export class DatabaseBackendNeon implements DatabaseBackend {
     );
   }
 
-  async queryItemsWithSizeLimit<TProps extends Props = Props>(
+  queryItemsWithSizeLimit<TProps extends Props = Props>(
     metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
     propsToQuery: Partial<TProps> = {},
     bfGids?: Array<string>,
