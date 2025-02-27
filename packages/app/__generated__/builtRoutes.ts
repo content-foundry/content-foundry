@@ -6,6 +6,16 @@ export type RouteEntrypoint = {
   title: string;
 };
 
+iso(`entrypoint Mutation.CheckEmail`)
+iso(`entrypoint Mutation.CreateVoice`)
+iso(`entrypoint Mutation.GetLoginOptions`)
+iso(`entrypoint Mutation.LoginAsDemoPerson`)
+iso(`entrypoint Mutation.Login`)
+iso(`entrypoint Mutation.MakeTweets`)
+iso(`entrypoint Mutation.Register`)
+iso(`entrypoint Mutation.RegistrationOptions`)
+iso(`entrypoint Mutation.ReviseBlog`)
+iso(`entrypoint Mutation.SubmitYcForm`)
 iso(`entrypoint Query.EntrypointBlogPost`)
 iso(`entrypoint Query.EntrypointBlog`)
 iso(`entrypoint Query.EntrypointContentFoundryApp`)
@@ -21,6 +31,8 @@ iso(`entrypoint Query.entrypointFormatterEditor`)
 iso(`entrypoint Query.entrypointTwitterIdeatorResearchPermalink`)
 iso(`entrypoint Query.entrypointTwitterIdeatorResearch`)
 
+import checkEmail from "packages/app/__generated__/__isograph/Mutation/CheckEmail/entrypoint.ts"
+import createVoice from "packages/app/__generated__/__isograph/Mutation/CreateVoice/entrypoint.ts"
 import entrypointBlog from "packages/app/__generated__/__isograph/Query/EntrypointBlog/entrypoint.ts"
 import entrypointBlogPost from "packages/app/__generated__/__isograph/Query/EntrypointBlogPost/entrypoint.ts"
 import entrypointContentFoundryApp from "packages/app/__generated__/__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts"
@@ -35,7 +47,17 @@ import entrypointTwitterIdeatorResearchPermalink from "packages/app/__generated_
 import entrypointTwitterIdeatorVoice from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts"
 import entrypointTwitterIdeatorWorkshop from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts"
 import entrypointTwitterIdeatorWorkshopPermalink from "packages/app/__generated__/__isograph/Query/EntrypointTwitterIdeatorWorkshopPermalink/entrypoint.ts"
+import getLoginOptions from "packages/app/__generated__/__isograph/Mutation/GetLoginOptions/entrypoint.ts"
+import login from "packages/app/__generated__/__isograph/Mutation/Login/entrypoint.ts"
+import loginAsDemoPerson from "packages/app/__generated__/__isograph/Mutation/LoginAsDemoPerson/entrypoint.ts"
+import makeTweets from "packages/app/__generated__/__isograph/Mutation/MakeTweets/entrypoint.ts"
+import register from "packages/app/__generated__/__isograph/Mutation/Register/entrypoint.ts"
+import registrationOptions from "packages/app/__generated__/__isograph/Mutation/RegistrationOptions/entrypoint.ts"
+import reviseBlog from "packages/app/__generated__/__isograph/Mutation/ReviseBlog/entrypoint.ts"
+import submitYcForm from "packages/app/__generated__/__isograph/Mutation/SubmitYcForm/entrypoint.ts"
 
+export {checkEmail};
+export {createVoice};
 export {entrypointBlogPost};
 export {entrypointBlog};
 export {entrypointContentFoundryApp};
@@ -50,3 +72,11 @@ export {entrypointTwitterIdeatorVoice};
 export {entrypointTwitterIdeatorWorkshopPermalink};
 export {entrypointTwitterIdeatorWorkshop};
 export {entrypointTwitterIdeator};
+export {getLoginOptions};
+export {loginAsDemoPerson};
+export {login};
+export {makeTweets};
+export {register};
+export {registrationOptions};
+export {reviseBlog};
+export {submitYcForm};
