@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@anthropic-ai/claude-code": "^0.2.18",
     "@hyperdx/browser": "^0.21.2",
     "@hyperdx/deno": "^0.0.4",
     "@isograph/compiler": "0.0.0-main-a5a81588",
