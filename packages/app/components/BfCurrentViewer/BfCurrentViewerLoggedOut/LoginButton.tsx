@@ -56,7 +56,7 @@ export const LoginButton = iso(`
               optionsJSON: options,
             });
             logger.debug("Got authentication response", authResp);
-            login({ email, authResp }, {
+            login({ email, authResp: JSON.stringify(authResp) }, {
               onComplete: (data) => {
                 logger.debug("Got login response", data);
                 globalThis.location.reload();

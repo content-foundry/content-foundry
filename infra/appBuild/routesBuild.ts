@@ -7,7 +7,10 @@ import { getLogger } from "packages/logger.ts";
 const logger = getLogger(import.meta);
 
 async function generateBuiltRoutes() {
-  const entrypointsDir = join(Deno.cwd(), "packages/app/entrypoints");
+  const entrypointDirs = [
+    join(Deno.cwd(), "packages/app/entrypoints"),
+    join(Deno.cwd(), "packages/app/mutations"),
+  ];
   const outputPath = join(
     Deno.cwd(),
     "packages/app/__generated__/builtRoutes.ts",
@@ -22,25 +25,39 @@ async function generateBuiltRoutes() {
     recursive: true,
   });
 
-  for await (
-    const entry of walk(entrypointsDir, {
-      exts: [".ts", ".tsx"],
-      skip: [/__tests__/, /\.d\.ts$/],
-    })
-  ) {
-    if (entry.isFile) {
-      // Read file content to look for field definitions
-      const content = await Deno.readTextFile(entry.path);
-      const fieldMatch = content.match(/field\s+([A-Za-z]+\.[A-Za-z]+)/);
-      if (fieldMatch) {
-        isoEntrypoints.push(`iso(\`entrypoint ${fieldMatch[1]}\`)`);
-        const [graphqlType, fieldName] = fieldMatch[1].split(".");
-        const fieldNameWithLowercasedFirstLetter =
-          fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
-        imports.push(
-          `import ${fieldNameWithLowercasedFirstLetter} from "packages/app/__generated__/__isograph/${graphqlType}/${fieldName}/entrypoint.ts"`,
-        );
-        exports.push(`export {${fieldNameWithLowercasedFirstLetter}};`);
+  // Process each entrypoint directory
+  for (const entrypointsDir of entrypointDirs) {
+    // Skip if directory doesn't exist yet
+    try {
+      await Deno.stat(entrypointsDir);
+    } catch (error) {
+      logger.warn(
+        `Directory ${entrypointsDir} does not exist, skipping`,
+        error,
+      );
+      continue;
+    }
+
+    for await (
+      const entry of walk(entrypointsDir, {
+        exts: [".ts", ".tsx"],
+        skip: [/__tests__/, /\.d\.ts$/],
+      })
+    ) {
+      if (entry.isFile) {
+        // Read file content to look for field definitions
+        const content = await Deno.readTextFile(entry.path);
+        const fieldMatch = content.match(/field\s+([A-Za-z]+\.[A-Za-z]+)/);
+        if (fieldMatch) {
+          isoEntrypoints.push(`iso(\`entrypoint ${fieldMatch[1]}\`)`);
+          const [graphqlType, fieldName] = fieldMatch[1].split(".");
+          const fieldNameWithLowercasedFirstLetter =
+            fieldName.charAt(0).toLowerCase() + fieldName.slice(1);
+          imports.push(
+            `import ${fieldNameWithLowercasedFirstLetter} from "packages/app/__generated__/__isograph/${graphqlType}/${fieldName}/entrypoint.ts"`,
+          );
+          exports.push(`export {${fieldNameWithLowercasedFirstLetter}};`);
+        }
       }
     }
   }
