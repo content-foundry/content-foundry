@@ -245,6 +245,145 @@ Guidelines for splitting commits:
 
 Example commit message:
 
+## Isograph
+
+Isograph is a key technology used in Content Foundry for data fetching and
+component rendering. It provides a type-safe way to declare data dependencies
+for React components and efficiently fetch that data from the GraphQL API.
+
+### What is Isograph?
+
+Isograph is a framework that integrates GraphQL with React components, allowing
+you to:
+
+1. Declare data requirements directly inside component definitions
+2. Automatically generate TypeScript types for your data
+3. Efficiently manage data fetching and caching
+4. Create reusable component fragments
+
+### How Isograph Works in Content Foundry
+
+In Content Foundry, Isograph components are defined using the `iso` function
+imported from the generated isograph module:
+
+```typescript
+import { iso } from "packages/app/__generated__/__isograph/iso.ts";
+
+export const MyComponent = iso(`
+  field TypeName.FieldName @component {
+    id
+    title
+    description
+    items {
+      id
+      name
+    }
+  }
+`)(function MyComponent({ data }) {
+  // data is typed based on the GraphQL fragment above
+  return <div>{data.title}</div>;
+});
+```
+
+The `iso` function takes a GraphQL fragment string that defines what data the
+component needs, and returns a higher-order function that wraps your component,
+providing the requested data via props.
+
+### Key Concepts
+
+#### Field Definitions
+
+Components declare their data needs using GraphQL field definitions:
+
+- `field TypeName.FieldName @component` - Creates a component field
+- `entrypoint TypeName.FieldName` - Creates an entry point for routing
+
+#### Component Structure
+
+Isograph components follow this pattern:
+
+1. Import the `iso` function
+2. Define the GraphQL fragment with fields needed
+3. Create a function component that receives the data
+4. Apply the iso HOC to the component
+
+#### Important Note on Isograph Component Usage
+
+One of the key benefits of Isograph is that you **don't need to explicitly
+import** components that are referenced in your GraphQL fragments. The Isograph
+system automatically makes these components available through the `data` prop.
+
+For example, if your GraphQL fragment includes a field like:
+
+```typescript
+// In ParentComponent.tsx
+export const ParentComponent = iso(`
+  field TypeName.ParentComponent @component {
+    childItems {
+      id
+      ChildComponent  // This references another Isograph component
+    }
+  }
+`)(function ParentComponent({ data }) {
+  return (
+    <div>
+      {data.childItems.map((item) => (
+        // The ChildComponent is automatically available as item.ChildComponent
+        <item.ChildComponent key={item.id} />
+      ))}
+    </div>
+  );
+});
+```
+
+The `ChildComponent` becomes accessible directly through the data object without
+explicit imports. This creates a tightly integrated system where the data
+structure and component structure align perfectly.
+
+#### Environment Setup
+
+Content Foundry sets up the Isograph environment in
+`packages/app/isographEnvironment.ts`:
+
+- Creates an Isograph store
+- Configures network requests to the GraphQL endpoint
+- Sets up caching
+
+### Development Workflow
+
+1. **Define Components**: Create components with their data requirements
+2. **Build**: Run `bff build` to generate Isograph types
+3. **Use Components**: Import and use the components in your app
+
+### Fragment Reader Components
+
+For dynamic component rendering, Content Foundry uses
+`BfIsographFragmentReader`:
+
+```typescript
+<BfIsographFragmentReader
+  fragmentReference={someFragmentReference}
+  networkRequestOptions={{
+    suspendIfInFlight: true,
+    throwOnNetworkError: true,
+  }}
+/>;
+```
+
+This utility component helps render Isograph fragments with proper error
+handling and loading states.
+
+### Common Isograph Patterns
+
+1. **Component Fields**: Use `field TypeName.ComponentName @component` for
+   reusable components
+2. **Entrypoints**: Use `entrypoint TypeName.EntrypointName` for route entry
+   points
+3. **Mutations**: Use `entrypoint Mutation.MutationName` for GraphQL mutations
+
+The Isograph compiler automatically generates TypeScript types and utilities in
+`packages/app/__generated__/__isograph/`.
+
 ```
 Fix content collection ID lookup and add BfGid type documentation
 
@@ -591,16 +730,31 @@ The `@std/assert` module provides all assertion functions for testing, while
 `@std/testing` contains other testing utilities like mocks and BDD testing
 frameworks.
 
+#### Using Optional Chaining for Nullable Values
+
+When working with potentially null or undefined values, use the optional
+chaining operator (`?.`) to safely access properties or methods:
+
+```typescript
+// PROBLEMATIC - TypeScript will warn about possible null/undefined
+<Component key={item.id} /> // Error: 'item' is possibly 'null'
+
+// BETTER - Using conditional rendering with && and Using optional chaining operator
+{item && <Component key={item?.id} />}
+
+The optional chaining operator (`?.`) short-circuits if the value before it is `null` or `undefined`, returning `undefined` instead of throwing an error.
+
 #### String vs BfGid Type Mismatch
 
 A common error when working with the Content Foundry database layer occurs when
 trying to use string IDs directly with collection caches or database lookups:
-
-```
-TS2345 [ERROR]: Argument of type 'string' is not assignable to parameter of type 'BfGid'.
-  Type 'string' is not assignable to type '{ readonly [__nominal__type]: "BfGid"; }'.
 ```
 
+TS2345 [ERROR]: Argument of type 'string' is not assignable to parameter of type
+'BfGid'. Type 'string' is not assignable to type '{ readonly [__nominal__type]:
+"BfGid"; }'.
+
+````
 ##### Why This Happens
 
 Content Foundry uses a nominal typing system for IDs to prevent accidental
@@ -617,7 +771,7 @@ const collection = collectionsCache.get("collection-id");
 
 // Correct - converts string to BfGid
 const collection = collectionsCache.get(toBfGid("collection-id"));
-```
+````
 
 ##### Content Collection ID Format
 
