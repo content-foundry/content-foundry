@@ -457,49 +457,6 @@ Content Foundry uses a component-based architecture with React:
 - Isograph used for component data fetching
 - Router context for navigation
 
-### Database Layer
-
-The application uses a custom database abstraction layer:
-
-- Core models in `packages/bfDb/coreModels/`
-- Business models in `packages/bfDb/models/`
-- Backend implementations in `packages/bfDb/backend/`
-  - PostgreSQL backend (default) using Neon
-  - SQLite backend (alternative) for local development
-- Configure backend with environment variable `USE_SQLITE_BACKEND=true`
-
-#### Database Backend Architecture
-
-Content Foundry's database layer supports multiple backends through a clean
-abstraction:
-
-- `DatabaseBackend` interface defines the core methods required for any backend
-  implementation:
-  - `initialize()`: Set up necessary tables and indexes
-  - `putItem()`: Insert or update items
-  - `getItem()`: Retrieve an item by ID
-  - `queryItems()`: Query items with filters
-  - `deleteItem()`: Remove an item from the database
-
-- Concrete implementations:
-  - `PostgresBackend`: Uses Neon serverless Postgres
-  - `SqliteBackend`: Uses SQLite for local development or testing
-
-#### Switching Between Backends
-
-To use the SQLite backend for development or testing:
-
-```bash
-# Set environment variable to use SQLite backend
-export USE_SQLITE_BACKEND=true
-
-# Optionally, set the SQLite database file path
-export SQLITE_DB_PATH="./data/bfdb.sqlite"
-```
-
-The default backend is PostgreSQL, which requires a valid `DATABASE_URL`
-environment variable pointing to a Neon or compatible PostgreSQL database.
-
 ### GraphQL API
 
 Content Foundry uses GraphQL for its API layer:
@@ -672,6 +629,91 @@ The Nix configuration is defined in `flake.nix` and ensures consistent
 development environments across different systems.
 
 ## Code Quality
+
+### Testing Approaches
+
+Content Foundry supports both standard Deno testing and Behavior-Driven
+Development (BDD) testing:
+
+### Database Testing
+
+When writing tests that interact with the database, it's recommended to use the
+SQLite backend with an in-memory database:
+
+```typescript
+// At the beginning of your test file:
+function setupTestDb() {
+  // Use SQLite backend for tests
+  Deno.env.set("USE_SQLITE_BACKEND", "true");
+  // Set an in-memory SQLite database for tests
+  Deno.env.set("SQLITE_DB_PATH", ":memory:");
+}
+
+Deno.test("my database test", async () => {
+  setupTestDb();
+  // Your test code here...
+});
+```
+
+This approach ensures tests can run consistently without requiring PostgreSQL
+configuration while still validating the database abstraction layer works
+correctly.
+
+#### Standard Testing
+
+The project primarily uses Deno's built-in testing capabilities:
+
+- Standard syntax with `Deno.test("description", () => { ... })`
+- Assertions from `@std/assert` (not `@std/testing/asserts`)
+- Simple execution with `deno test` or `bff test`
+
+```typescript
+// Example standard test
+import { assertEquals } from "@std/assert";
+
+Deno.test("my test function", () => {
+  assertEquals(1 + 1, 2);
+});
+```
+
+#### BDD Testing
+
+For more complex scenarios, Behavior-Driven Development testing is available:
+
+- Uses `describe`, `it`, `beforeEach`, `afterEach` blocks
+- Better for organizing tests with shared setup/teardown
+- Import from `@std/testing/bdd` module
+- More descriptive test structure
+
+```typescript
+import { assertEquals } from "@std/assert";
+import { afterEach, beforeEach, describe, it } from "@std/testing/bdd";
+
+describe("Calculator", () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new Calculator();
+  });
+
+  it("adds two numbers correctly", () => {
+    assertEquals(calculator.add(1, 2), 3);
+  });
+
+  it("subtracts two numbers correctly", () => {
+    assertEquals(calculator.subtract(5, 2), 3);
+  });
+});
+```
+
+#### When to Use Each Approach
+
+- **Standard Testing**: Suitable for simple unit tests and most scenarios
+- **BDD Testing**: Better for complex user flows, component testing, and cases
+  requiring extensive setup/teardown logic
+
+The standard approach is generally preferred for simplicity unless the
+additional organization of BDD is specifically needed.
 
 ### Code Reviews
 
@@ -881,3 +923,8 @@ that includes the content path prefix.
    relative to the current file. For example, use
    `import { X } from "packages/web/component.ts"` instead of
    `import { X } from "../web/component.ts"`.
+10. **Use lexically sortable inheritance naming** for classes that implement
+    interfaces or extend base classes. Start with the base class or interface
+    name, followed by specifics, like `DatabaseBackendPostgres` instead of
+    `PostgresBackend`. This makes imports and directory listings easier to scan
+    and understand inheritance hierarchies.
