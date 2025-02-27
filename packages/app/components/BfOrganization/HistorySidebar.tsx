@@ -17,7 +17,7 @@ export const HistorySidebar = iso(`
       <div className="flexColumn right-side-bar">
         <div className="sessions-container">
           <BfDsList header="History">
-            <BfDsListItem content="Initial suggestion" isHighlighted={true} />
+            <BfDsListItem content="Initial suggestion" isHighlighted />
           </BfDsList>
         </div>
       </div>

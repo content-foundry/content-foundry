@@ -81,20 +81,20 @@ export function Example() {
           toggle={() => logger.log("toggled")}
         />
       </BfDsList>
-      <BfDsList header="List with separators" separator={true}>
+      <BfDsList header="List with separators" separator>
         <BfDsListItem content="Item 1" />
         <BfDsListItem content="Item 2" />
         <BfDsListItem content="Item 3" />
       </BfDsList>
-      <BfDsList header="Collapsible" collapsible={true}>
+      <BfDsList header="Collapsible" collapsible>
         <BfDsListItem content="Item 1" />
         <BfDsListItem content="Item 2" />
         <BfDsListItem content="Item 3" />
       </BfDsList>
       <BfDsList
         header="Default collapsed"
-        collapsible={true}
-        defaultCollapsed={true}
+        collapsible
+        defaultCollapsed
       >
         <BfDsListItem content="Item 1" />
         <BfDsListItem content="Item 2" />

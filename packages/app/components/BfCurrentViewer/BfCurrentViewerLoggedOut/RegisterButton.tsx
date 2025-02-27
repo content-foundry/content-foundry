@@ -36,7 +36,7 @@ export const RegisterButton = iso(`
     if (hasEmail) {
       return (
         <BfDsButton
-          disabled={true}
+          disabled
           text="Register"
           tooltip="You are already registered"
         />

@@ -53,7 +53,7 @@ export const LoginAndRegisterForm = iso(`
     <>
       <div className="center">
         <BfDsInput
-          autoFocus={true}
+          autoFocus
           label="Email"
           name="email"
           placeholder="randall@contentfoundry.com"

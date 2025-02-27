@@ -544,7 +544,7 @@ export function BfDsButton({
           kind={kind}
           size={size}
           progress={progress}
-          isIconButton={true}
+          isIconButton
         />
       )}
 

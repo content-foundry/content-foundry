@@ -10,7 +10,7 @@ export function KitchenSink() {
     <div className="ui-section">
       <h2>Random</h2>
       <div>
-        <BfDsSpinner waitIcon={true} />
+        <BfDsSpinner waitIcon />
         {/* <WorkflowStatusIndicator percent={Number(percent)} /> */}
         <div>
           <BfDsButton

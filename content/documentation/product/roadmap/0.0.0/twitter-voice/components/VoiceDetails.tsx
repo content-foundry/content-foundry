@@ -63,7 +63,7 @@ export function CreateTwitterVoiceStep2() {
             <BfDsTextArea
               placeholder="What would you change?"
               onChange={() => (logger.log("foo"))}
-              value={""}
+              value=""
             />
             {voiceLinks.map((link, index) => (
               <BfDsInput

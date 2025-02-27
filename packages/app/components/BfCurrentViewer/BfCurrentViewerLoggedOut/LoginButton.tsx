@@ -83,7 +83,7 @@ export const LoginButton = iso(`
         <BfDsButton
           text="Login"
           showSpinner={showSpinner}
-          disabled={true}
+          disabled
           tooltip="The email wasn't found. Either register or try a different email?"
         />
       );
