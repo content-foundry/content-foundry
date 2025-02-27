@@ -14,6 +14,7 @@ const readerAst: ReaderAst<Mutation__CheckEmail__param> = [
         { kind: "Variable", name: "email" },
       ],
     ],
+    isUpdatable: false,
   },
 ];
 
@@ -22,6 +23,7 @@ const artifact: EagerReaderArtifact<
   Mutation__CheckEmail__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Mutation.CheckEmail",
   resolver,
   readerAst,
   hasUpdatable: false,

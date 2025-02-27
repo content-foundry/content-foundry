@@ -11,6 +11,7 @@ const readerAst: ReaderAst<Query__EntrypointFormatter__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -18,6 +19,7 @@ const readerAst: ReaderAst<Query__EntrypointFormatter__param> = [
         alias: null,
         arguments: null,
         condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
+        isUpdatable: false,
         selections: [
           {
             kind: "Linked",
@@ -25,6 +27,7 @@ const readerAst: ReaderAst<Query__EntrypointFormatter__param> = [
             alias: null,
             arguments: null,
             condition: null,
+            isUpdatable: false,
             selections: [
               {
                 kind: "Linked",
@@ -32,6 +35,7 @@ const readerAst: ReaderAst<Query__EntrypointFormatter__param> = [
                 alias: null,
                 arguments: null,
                 condition: null,
+                isUpdatable: false,
                 selections: [
                   {
                     kind: "Linked",
@@ -39,18 +43,21 @@ const readerAst: ReaderAst<Query__EntrypointFormatter__param> = [
                     alias: null,
                     arguments: null,
                     condition: null,
+                    isUpdatable: false,
                     selections: [
                       {
                         kind: "Scalar",
                         fieldName: "voiceSummary",
                         alias: null,
                         arguments: null,
+                        isUpdatable: false,
                       },
                       {
                         kind: "Scalar",
                         fieldName: "voice",
                         alias: null,
                         arguments: null,
+                        isUpdatable: false,
                       },
                     ],
                   },
@@ -69,6 +76,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointFormatter__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointFormatter",
   resolver,
   readerAst,
   hasUpdatable: false,

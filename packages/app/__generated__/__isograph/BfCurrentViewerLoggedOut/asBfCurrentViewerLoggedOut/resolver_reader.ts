@@ -6,6 +6,7 @@ const readerAst: ReaderAst<{ data: any, parameters: Record<PropertyKey, never> }
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Link",
@@ -18,6 +19,7 @@ const artifact: EagerReaderArtifact<
   Link | null
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "BfCurrentViewerLoggedOut.asBfCurrentViewerLoggedOut",
   resolver: ({ data }) => data.__typename === "BfCurrentViewerLoggedOut" ? data.link : null,
   readerAst,
   hasUpdatable: false,

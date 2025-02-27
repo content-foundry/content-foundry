@@ -25,7 +25,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Mutation__CheckEmail__param,
-  Mutation__CheckEmail__output_type
+  Mutation__CheckEmail__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

@@ -1,8 +1,7 @@
 import { useMutation } from "packages/app/hooks/isographPrototypes/useMutation.tsx";
-import type { IsographEntrypoint } from "@isograph/react";
+import type { BfIsographEntrypoint } from "lib/BfIsographEntrypoint.ts";
 
-// deno-lint-ignore no-explicit-any
-export function useEntrypoint<T extends IsographEntrypoint<any, any>>(
+export function useEntrypoint<T extends BfIsographEntrypoint>(
   entrypoint: T,
 ) {
   const { commit, responseElement } = useMutation(entrypoint);

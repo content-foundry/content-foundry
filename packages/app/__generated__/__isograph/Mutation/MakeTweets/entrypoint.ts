@@ -35,7 +35,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Mutation__MakeTweets__param,
-  Mutation__MakeTweets__output_type
+  Mutation__MakeTweets__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

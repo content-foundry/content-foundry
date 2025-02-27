@@ -18,7 +18,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.SimpleComposer",
+  fieldName: "BfOrganization.SimpleComposer",
   resolver,
   readerAst,
   hasUpdatable: false,

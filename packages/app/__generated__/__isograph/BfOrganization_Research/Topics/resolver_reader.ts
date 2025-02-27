@@ -9,12 +9,14 @@ const readerAst: ReaderAst<BfOrganization_Research__Topics__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Scalar",
         fieldName: "name",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
       {
         kind: "Linked",
@@ -22,30 +24,35 @@ const readerAst: ReaderAst<BfOrganization_Research__Topics__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Scalar",
             fieldName: "type",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "name",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "summary",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "url",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -58,7 +65,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization_Research.Topics",
+  fieldName: "BfOrganization_Research.Topics",
   resolver,
   readerAst,
   hasUpdatable: false,

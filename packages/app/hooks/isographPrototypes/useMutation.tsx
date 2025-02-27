@@ -1,11 +1,14 @@
 import {
   FragmentReader,
   type IsographEntrypoint,
+  type NormalizationAst,
   useImperativeReference,
 } from "@isograph/react";
 
-// deno-lint-ignore no-explicit-any
-export function useMutation<T extends IsographEntrypoint<any, any>>(
+export function useMutation<
+  // deno-lint-ignore no-explicit-any
+  T extends IsographEntrypoint<any, any, NormalizationAst>,
+>(
   mutation: T,
 ) {
   const {
