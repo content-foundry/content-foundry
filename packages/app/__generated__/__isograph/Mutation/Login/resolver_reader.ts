@@ -20,12 +20,14 @@ const readerAst: ReaderAst<Mutation__Login__param> = [
       ],
     ],
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Scalar",
         fieldName: "__typename",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
     ],
   },
@@ -36,6 +38,7 @@ const artifact: EagerReaderArtifact<
   Mutation__Login__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Mutation.Login",
   resolver,
   readerAst,
   hasUpdatable: false,

@@ -6,26 +6,18 @@ export const Home = iso(`
   field BfCurrentViewer.Home @component {
     __typename
     # Isograph bug preventing string literals
-    # contentCollection(slug: "home") {
-    contentCollection {
-      name
-      description
+    contentCollection(slug: "marketing") {
       items {
-        edges {
-          node {
             title
             body
             href
-          }
-        }
       }
     }
   }
 `)(function Home({ data }) {
   // Extract content items from the data
   const collection = data?.contentCollection;
-  const contentItems = collection?.items?.edges?.map((edge) => edge?.node) ||
-    [];
+  const contentItems = collection?.items || [];
   const showExtendedContent = useFeatureFlagEnabled("show_extended_content");
 
   return (
@@ -45,9 +37,6 @@ export const Home = iso(`
         {collection && showExtendedContent
           ? (
             <div className="content-collection">
-              <h2>{collection.name}</h2>
-              <p className="collection-description">{collection.description}</p>
-
               <div className="content-items">
                 {contentItems.length > 0
                   ? (

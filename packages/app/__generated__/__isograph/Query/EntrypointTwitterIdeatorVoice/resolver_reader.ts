@@ -12,6 +12,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorVoice__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -19,6 +20,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorVoice__param> = [
         alias: null,
         arguments: null,
         condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
+        isUpdatable: false,
         selections: [
           {
             kind: "Linked",
@@ -26,6 +28,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorVoice__param> = [
             alias: null,
             arguments: null,
             condition: null,
+            isUpdatable: false,
             selections: [
               {
                 kind: "Resolver",
@@ -47,6 +50,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointTwitterIdeatorVoice__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointTwitterIdeatorVoice",
   resolver,
   readerAst,
   hasUpdatable: false,

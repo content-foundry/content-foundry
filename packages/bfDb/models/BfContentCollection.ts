@@ -3,99 +3,206 @@ import {
   type BfNodeBaseProps,
   type BfNodeCache,
 } from "packages/bfDb/classes/BfNodeBase.ts";
-import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
+import { walk } from "@std/fs/walk";
 import { BfErrorNodeNotFound } from "packages/bfDb/classes/BfErrorNode.ts";
 import { getLogger } from "packages/logger.ts";
+import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import { exists } from "@std/fs/exists";
+import { extractYaml } from "@std/front-matter";
 
 const logger = getLogger(import.meta);
 
-// Content Item type definitions
 export type BfContentItemProps = {
   title: string;
   body: string;
   slug: string;
-  // Add more properties as needed
+  filePath?: string;
 };
 
-// Content Collection type definitions
-export type BfContentCollectionProps = {
+export interface BfContentCollectionProps extends BfNodeBaseProps {
   name: string;
   slug: string;
   description: string;
-  items?: BfContentItemProps[];
-};
+  items: BfContentItemProps[];
+}
 
-/**
- * BfContentCollection: A collection of content items
- */
-export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
+type ContentItemFrontmatterProps = Partial<{
+  title: string;
+}>;
+
+class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
   private static _collectionsCache: Map<BfGid, BfContentCollection>;
 
-  // Mock data for content collections
-  private static readonly MOCK_COLLECTIONS: Record<
-    string,
-    BfContentCollectionProps
-  > = {
-    "collection-home": {
-      name: "Home Collection",
-      slug: "home",
-      description: "Content displayed on the home page",
-      items: [
-        {
-          title: "Welcome to Content Foundry",
-          body:
-            "Content Foundry is a platform for creating and managing digital content. This is an example content item for demonstration purposes.",
-          slug: "welcome",
-        },
-        {
-          title: "Getting Started Guide",
-          body:
-            "Learn how to create and manage content collections and items in Content Foundry with this comprehensive guide.",
-          slug: "getting-started",
-        },
-        {
-          title: "Content Management Best Practices",
-          body:
-            "Discover the best practices for organizing and structuring your content in Content Foundry.",
-          slug: "best-practices",
-        },
-      ],
-    },
-    "collection-blog": {
-      name: "Blog Collection",
-      slug: "blog",
-      description: "Blog posts and articles",
-      items: [
-        {
-          title: "Introduction to Content Management",
-          body:
-            "An introduction to content management systems and how they can help your organization.",
-          slug: "intro-to-cms",
-        },
-        {
-          title: "Content Strategy 101",
-          body:
-            "Learn the basics of developing an effective content strategy for your digital presence.",
-          slug: "content-strategy-101",
-        },
-      ],
-    },
-    "collection-default": {
-      name: "Default Collection",
-      slug: "default",
-      description: "Default content collection",
-      items: [
-        {
-          title: "Default Content Item",
-          body:
-            "This is a default content item that appears when no specific collection is requested.",
-          slug: "default-item",
-        },
-      ],
-    },
-  };
+  /**
+   * Scans the content directory and builds collections based on folder structure
+   */
+  private static async scanContentDirectory(
+    _cv: BfCurrentViewer,
+  ): Promise<Map<string, BfContentCollectionProps>> {
+    const collections = new Map<string, BfContentCollectionProps>();
+    const contentBasePath = "content";
+
+    logger.info(`Scanning content directory: ${contentBasePath}`);
+
+    // Check if content directory exists
+    if (!await exists(contentBasePath)) {
+      logger.warn("Content directory not found at:", contentBasePath);
+      return collections;
+    }
+
+    // Create a map of folder paths to collection objects
+    try {
+      logger.info("Starting first pass: identifying directories");
+      // First pass: identify all directories that will become collections
+      for await (
+        const entry of walk(contentBasePath, {
+          includeFiles: false,
+          includeDirs: true,
+          maxDepth: 2,
+        })
+      ) {
+        logger.info(`Found directory: ${entry.path}`);
+        if (entry.isDirectory && entry.path !== contentBasePath) {
+          const relativePath = entry.path;
+          const slug = relativePath;
+          const name = relativePath.split("/").pop() || "Unknown";
+
+          logger.info(
+            `Creating collection for directory: ${relativePath} with slug: ${slug}`,
+          );
+          collections.set(slug, {
+            name: name.charAt(0).toUpperCase() + name.slice(1),
+            slug,
+            description: `Content from ${relativePath}`,
+            items: [],
+          });
+        }
+      }
+
+      // Second pass: scan for MDX/MD files to add as items to their respective collections
+      logger.info("Starting second pass: scanning for MDX/MD files");
+      // Check specifically if marketing directory exists and make sure it creates a collection
+      if (await exists("content/marketing")) {
+        logger.info(
+          "Marketing directory exists. Ensuring marketing collection is created",
+        );
+        if (!collections.has("content/marketing")) {
+          logger.info("Creating marketing collection manually");
+          collections.set("content/marketing", {
+            name: "Marketing",
+            slug: "content/marketing",
+            description: "Content from marketing",
+            items: [],
+          });
+        }
+      } else {
+        logger.warn("Marketing directory does not exist!");
+      }
+
+      for await (
+        const entry of walk(contentBasePath, {
+          includeDirs: false,
+          exts: [".mdx", ".md"],
+        })
+      ) {
+        if (entry.isFile) {
+          const filePath = entry.path;
+          const parts = filePath.split("/");
+          parts.pop(); // Remove filename
+
+          const dirPath = parts.join("/");
+          logger.info(`Processing file: ${filePath} in directory: ${dirPath}`);
+          const fileContent = await Deno.readTextFile(filePath);
+
+          let title = entry.name.replace(/\.(mdx|md)$/, "");
+          let frontMatter = {} as ContentItemFrontmatterProps;
+
+          try {
+            // Check if the content has frontmatter (starts with ---)
+            let body = fileContent;
+            let attrs = {};
+
+            if (fileContent.trim().startsWith("---")) {
+              try {
+                const extracted = extractYaml(fileContent);
+                attrs = extracted.attrs || {};
+                body = extracted.body || fileContent;
+              } catch (frontmatterErr) {
+                logger.warn(
+                  `Malformed front matter in ${filePath}, using fallback`,
+                  frontmatterErr,
+                );
+                // Continue with empty attrs and original content as body
+              }
+            } else {
+              logger.info(
+                `No front matter found in ${filePath}, using fallback metadata`,
+              );
+              // No frontmatter - continue with empty attrs and original content as body
+            }
+
+            frontMatter = attrs as ContentItemFrontmatterProps;
+            title = frontMatter.title || title;
+
+            // Add this file as an item to its collection
+            if (collections.has(dirPath)) {
+              const collection = collections.get(dirPath)!;
+              logger.info(
+                `Found collection for ${dirPath}, adding item: ${entry.name}`,
+              );
+
+              // Special case for content/marketing - only include home.mdx
+              if (
+                dirPath === "content/marketing" && entry.name !== "home.mdx"
+              ) {
+                logger.info(
+                  `Skipping non-home.mdx file in marketing directory: ${entry.name}`,
+                );
+                continue;
+              }
+
+              collection.items.push({
+                title,
+                body: body.slice(0, 300) + (body.length > 300 ? "..." : ""),
+                slug: entry.name.replace(/\.(mdx|md)$/, ""),
+                filePath: entry.path,
+              });
+            }
+          } catch (err) {
+            logger.warn(`Failed to process content file ${filePath}:`, err);
+
+            // Still add the file to the collection with default values
+            if (collections.has(dirPath)) {
+              const collection = collections.get(dirPath)!;
+
+              // Special case for content/marketing - only include home.mdx
+              if (
+                dirPath === "content/marketing" && entry.name !== "home.mdx"
+              ) {
+                continue;
+              }
+
+              collection.items.push({
+                title: entry.name.replace(/\.(mdx|md)$/, ""),
+                body:
+                  "Content could not be processed. This may be due to malformed content.",
+                slug: entry.name.replace(/\.(mdx|md)$/, ""),
+                filePath: entry.path,
+              });
+
+              logger.info(`Added ${filePath} with fallback content`);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      logger.error("Error scanning content directory:", err);
+    }
+
+    return collections;
+  }
 
   /**
    * Get or initialize the collections cache
@@ -104,25 +211,74 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
     cv: BfCurrentViewer,
   ): Promise<Map<BfGid, BfContentCollection>> {
     if (this._collectionsCache) {
+      logger.info("Using existing collections cache");
+      // Output all cached collections for debugging
+      for (const [id, collection] of this._collectionsCache.entries()) {
+        logger.info(`Cached collection: ${id}, slug: ${collection.props.slug}`);
+      }
       return this._collectionsCache;
     }
 
+    logger.info("Initializing collections cache");
     // Initialize the cache
     this._collectionsCache = new Map();
 
-    // Populate with mock data
-    for (const [id, collectionData] of Object.entries(this.MOCK_COLLECTIONS)) {
-      const bfGid = toBfGid(id);
-      logger.debug(`Creating content collection with id: ${id}`);
+    // Scan content directory to build collections
+    const collectionData = await this.scanContentDirectory(cv);
+
+    logger.info(`Found ${collectionData.size} collections from directory scan`);
+    // Log all found collections
+    for (const [slug, data] of collectionData.entries()) {
+      logger.info(`Found collection: ${slug} with ${data.items.length} items`);
+    }
+
+    // Create collection objects and add to cache
+    for (const [slug, data] of collectionData.entries()) {
+      const collectionId = toBfGid(`collection-${slug.replace(/\//g, "-")}`);
+      logger.info(
+        `Creating content collection with id: ${collectionId}, slug: ${slug}`,
+      );
 
       const collection = await this.__DANGEROUS__createUnattached(
         cv,
-        collectionData,
-        { bfGid },
+        data,
+        { bfGid: collectionId },
       );
 
-      this._collectionsCache.set(bfGid, collection);
-      logger.debug(`Added collection to cache with ID: ${id}`);
+      this._collectionsCache.set(collectionId, collection);
+    }
+
+    // If no collections were found, add a default one
+    if (this._collectionsCache.size === 0) {
+      logger.info("No collections found, creating default collection");
+      const defaultId = toBfGid("collection-default");
+      const defaultCollection = await this.__DANGEROUS__createUnattached(
+        cv,
+        {
+          name: "Default Collection",
+          slug: "default",
+          description: "Default content collection",
+          items: [
+            {
+              title: "Default Content Item",
+              body:
+                "This is a default content item that appears when no specific collection is requested.",
+              slug: "default-item",
+            },
+          ],
+        },
+        { bfGid: defaultId },
+      );
+
+      this._collectionsCache.set(defaultId, defaultCollection);
+    }
+
+    // Log all cached collections after initialization
+    logger.info(
+      `Cache initialized with ${this._collectionsCache.size} collections:`,
+    );
+    for (const [id, collection] of this._collectionsCache.entries()) {
+      logger.info(`Cached collection: ${id}, slug: ${collection.props.slug}`);
     }
 
     return this._collectionsCache;
@@ -135,19 +291,62 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
     TProps extends BfNodeBaseProps,
     T extends BfNodeBase<TProps>,
   >(
-    cv: BfCurrentViewer,
+    _cv: BfCurrentViewer,
     id: BfGid,
     _cache?: BfNodeCache,
   ): Promise<T> {
-    const collectionsCache = await this.getCollectionsCache(cv);
-    const collection = collectionsCache.get(id);
+    const collectionsCache = await this.getCollectionsCache(_cv);
 
+    // Try direct lookup first
+    const collection = collectionsCache.get(id);
     if (collection) {
       return collection as unknown as T;
     }
 
-    logger.info(`Collection not found: ${id}`);
+    // If we're looking for "collection-marketing", try "collection-content-marketing"
+    if (id === "collection-marketing") {
+      logger.info(
+        `Attempting to find collection-marketing as collection-content-marketing`,
+      );
+      const alternativeId = toBfGid("collection-content-marketing");
+      const alternativeCollection = collectionsCache.get(alternativeId);
+      if (alternativeCollection) {
+        logger.info(`Found collection using alternative ID: ${alternativeId}`);
+        return alternativeCollection as unknown as T;
+      }
+    }
+
+    // Debug: Log all available collections
+    logger.info(`Collection not found: ${id}. Available collections:`);
+    for (const [cachedId, cachedCollection] of collectionsCache.entries()) {
+      logger.info(
+        `Available collection: ${cachedId}, slug: ${cachedCollection.props.slug}`,
+      );
+    }
+
     throw new BfErrorNodeNotFound();
+  }
+
+  /**
+   * Find a content collection by slug
+   */
+  static async findBySlug(
+    cv: BfCurrentViewer,
+    slug: string,
+  ): Promise<BfContentCollection | null> {
+    logger.info(`Looking for collection with slug: ${slug}`);
+    const collectionsCache = await this.getCollectionsCache(cv);
+
+    for (const collection of collectionsCache.values()) {
+      logger.info(`Checking collection slug: ${collection.props.slug}`);
+      if (collection.props.slug === slug) {
+        logger.info(`Found collection with slug: ${slug}`);
+        return collection;
+      }
+    }
+
+    logger.info(`No collection found with slug: ${slug}`);
+    return null;
   }
 
   /**
@@ -168,6 +367,14 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
     return this.props.items || [];
   }
 
+  /**
+   * Get a specific content item by slug
+   */
+  getContentItem(slug: string): BfContentItemProps | null {
+    const items = this.getContentItems();
+    return items.find((item) => item.slug === slug) || null;
+  }
+
   override save() {
     return Promise.resolve(this);
   }
@@ -178,3 +385,5 @@ export class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
     return Promise.resolve(this);
   }
 }
+
+export { BfContentCollection };

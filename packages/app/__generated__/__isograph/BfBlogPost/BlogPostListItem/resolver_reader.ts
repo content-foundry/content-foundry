@@ -8,36 +8,42 @@ const readerAst: ReaderAst<BfBlogPost__BlogPostListItem__param> = [
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Scalar",
     fieldName: "title",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Scalar",
     fieldName: "author",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Scalar",
     fieldName: "cta",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Scalar",
     fieldName: "summary",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Scalar",
     fieldName: "href",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
 ];
 
@@ -46,7 +52,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfBlogPost.BlogPostListItem",
+  fieldName: "BfBlogPost.BlogPostListItem",
   resolver,
   readerAst,
   hasUpdatable: false,

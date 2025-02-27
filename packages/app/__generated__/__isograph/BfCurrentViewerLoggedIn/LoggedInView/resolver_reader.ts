@@ -8,6 +8,7 @@ const readerAst: ReaderAst<BfCurrentViewerLoggedIn__LoggedInView__param> = [
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
 ];
 
@@ -16,7 +17,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfCurrentViewerLoggedIn.LoggedInView",
+  fieldName: "BfCurrentViewerLoggedIn.LoggedInView",
   resolver,
   readerAst,
   hasUpdatable: false,

@@ -25,7 +25,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Mutation__GetLoginOptions__param,
-  Mutation__GetLoginOptions__output_type
+  Mutation__GetLoginOptions__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

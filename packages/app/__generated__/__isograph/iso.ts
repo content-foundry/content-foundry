@@ -4,7 +4,6 @@ import { type BfBlogPost__BlogPostListItem__param } from './BfBlogPost/BlogPostL
 import { type BfCurrentViewer__Blog__param } from './BfCurrentViewer/Blog/param_type.ts';
 import { type BfCurrentViewer__Home__param } from './BfCurrentViewer/Home/param_type.ts';
 import { type BfCurrentViewerLoggedIn__LoggedInView__param } from './BfCurrentViewerLoggedIn/LoggedInView/param_type.ts';
-import { type BfCurrentViewerLoggedIn__YcForm__param } from './BfCurrentViewerLoggedIn/YcForm/param_type.ts';
 import { type BfCurrentViewerLoggedOut__DemoButton__param } from './BfCurrentViewerLoggedOut/DemoButton/param_type.ts';
 import { type BfCurrentViewerLoggedOut__LoggedOutView__param } from './BfCurrentViewerLoggedOut/LoggedOutView/param_type.ts';
 import { type BfCurrentViewerLoggedOut__LoginAndRegisterForm__param } from './BfCurrentViewerLoggedOut/LoginAndRegisterForm/param_type.ts';
@@ -49,6 +48,30 @@ import { type Query__EntrypointTwitterIdeator__param } from './Query/EntrypointT
 import { type Query__entrypointFormatterEditor__param } from './Query/entrypointFormatterEditor/param_type.ts';
 import { type Query__entrypointTwitterIdeatorResearchPermalink__param } from './Query/entrypointTwitterIdeatorResearchPermalink/param_type.ts';
 import { type Query__entrypointTwitterIdeatorResearch__param } from './Query/entrypointTwitterIdeatorResearch/param_type.ts';
+import entrypoint_Mutation__CheckEmail from '../__isograph/Mutation/CheckEmail/entrypoint.ts';
+import entrypoint_Mutation__CreateVoice from '../__isograph/Mutation/CreateVoice/entrypoint.ts';
+import entrypoint_Mutation__GetLoginOptions from '../__isograph/Mutation/GetLoginOptions/entrypoint.ts';
+import entrypoint_Mutation__LoginAsDemoPerson from '../__isograph/Mutation/LoginAsDemoPerson/entrypoint.ts';
+import entrypoint_Mutation__Login from '../__isograph/Mutation/Login/entrypoint.ts';
+import entrypoint_Mutation__MakeTweets from '../__isograph/Mutation/MakeTweets/entrypoint.ts';
+import entrypoint_Mutation__Register from '../__isograph/Mutation/Register/entrypoint.ts';
+import entrypoint_Mutation__RegistrationOptions from '../__isograph/Mutation/RegistrationOptions/entrypoint.ts';
+import entrypoint_Mutation__ReviseBlog from '../__isograph/Mutation/ReviseBlog/entrypoint.ts';
+import entrypoint_Mutation__SubmitYcForm from '../__isograph/Mutation/SubmitYcForm/entrypoint.ts';
+import entrypoint_Query__EntrypointBlogPost from '../__isograph/Query/EntrypointBlogPost/entrypoint.ts';
+import entrypoint_Query__EntrypointBlog from '../__isograph/Query/EntrypointBlog/entrypoint.ts';
+import entrypoint_Query__EntrypointContentFoundryApp from '../__isograph/Query/EntrypointContentFoundryApp/entrypoint.ts';
+import entrypoint_Query__EntrypointFormatterVoice from '../__isograph/Query/EntrypointFormatterVoice/entrypoint.ts';
+import entrypoint_Query__EntrypointFormatter from '../__isograph/Query/EntrypointFormatter/entrypoint.ts';
+import entrypoint_Query__EntrypointHome from '../__isograph/Query/EntrypointHome/entrypoint.ts';
+import entrypoint_Query__EntrypointTwitterIdeatorCompose from '../__isograph/Query/EntrypointTwitterIdeatorCompose/entrypoint.ts';
+import entrypoint_Query__EntrypointTwitterIdeatorVoice from '../__isograph/Query/EntrypointTwitterIdeatorVoice/entrypoint.ts';
+import entrypoint_Query__EntrypointTwitterIdeatorWorkshopPermalink from '../__isograph/Query/EntrypointTwitterIdeatorWorkshopPermalink/entrypoint.ts';
+import entrypoint_Query__EntrypointTwitterIdeatorWorkshop from '../__isograph/Query/EntrypointTwitterIdeatorWorkshop/entrypoint.ts';
+import entrypoint_Query__EntrypointTwitterIdeator from '../__isograph/Query/EntrypointTwitterIdeator/entrypoint.ts';
+import entrypoint_Query__entrypointFormatterEditor from '../__isograph/Query/entrypointFormatterEditor/entrypoint.ts';
+import entrypoint_Query__entrypointTwitterIdeatorResearchPermalink from '../__isograph/Query/entrypointTwitterIdeatorResearchPermalink/entrypoint.ts';
+import entrypoint_Query__entrypointTwitterIdeatorResearch from '../__isograph/Query/entrypointTwitterIdeatorResearch/entrypoint.ts';
 
 // This is the type given to regular client fields.
 // This means that the type of the exported iso literal is exactly
@@ -117,10 +140,6 @@ export function iso<T>(
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.LoggedInView', T>
 ): IdentityWithParamComponent<BfCurrentViewerLoggedIn__LoggedInView__param>;
-
-export function iso<T>(
-  param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedIn.YcForm', T>
-): IdentityWithParamComponent<BfCurrentViewerLoggedIn__YcForm__param>;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'field BfCurrentViewerLoggedOut.DemoButton', T>
@@ -300,104 +319,154 @@ export function iso<T>(
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CheckEmail', T>
-): void;
+): typeof entrypoint_Mutation__CheckEmail;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.CreateVoice', T>
-): void;
+): typeof entrypoint_Mutation__CreateVoice;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.GetLoginOptions', T>
-): void;
+): typeof entrypoint_Mutation__GetLoginOptions;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.LoginAsDemoPerson', T>
-): void;
+): typeof entrypoint_Mutation__LoginAsDemoPerson;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.Login', T>
-): void;
+): typeof entrypoint_Mutation__Login;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.MakeTweets', T>
-): void;
+): typeof entrypoint_Mutation__MakeTweets;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.Register', T>
-): void;
+): typeof entrypoint_Mutation__Register;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.RegistrationOptions', T>
-): void;
+): typeof entrypoint_Mutation__RegistrationOptions;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.ReviseBlog', T>
-): void;
+): typeof entrypoint_Mutation__ReviseBlog;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Mutation.SubmitYcForm', T>
-): void;
+): typeof entrypoint_Mutation__SubmitYcForm;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointBlogPost', T>
-): void;
+): typeof entrypoint_Query__EntrypointBlogPost;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointBlog', T>
-): void;
+): typeof entrypoint_Query__EntrypointBlog;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointContentFoundryApp', T>
-): void;
+): typeof entrypoint_Query__EntrypointContentFoundryApp;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointFormatterVoice', T>
-): void;
+): typeof entrypoint_Query__EntrypointFormatterVoice;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointFormatter', T>
-): void;
+): typeof entrypoint_Query__EntrypointFormatter;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointHome', T>
-): void;
+): typeof entrypoint_Query__EntrypointHome;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorCompose', T>
-): void;
+): typeof entrypoint_Query__EntrypointTwitterIdeatorCompose;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorVoice', T>
-): void;
+): typeof entrypoint_Query__EntrypointTwitterIdeatorVoice;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink', T>
-): void;
+): typeof entrypoint_Query__EntrypointTwitterIdeatorWorkshopPermalink;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeatorWorkshop', T>
-): void;
+): typeof entrypoint_Query__EntrypointTwitterIdeatorWorkshop;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.EntrypointTwitterIdeator', T>
-): void;
+): typeof entrypoint_Query__EntrypointTwitterIdeator;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointFormatterEditor', T>
-): void;
+): typeof entrypoint_Query__entrypointFormatterEditor;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointTwitterIdeatorResearchPermalink', T>
-): void;
+): typeof entrypoint_Query__entrypointTwitterIdeatorResearchPermalink;
 
 export function iso<T>(
   param: T & MatchesWhitespaceAndString<'entrypoint Query.entrypointTwitterIdeatorResearch', T>
-): void;
+): typeof entrypoint_Query__entrypointTwitterIdeatorResearch;
 
-export function iso(_isographLiteralText: string):
+export function iso(isographLiteralText: string):
   | IdentityWithParam<any>
   | IdentityWithParamComponent<any>
-  | IsographEntrypoint<any, any>
+  | IsographEntrypoint<any, any, any>
 {
+  switch (isographLiteralText) {
+    case 'entrypoint Mutation.CheckEmail':
+      return entrypoint_Mutation__CheckEmail;
+    case 'entrypoint Mutation.CreateVoice':
+      return entrypoint_Mutation__CreateVoice;
+    case 'entrypoint Mutation.GetLoginOptions':
+      return entrypoint_Mutation__GetLoginOptions;
+    case 'entrypoint Mutation.LoginAsDemoPerson':
+      return entrypoint_Mutation__LoginAsDemoPerson;
+    case 'entrypoint Mutation.Login':
+      return entrypoint_Mutation__Login;
+    case 'entrypoint Mutation.MakeTweets':
+      return entrypoint_Mutation__MakeTweets;
+    case 'entrypoint Mutation.Register':
+      return entrypoint_Mutation__Register;
+    case 'entrypoint Mutation.RegistrationOptions':
+      return entrypoint_Mutation__RegistrationOptions;
+    case 'entrypoint Mutation.ReviseBlog':
+      return entrypoint_Mutation__ReviseBlog;
+    case 'entrypoint Mutation.SubmitYcForm':
+      return entrypoint_Mutation__SubmitYcForm;
+    case 'entrypoint Query.EntrypointBlogPost':
+      return entrypoint_Query__EntrypointBlogPost;
+    case 'entrypoint Query.EntrypointBlog':
+      return entrypoint_Query__EntrypointBlog;
+    case 'entrypoint Query.EntrypointContentFoundryApp':
+      return entrypoint_Query__EntrypointContentFoundryApp;
+    case 'entrypoint Query.EntrypointFormatterVoice':
+      return entrypoint_Query__EntrypointFormatterVoice;
+    case 'entrypoint Query.EntrypointFormatter':
+      return entrypoint_Query__EntrypointFormatter;
+    case 'entrypoint Query.EntrypointHome':
+      return entrypoint_Query__EntrypointHome;
+    case 'entrypoint Query.EntrypointTwitterIdeatorCompose':
+      return entrypoint_Query__EntrypointTwitterIdeatorCompose;
+    case 'entrypoint Query.EntrypointTwitterIdeatorVoice':
+      return entrypoint_Query__EntrypointTwitterIdeatorVoice;
+    case 'entrypoint Query.EntrypointTwitterIdeatorWorkshopPermalink':
+      return entrypoint_Query__EntrypointTwitterIdeatorWorkshopPermalink;
+    case 'entrypoint Query.EntrypointTwitterIdeatorWorkshop':
+      return entrypoint_Query__EntrypointTwitterIdeatorWorkshop;
+    case 'entrypoint Query.EntrypointTwitterIdeator':
+      return entrypoint_Query__EntrypointTwitterIdeator;
+    case 'entrypoint Query.entrypointFormatterEditor':
+      return entrypoint_Query__entrypointFormatterEditor;
+    case 'entrypoint Query.entrypointTwitterIdeatorResearchPermalink':
+      return entrypoint_Query__entrypointTwitterIdeatorResearchPermalink;
+    case 'entrypoint Query.entrypointTwitterIdeatorResearch':
+      return entrypoint_Query__entrypointTwitterIdeatorResearch;
+  } 
   return (clientFieldResolver: any) => clientFieldResolver;
 }

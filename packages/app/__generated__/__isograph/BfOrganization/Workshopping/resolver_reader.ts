@@ -25,12 +25,14 @@ const readerAst: ReaderAst<BfOrganization__Workshopping__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Scalar",
         fieldName: "originalText",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
       {
         kind: "Linked",
@@ -38,18 +40,21 @@ const readerAst: ReaderAst<BfOrganization__Workshopping__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Scalar",
             fieldName: "tweet",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "explanation",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -62,7 +67,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.Workshopping",
+  fieldName: "BfOrganization.Workshopping",
   resolver,
   readerAst,
   hasUpdatable: false,

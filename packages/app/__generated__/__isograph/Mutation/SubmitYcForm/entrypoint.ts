@@ -511,7 +511,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Mutation__SubmitYcForm__param,
-  Mutation__SubmitYcForm__output_type
+  Mutation__SubmitYcForm__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

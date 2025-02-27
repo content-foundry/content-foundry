@@ -9,6 +9,7 @@ const readerAst: ReaderAst<BfOrganization__BlogRevisionsSidebar__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -16,30 +17,35 @@ const readerAst: ReaderAst<BfOrganization__BlogRevisionsSidebar__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Scalar",
             fieldName: "revisionTitle",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "original",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "revision",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
           {
             kind: "Scalar",
             fieldName: "explanation",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -52,7 +58,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.BlogRevisionsSidebar",
+  fieldName: "BfOrganization.BlogRevisionsSidebar",
   resolver,
   readerAst,
   hasUpdatable: false,
