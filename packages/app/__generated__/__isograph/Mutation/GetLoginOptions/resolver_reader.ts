@@ -14,6 +14,7 @@ const readerAst: ReaderAst<Mutation__GetLoginOptions__param> = [
         { kind: "Variable", name: "email" },
       ],
     ],
+    isUpdatable: false,
   },
 ];
 
@@ -22,6 +23,7 @@ const artifact: EagerReaderArtifact<
   Mutation__GetLoginOptions__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Mutation.GetLoginOptions",
   resolver,
   readerAst,
   hasUpdatable: false,

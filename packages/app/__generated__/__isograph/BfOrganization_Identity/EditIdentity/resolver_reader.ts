@@ -9,18 +9,21 @@ const readerAst: ReaderAst<BfOrganization_Identity__EditIdentity__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Scalar",
         fieldName: "voiceSummary",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
       {
         kind: "Scalar",
         fieldName: "voice",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
     ],
   },
@@ -31,7 +34,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization_Identity.EditIdentity",
+  fieldName: "BfOrganization_Identity.EditIdentity",
   resolver,
   readerAst,
   hasUpdatable: false,

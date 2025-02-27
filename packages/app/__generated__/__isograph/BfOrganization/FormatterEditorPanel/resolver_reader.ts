@@ -8,6 +8,7 @@ const readerAst: ReaderAst<BfOrganization__FormatterEditorPanel__param> = [
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
 ];
 
@@ -16,7 +17,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.FormatterEditorPanel",
+  fieldName: "BfOrganization.FormatterEditorPanel",
   resolver,
   readerAst,
   hasUpdatable: false,

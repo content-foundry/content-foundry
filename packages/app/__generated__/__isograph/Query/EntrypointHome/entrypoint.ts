@@ -9,20 +9,14 @@ const queryText = 'query EntrypointHome  {\
     __typename,\
     id,\
     __typename,\
-    contentCollection {\
+    contentCollection____slug___s_marketing: contentCollection(slug: "marketing") {\
       id,\
-      description,\
       items {\
-        edges {\
-          node {\
-            id,\
-            body,\
-            href,\
-            title,\
-          },\
-        },\
+        id,\
+        body,\
+        href,\
+        title,\
       },\
-      name,\
     },\
   },\
 }';
@@ -54,7 +48,12 @@ const normalizationAst: NormalizationAst = {
         {
           kind: "Linked",
           fieldName: "contentCollection",
-          arguments: null,
+          arguments: [
+            [
+              "slug",
+              { kind: "String", value: "marketing" },
+            ],
+          ],
           concreteType: "BfContentCollection",
           selections: [
             {
@@ -63,58 +62,32 @@ const normalizationAst: NormalizationAst = {
               arguments: null,
             },
             {
-              kind: "Scalar",
-              fieldName: "description",
-              arguments: null,
-            },
-            {
               kind: "Linked",
               fieldName: "items",
               arguments: null,
-              concreteType: "BfContentItemConnection",
+              concreteType: "BfContentItem",
               selections: [
                 {
-                  kind: "Linked",
-                  fieldName: "edges",
+                  kind: "Scalar",
+                  fieldName: "id",
                   arguments: null,
-                  concreteType: "BfContentItemEdge",
-                  selections: [
-                    {
-                      kind: "Linked",
-                      fieldName: "node",
-                      arguments: null,
-                      concreteType: "BfContentItem",
-                      selections: [
-                        {
-                          kind: "Scalar",
-                          fieldName: "id",
-                          arguments: null,
-                        },
-                        {
-                          kind: "Scalar",
-                          fieldName: "body",
-                          arguments: null,
-                        },
-                        {
-                          kind: "Scalar",
-                          fieldName: "href",
-                          arguments: null,
-                        },
-                        {
-                          kind: "Scalar",
-                          fieldName: "title",
-                          arguments: null,
-                        },
-                      ],
-                    },
-                  ],
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "body",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "href",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "title",
+                  arguments: null,
                 },
               ],
-            },
-            {
-              kind: "Scalar",
-              fieldName: "name",
-              arguments: null,
             },
           ],
         },
@@ -124,7 +97,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Query__EntrypointHome__param,
-  Query__EntrypointHome__output_type
+  Query__EntrypointHome__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

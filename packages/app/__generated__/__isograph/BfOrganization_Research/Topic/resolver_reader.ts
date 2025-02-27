@@ -8,6 +8,7 @@ const readerAst: ReaderAst<BfOrganization_Research__Topic__param> = [
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
 ];
 
@@ -16,7 +17,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization_Research.Topic",
+  fieldName: "BfOrganization_Research.Topic",
   resolver,
   readerAst,
   hasUpdatable: false,

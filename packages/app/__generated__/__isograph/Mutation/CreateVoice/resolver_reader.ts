@@ -15,12 +15,14 @@ const readerAst: ReaderAst<Mutation__CreateVoice__param> = [
       ],
     ],
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Scalar",
         fieldName: "__typename",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
     ],
   },
@@ -31,6 +33,7 @@ const artifact: EagerReaderArtifact<
   Mutation__CreateVoice__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Mutation.CreateVoice",
   resolver,
   readerAst,
   hasUpdatable: false,

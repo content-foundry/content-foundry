@@ -19,12 +19,14 @@ const readerAst: ReaderAst<Mutation__Register__param> = [
       ],
     ],
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Scalar",
         fieldName: "__typename",
         alias: null,
         arguments: null,
+        isUpdatable: false,
       },
     ],
   },
@@ -35,7 +37,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "Mutation.Register",
+  fieldName: "Mutation.Register",
   resolver,
   readerAst,
   hasUpdatable: false,

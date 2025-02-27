@@ -35,7 +35,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Mutation__ReviseBlog__param,
-  Mutation__ReviseBlog__output_type
+  Mutation__ReviseBlog__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

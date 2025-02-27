@@ -86,24 +86,17 @@ export interface NexusGenObjects {
   BfContentCollection: { // root type
     description?: string | null; // String
     id: string; // ID!
-    name?: string | null; // String
-    slug?: string | null; // String
-  }
-  BfContentItem: { // root type
-    body?: string | null; // String
-    id: string; // ID!
-    slug?: string | null; // String
     title?: string | null; // String
   }
-  BfContentItemConnection: { // root type
-    count?: number | null; // Int
-    edges?: Array<NexusGenRootTypes['BfContentItemEdge'] | null> | null; // [BfContentItemEdge]
-    nodes?: Array<NexusGenRootTypes['BfContentItem'] | null> | null; // [BfContentItem]
-    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
-  }
-  BfContentItemEdge: { // root type
-    cursor: string; // String!
-    node?: NexusGenRootTypes['BfContentItem'] | null; // BfContentItem
+  BfContentItem: { // root type
+    author?: string | null; // String
+    body?: string | null; // String
+    cta?: string | null; // String
+    href?: string | null; // String
+    id: string; // ID!
+    slug?: string | null; // String
+    summary?: string | null; // String
+    title?: string | null; // String
   }
   BfCurrentViewerLoggedIn: { // root type
     id: string; // ID!
@@ -257,26 +250,18 @@ export interface NexusGenFieldTypes {
   BfContentCollection: { // field return type
     description: string | null; // String
     id: string; // ID!
-    items: NexusGenRootTypes['BfContentItemConnection'] | null; // BfContentItemConnection
-    name: string | null; // String
-    slug: string | null; // String
+    items: Array<NexusGenRootTypes['BfContentItem'] | null> | null; // [BfContentItem]
+    title: string | null; // String
   }
   BfContentItem: { // field return type
+    author: string | null; // String
     body: string | null; // String
+    cta: string | null; // String
     href: string | null; // String
     id: string; // ID!
     slug: string | null; // String
+    summary: string | null; // String
     title: string | null; // String
-  }
-  BfContentItemConnection: { // field return type
-    count: number | null; // Int
-    edges: Array<NexusGenRootTypes['BfContentItemEdge'] | null> | null; // [BfContentItemEdge]
-    nodes: Array<NexusGenRootTypes['BfContentItem'] | null> | null; // [BfContentItem]
-    pageInfo: NexusGenRootTypes['PageInfo']; // PageInfo!
-  }
-  BfContentItemEdge: { // field return type
-    cursor: string; // String!
-    node: NexusGenRootTypes['BfContentItem'] | null; // BfContentItem
   }
   BfCurrentViewerLoggedIn: { // field return type
     blog: NexusGenRootTypes['BfBlog'] | null; // BfBlog
@@ -449,26 +434,18 @@ export interface NexusGenFieldTypeNames {
   BfContentCollection: { // field return type name
     description: 'String'
     id: 'ID'
-    items: 'BfContentItemConnection'
-    name: 'String'
-    slug: 'String'
+    items: 'BfContentItem'
+    title: 'String'
   }
   BfContentItem: { // field return type name
+    author: 'String'
     body: 'String'
+    cta: 'String'
     href: 'String'
     id: 'ID'
     slug: 'String'
+    summary: 'String'
     title: 'String'
-  }
-  BfContentItemConnection: { // field return type name
-    count: 'Int'
-    edges: 'BfContentItemEdge'
-    nodes: 'BfContentItem'
-    pageInfo: 'PageInfo'
-  }
-  BfContentItemEdge: { // field return type name
-    cursor: 'String'
-    node: 'BfContentItem'
   }
   BfCurrentViewerLoggedIn: { // field return type name
     blog: 'BfBlog'
@@ -614,14 +591,6 @@ export interface NexusGenArgTypes {
       id?: string | null; // ID
     }
     posts: { // args
-      after?: string | null; // String
-      before?: string | null; // String
-      first?: number | null; // Int
-      last?: number | null; // Int
-    }
-  }
-  BfContentCollection: {
-    items: { // args
       after?: string | null; // String
       before?: string | null; // String
       first?: number | null; // Int

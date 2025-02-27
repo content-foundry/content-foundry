@@ -104,7 +104,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Query__EntrypointFormatterVoice__param,
-  Query__EntrypointFormatterVoice__output_type
+  Query__EntrypointFormatterVoice__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

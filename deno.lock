@@ -42,8 +42,8 @@
     "npm:@hexagon/base64@^1.1.27": "1.1.28",
     "npm:@hyperdx/browser@~0.21.2": "0.21.2_@hyperdx+otel-web@0.16.3__@opentelemetry+api@1.9.0",
     "npm:@hyperdx/deno@^0.0.4": "0.0.4_@opentelemetry+api@1.6.0_@opentelemetry+api-logs@0.43.0",
-    "npm:@isograph/compiler@0.0.0-main-a5a81588": "0.0.0-main-a5a81588",
-    "npm:@isograph/react@0.0.0-main-a5a81588": "0.0.0-main-a5a81588_react@19.0.0",
+    "npm:@isograph/compiler@0.0.0-main-9cb0ac6d": "0.0.0-main-9cb0ac6d",
+    "npm:@isograph/react@0.0.0-main-9cb0ac6d": "0.0.0-main-9cb0ac6d_react@19.0.0",
     "npm:@levischuck/tiny-cbor@~0.2.2": "0.2.2",
     "npm:@mdx-js/esbuild@^3.1.0": "3.1.0_esbuild@0.24.2",
     "npm:@mdx-js/mdx@^3.1.0": "3.1.0",
@@ -588,21 +588,21 @@
     "@img/sharp-win32-x64@0.33.5": {
       "integrity": "sha512-MpY/o8/8kj+EcnxwvrP4aTJSWw/aZ7JIGR4aBeZkZw5B7/Jn+tY9/VNwtcoGmdT7GfggGIU4kygOMSbYnOrAbg=="
     },
-    "@isograph/compiler@0.0.0-main-a5a81588": {
-      "integrity": "sha512-fBHLwE12skwW0h7ffLSBV6y8dFUZcoIW6jOXYjwValJnf/0qHAs+RCuoZa7Ek/O2g5j6UHyJazl/hKmRUltwrQ=="
+    "@isograph/compiler@0.0.0-main-9cb0ac6d": {
+      "integrity": "sha512-ENKC0YqfkyP+9v8rdXdkskauoUg2zcKueYSOyXz3eX2lr9YXBMaVv7uxGEoI+Sj91AXMIaedsiRpOK1XJhMOJA=="
     },
-    "@isograph/disposable-types@0.0.0-main-a5a81588": {
-      "integrity": "sha512-mX1X5sDyIw89sJK15oAN7xvTvoAfTi0zxm0TIvVnYSTrJ6O9hoVpNqczFmfeFRyarHjKlohUgpqM/z21yT9UaA=="
+    "@isograph/disposable-types@0.0.0-main-9cb0ac6d": {
+      "integrity": "sha512-Kj5AWW9YeWwzRwzBstSY8TLhyeETLrzjlv86OCKo8t/tt9rTPIGPCLRHnyCGvbvjVRzLbXKvIUsheRTewmCNSw=="
     },
-    "@isograph/react-disposable-state@0.0.0-main-a5a81588_react@19.0.0": {
-      "integrity": "sha512-IAIXqhpkvAC8mgLgKggvgethr+awjCm4fgBqEj+yuV0Uh0Pt7ebVzJwqpZPeB1T12lRbeI9gxUA9VrNLFVx5Lw==",
+    "@isograph/react-disposable-state@0.0.0-main-9cb0ac6d_react@19.0.0": {
+      "integrity": "sha512-/FEB/8imWb/WfBOomlvo3Q4p3EcABAkriK9cuA+dAOpkLowSulroAoT6ufgKQepfmt89Fex4E4/WXRCpfYYeyw==",
       "dependencies": [
         "@isograph/disposable-types",
         "react"
       ]
     },
-    "@isograph/react@0.0.0-main-a5a81588_react@19.0.0": {
-      "integrity": "sha512-3pjWFtW8QxtMz00z9Vb5W/q+qRGbu8qdfqdcLWTc1iQGqPGFhXmONrGyYiARixwWm48Zc3fMNHOG0+BaMTUIcw==",
+    "@isograph/react@0.0.0-main-9cb0ac6d_react@19.0.0": {
+      "integrity": "sha512-/Fh/+zKRNRHG+TuDQZ0bb898FBVfpz3rsdkT2WmPexjHo4CYQgpwXs+Wl7yG6rLNAKWNfrOQ26KBGyCADF24nQ==",
       "dependencies": [
         "@isograph/disposable-types",
         "@isograph/react-disposable-state",
@@ -610,8 +610,8 @@
         "react"
       ]
     },
-    "@isograph/reference-counted-pointer@0.0.0-main-a5a81588": {
-      "integrity": "sha512-gS6W1UcJCX/Y5JMzJjyPUgE7LWPHpbxRv8mZVIBm9Zz6IPzGTJYk5Pj3j7s/dY1pbFvH9dj3JO0hB6IRvm/G4A==",
+    "@isograph/reference-counted-pointer@0.0.0-main-9cb0ac6d": {
+      "integrity": "sha512-XjDXyVmwIPOYpLxA6m5B4vtgdJo4L9dOzBwFKprwXad/8ZFShNB/q/Up3Pbd7oOm+k+T/Yr/LRjZKBKFSTtxlg==",
       "dependencies": [
         "@isograph/disposable-types"
       ]
@@ -2824,8 +2824,8 @@
         "npm:@anthropic-ai/claude-code@~0.2.18",
         "npm:@hyperdx/browser@~0.21.2",
         "npm:@hyperdx/deno@^0.0.4",
-        "npm:@isograph/compiler@0.0.0-main-a5a81588",
-        "npm:@isograph/react@0.0.0-main-a5a81588",
+        "npm:@isograph/compiler@0.0.0-main-9cb0ac6d",
+        "npm:@isograph/react@0.0.0-main-9cb0ac6d",
         "npm:@mdx-js/esbuild@^3.1.0",
         "npm:@mdx-js/mdx@^3.1.0",
         "npm:@neondatabase/serverless@~0.10.4",

@@ -11,6 +11,7 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorWorkshopPermalink__par
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -18,12 +19,14 @@ const readerAst: ReaderAst<Query__EntrypointTwitterIdeatorWorkshopPermalink__par
         alias: null,
         arguments: null,
         condition: BfCurrentViewerLoggedIn__asBfCurrentViewerLoggedIn__resolver_reader,
+        isUpdatable: false,
         selections: [
           {
             kind: "Scalar",
             fieldName: "__typename",
             alias: null,
             arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -36,6 +39,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointTwitterIdeatorWorkshopPermalink__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointTwitterIdeatorWorkshopPermalink",
   resolver,
   readerAst,
   hasUpdatable: false,
