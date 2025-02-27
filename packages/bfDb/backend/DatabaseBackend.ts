@@ -1,4 +1,3 @@
-
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
 import type { BfMetadataNode } from "packages/bfDb/coreModels/BfNode.ts";
 import type { JSONValue } from "packages/bfDb/bfDb.ts";
@@ -10,7 +9,7 @@ type DbItem<T extends Props> = {
   metadata: BfDbMetadata;
 };
 
- export type BfDbMetadata = BfMetadataNode | (BfMetadataNode & BfMetadataEdge);
+export type BfDbMetadata = BfMetadataNode | (BfMetadataNode & BfMetadataEdge);
 /**
  * Interface for database backend implementations.
  * This allows for swapping between PostgreSQL and SQLite backends.
@@ -21,7 +20,7 @@ export interface DatabaseBackend {
    */
   getItem<TProps extends Props = Props>(
     bfOid: BfGid,
-    bfGid: BfGid
+    bfGid: BfGid,
   ): Promise<DbItem<TProps> | null>;
 
   /**
@@ -29,7 +28,7 @@ export interface DatabaseBackend {
    */
   getItemByBfGid<TProps extends Props = Props>(
     bfGid: string,
-    className?: string
+    className?: string,
   ): Promise<DbItem<TProps> | null>;
 
   /**
@@ -37,7 +36,7 @@ export interface DatabaseBackend {
    */
   getItemsByBfGid<TProps extends Props = Props>(
     bfGids: Array<string>,
-    className?: string
+    className?: string,
   ): Promise<Array<DbItem<TProps>>>;
 
   /**
@@ -46,7 +45,7 @@ export interface DatabaseBackend {
   putItem<TProps extends Props = Props>(
     itemProps: TProps,
     itemMetadata: BfMetadataNode | BfMetadataEdge,
-    sortValue?: number
+    sortValue?: number,
   ): Promise<void>;
 
   /**
@@ -57,7 +56,7 @@ export interface DatabaseBackend {
     propsToQuery?: Partial<TProps>,
     bfGids?: Array<string>,
     orderDirection?: "ASC" | "DESC",
-    orderBy?: string
+    orderBy?: string,
   ): Promise<Array<DbItem<TProps>>>;
 
   /**
@@ -71,7 +70,7 @@ export interface DatabaseBackend {
     orderBy?: string,
     cursorValue?: number | string,
     maxSizeBytes?: number,
-    batchSize?: number
+    batchSize?: number,
   ): Promise<Array<DbItem<TProps>>>;
 
   /**
@@ -81,7 +80,7 @@ export interface DatabaseBackend {
     bfOid: string,
     targetBfGid: string,
     sourceBfClassName: string,
-    depth?: number
+    depth?: number,
   ): Promise<Array<DbItem<TProps>>>;
 
   /**
@@ -91,7 +90,7 @@ export interface DatabaseBackend {
     bfOid: string,
     sourceBfGid: string,
     targetBfClassName: string,
-    depth?: number
+    depth?: number,
   ): Promise<Array<DbItem<TProps>>>;
 
   /**
