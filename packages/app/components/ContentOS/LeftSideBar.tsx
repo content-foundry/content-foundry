@@ -57,7 +57,7 @@ export function LeftSideBar() {
           kind="secondary"
           type="submit"
           text="Show results"
-          disabled={true}
+          disabled
           xstyle={{ alignSelf: "flex-end" }}
         />
       </div>

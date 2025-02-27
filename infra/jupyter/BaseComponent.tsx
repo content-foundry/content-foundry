@@ -61,7 +61,7 @@ export function BaseComponent(
         <div id="staging-root" className="portalRoot"></div>
         <script
           type="module"
-          defer={true}
+          defer
           dangerouslySetInnerHTML={{
             __html: `globalThis.__ENVIRONMENT__ = ${
               JSON.stringify(environment)

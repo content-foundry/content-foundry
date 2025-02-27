@@ -1,8 +1,8 @@
 { pkgs }:
 let
   unstablePkgs = import (builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/0141b8e1af43116e0a9d7cfbd0419a31aa62b4f2.tar.gz";
-    sha256 = "0bilcymkixm0ar3c4gbr8jciq2zfxx28l31y6wmsnbx1j5n6kiv5";
+    url = "https://github.com/NixOS/nixpkgs/archive/482ffc541c8ffb8d2d09018dba09667d8d2e5e7f.tar.gz";
+    sha256 = "1wvj6dl9y5gp3xb8vqlg625xi0ci4gj9zmg52qmz0hyj4rgh1mv7";
   }) { };
 in
 {

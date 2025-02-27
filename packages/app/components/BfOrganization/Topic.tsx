@@ -75,7 +75,7 @@ export const Topic = iso(`
           <BfDsTextArea
             className="input-box"
             placeholder="I've never thought about..."
-            value={""}
+            value=""
             onChange={() => logger.debug("onChange")}
           />
           <BfDsButton

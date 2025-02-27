@@ -59,7 +59,7 @@ export function VoiceSetupStep2() {
             <BfDsTextArea
               placeholder="What would you change?"
               onChange={() => (logger.info("foo"))}
-              value={""}
+              value=""
             />
             {voiceLinks.map((link, index) => (
               <BfDsInput
