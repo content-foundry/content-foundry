@@ -14,6 +14,7 @@ const queryText = 'query entrypointFormatterEditor  {\
       creation {\
         revisions {\
           explanation,\
+          instructions,\
           original,\
           revision,\
           revisionTitle,\
@@ -84,6 +85,11 @@ const normalizationAst: NormalizationAst = {
                     {
                       kind: "Scalar",
                       fieldName: "explanation",
+                      arguments: null,
+                    },
+                    {
+                      kind: "Scalar",
+                      fieldName: "instructions",
                       arguments: null,
                     },
                     {

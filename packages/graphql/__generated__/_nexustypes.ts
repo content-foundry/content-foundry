@@ -161,6 +161,7 @@ export interface NexusGenObjects {
   }
   Revisions: { // root type
     explanation?: string | null; // String
+    instructions?: string | null; // String
     original?: string | null; // String
     revision?: string | null; // String
     revisionTitle?: string | null; // String
@@ -346,6 +347,7 @@ export interface NexusGenFieldTypes {
   }
   Revisions: { // field return type
     explanation: string | null; // String
+    instructions: string | null; // String
     original: string | null; // String
     revision: string | null; // String
     revisionTitle: string | null; // String
@@ -530,6 +532,7 @@ export interface NexusGenFieldTypeNames {
   }
   Revisions: { // field return type name
     explanation: 'String'
+    instructions: 'String'
     original: 'String'
     revision: 'String'
     revisionTitle: 'String'

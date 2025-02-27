@@ -199,7 +199,7 @@
 }
 .right-side-bar{
   background-color: var(--pageBackground);
-  max-width: 250px;
+  min-width: 250px;
   border-left: 1px solid var(--border);
   height: 100%;
   padding: 20px;

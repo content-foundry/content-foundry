@@ -42,6 +42,7 @@ type Props = {
       | Array<{
         revisionTitle: string;
         original: string;
+        instructions: string;
         revised: string;
         explanation: string;
       }>

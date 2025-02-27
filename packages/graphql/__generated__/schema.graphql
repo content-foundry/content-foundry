@@ -237,6 +237,7 @@ type ResearchTopic {
 
 type Revisions {
   explanation: String
+  instructions: String
   original: String
   revision: String
   revisionTitle: String
