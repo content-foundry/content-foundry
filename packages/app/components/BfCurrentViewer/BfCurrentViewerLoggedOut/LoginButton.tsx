@@ -56,7 +56,8 @@ export const LoginButton = iso(`
               optionsJSON: options,
             });
             logger.debug("Got authentication response", authResp);
-            login({ email, authResp: JSON.stringify(authResp) }, {
+            // @ts-expect-error #techdebt from deno 2.2 upgrade
+            login({ email, authResp }, {
               onComplete: (data) => {
                 logger.debug("Got login response", data);
                 globalThis.location.reload();
