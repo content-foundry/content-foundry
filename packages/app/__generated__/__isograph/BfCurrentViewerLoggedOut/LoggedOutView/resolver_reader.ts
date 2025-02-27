@@ -34,7 +34,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfCurrentViewerLoggedOut.LoggedOutView",
+  fieldName: "BfCurrentViewerLoggedOut.LoggedOutView",
   resolver,
   readerAst,
   hasUpdatable: false,

@@ -3,7 +3,6 @@ import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
 
-iso(`entrypoint Mutation.CheckEmail`);
 export const CheckEmailMutation = iso(`
   field Mutation.CheckEmail($email: String!) {
     checkEmail(email: $email)

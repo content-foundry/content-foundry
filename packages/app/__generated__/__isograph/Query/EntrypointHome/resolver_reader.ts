@@ -11,6 +11,7 @@ const readerAst: ReaderAst<Query__EntrypointHome__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Resolver",
@@ -28,6 +29,7 @@ const artifact: EagerReaderArtifact<
   Query__EntrypointHome__output_type
 > = {
   kind: "EagerReaderArtifact",
+  fieldName: "Query.EntrypointHome",
   resolver,
   readerAst,
   hasUpdatable: false,

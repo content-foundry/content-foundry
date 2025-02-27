@@ -35,7 +35,8 @@ const normalizationAst: NormalizationAst = {
 };
 const artifact: IsographEntrypoint<
   Mutation__CreateVoice__param,
-  Mutation__CreateVoice__output_type
+  Mutation__CreateVoice__output_type,
+  NormalizationAst
 > = {
   kind: "Entrypoint",
   networkRequestInfo: {

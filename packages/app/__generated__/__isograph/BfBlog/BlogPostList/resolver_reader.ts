@@ -9,6 +9,7 @@ const readerAst: ReaderAst<BfBlog__BlogPostList__param> = [
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Linked",
@@ -16,6 +17,7 @@ const readerAst: ReaderAst<BfBlog__BlogPostList__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Linked",
@@ -23,6 +25,7 @@ const readerAst: ReaderAst<BfBlog__BlogPostList__param> = [
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
             kind: "Resolver",
@@ -42,7 +45,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfBlog.BlogPostList",
+  fieldName: "BfBlog.BlogPostList",
   resolver,
   readerAst,
   hasUpdatable: false,

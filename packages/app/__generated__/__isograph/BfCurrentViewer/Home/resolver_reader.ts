@@ -8,68 +8,49 @@ const readerAst: ReaderAst<BfCurrentViewer__Home__param> = [
     fieldName: "__typename",
     alias: null,
     arguments: null,
+    isUpdatable: false,
   },
   {
     kind: "Linked",
     fieldName: "contentCollection",
     alias: null,
-    arguments: null,
+    arguments: [
+      [
+        "slug",
+        { kind: "String", value: "marketing" },
+      ],
+    ],
     condition: null,
+    isUpdatable: false,
     selections: [
-      {
-        kind: "Scalar",
-        fieldName: "name",
-        alias: null,
-        arguments: null,
-      },
-      {
-        kind: "Scalar",
-        fieldName: "description",
-        alias: null,
-        arguments: null,
-      },
       {
         kind: "Linked",
         fieldName: "items",
         alias: null,
         arguments: null,
         condition: null,
+        isUpdatable: false,
         selections: [
           {
-            kind: "Linked",
-            fieldName: "edges",
+            kind: "Scalar",
+            fieldName: "title",
             alias: null,
             arguments: null,
-            condition: null,
-            selections: [
-              {
-                kind: "Linked",
-                fieldName: "node",
-                alias: null,
-                arguments: null,
-                condition: null,
-                selections: [
-                  {
-                    kind: "Scalar",
-                    fieldName: "title",
-                    alias: null,
-                    arguments: null,
-                  },
-                  {
-                    kind: "Scalar",
-                    fieldName: "body",
-                    alias: null,
-                    arguments: null,
-                  },
-                  {
-                    kind: "Scalar",
-                    fieldName: "href",
-                    alias: null,
-                    arguments: null,
-                  },
-                ],
-              },
-            ],
+            isUpdatable: false,
+          },
+          {
+            kind: "Scalar",
+            fieldName: "body",
+            alias: null,
+            arguments: null,
+            isUpdatable: false,
+          },
+          {
+            kind: "Scalar",
+            fieldName: "href",
+            alias: null,
+            arguments: null,
+            isUpdatable: false,
           },
         ],
       },
@@ -82,7 +63,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfCurrentViewer.Home",
+  fieldName: "BfCurrentViewer.Home",
   resolver,
   readerAst,
   hasUpdatable: false,

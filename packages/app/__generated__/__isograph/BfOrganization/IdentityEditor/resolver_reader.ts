@@ -10,6 +10,7 @@ const readerAst: ReaderAst<BfOrganization__IdentityEditor__param> = [
     alias: null,
     arguments: null,
     condition: null,
+    isUpdatable: false,
     selections: [
       {
         kind: "Resolver",
@@ -27,7 +28,7 @@ const artifact: ComponentReaderArtifact<
   ExtractSecondParam<typeof resolver>
 > = {
   kind: "ComponentReaderArtifact",
-  componentName: "BfOrganization.IdentityEditor",
+  fieldName: "BfOrganization.IdentityEditor",
   resolver,
   readerAst,
   hasUpdatable: false,
