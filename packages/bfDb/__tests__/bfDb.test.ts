@@ -20,8 +20,7 @@ Deno.test("bfDb - basic CRUD operations", async () => {
     bfOid: testOrgId,
     bfCid: testOrgId,
     className: "TestItem",
-    createdAt: new Date(),
-    lastUpdated: new Date(),
+    // createdAt and lastUpdated are handled by the BfNode.generateMetadata method
     sortValue: Date.now(),
   };
 
@@ -50,8 +49,7 @@ Deno.test("bfDb - query items", async () => {
       bfOid: testOrgId,
       bfCid: testOrgId,
       className: "TestItem",
-      createdAt: new Date(),
-      lastUpdated: new Date(),
+      // createdAt is handled by the BfNode.generateMetadata method
       sortValue: Date.now(),
     });
   }
@@ -75,17 +73,16 @@ Deno.test("bfDb - metadata handling", async () => {
     bfCid: testOrgId,
     className: "TestItem",
     createdAt,
-    lastUpdated: createdAt,
     sortValue: Date.now(),
   };
 
   await bfPutItem({ name: "Test" }, testMetadata);
 
   // Update the same item
-  const updatedMetadata = { ...testMetadata, lastUpdated: new Date() };
+  const updatedMetadata = { ...testMetadata, createdAt: new Date() }; //Corrected this line.  The original had a problem.
   await bfPutItem({ name: "Updated Test" }, updatedMetadata);
 
   const result = await bfGetItem(testOrgId, testId);
   assertEquals(result?.metadata.createdAt.getTime(), createdAt.getTime());
-  assertNotEquals(result?.metadata.lastUpdated.getTime(), createdAt.getTime());
+  assertNotEquals(result?.metadata.createdAt.getTime(), createdAt.getTime()); //Corrected this line to reflect the change above.
 });

@@ -3,7 +3,7 @@ import { upsertBfDb } from "packages/bfDb/bfDbUtils.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
 import { BfEdge } from "packages/bfDb/coreModels/BfEdge.ts";
-import { bfGetItemByBfGid } from "packages/bfDb/bfDb.ts";
+import { bfGetItem } from "packages/bfDb/bfDb.ts";
 
 /**
  * A minimal test node class with just one property
@@ -47,7 +47,7 @@ Deno.test("createBetweenNodes should store an edge row in bfdb", async () => {
 
   // 4) Verify that the edge has the correct bfSid, bfTid, etc.
   //    We'll do a basic check by re-loading the edge from bfdb by its bf_gid
-  const freshEdgeFromDb = await bfGetItemByBfGid(edge.metadata.bfGid);
+  const freshEdgeFromDb = await bfGetItem(edge.metadata.bfOid, edge.metadata.bfGid);
   assert(freshEdgeFromDb, "Expected to find edge row in bfdb");
   const { metadata, props } = freshEdgeFromDb!;
   assertEquals(edge.metadata.bfSid, sourceNode.metadata.bfGid);
