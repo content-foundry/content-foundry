@@ -108,6 +108,282 @@ advanced features while maintaining compatibility with Git.
 - `sl goto` - Switch to specific branch or commit
 - `sl log` - View commit history
 - `sl web` - Start Sapling web interface
+- `sl diff` - Show changes in working directory
+- `sl submit` - Submit a pull request with your changes for review
+
+### Creating Structured Commits
+
+When creating commits in Sapling, it's recommended to follow a structured format
+with:
+
+1. A clear, descriptive title
+2. A detailed description with "Summary" and "Test Plan" sections
+
+#### Using the Commit Template
+
+We've set up a commit template to help you create well-structured commits. To
+use it:
+
+```bash
+# First ensure code is formatted properly
+bff f
+
+# Generate a diff and save it to a file for review
+sl diff > build/sl.txt
+
+# Review the diff to understand changes
+cat build/sl.txt
+
+# Create a commit using the template
+sl commit
+```
+
+This will open your editor with the commit template pre-populated:
+
+```
+# Title: concise description of changes (50 chars max)
+
+## Summary
+# Explain what changed and why (bullet points work well)
+# - Change 1
+# - Change 2
+
+## Test Plan
+# Describe how you tested these changes
+# - What you verified
+# - How others can test/verify
+```
+
+Fill in each section, removing the comment lines (lines starting with #). Make
+sure to:
+
+- Use a short, descriptive title
+- Leave a blank line after the title
+- Use line breaks to make the commit message readable
+- Use bullet points in the Summary and Test Plan sections
+- Save and close the editor to complete the commit
+
+#### Manual Commit Structure
+
+If not using the template, you can still create a well-structured commit
+manually:
+
+```bash
+# Format code before committing
+bff f
+
+# Then commit with a descriptive message
+sl commit -m "Descriptive title
+
+## Summary
+- Change 1: Brief explanation of first change
+- Change 2: Brief explanation of second change
+
+## Test Plan
+- Verified X works as expected
+- Ran Y test and confirmed Z outcome"
+```
+
+The key is to use line breaks and formatting to make your commit message
+readable.
+
+Example commit message:
+
+```
+Fix content collection ID lookup and add BfGid type documentation
+
+## Summary
+- Fixed content collection lookup by correctly handling ID prefix conventions
+- Added documentation about BfGid type errors to AGENT.md
+- Updated collectionsCache.get() to properly convert string IDs to BfGid
+
+## Test Plan
+- Verified content/marketing collection now loads correctly
+- Tested with shortened collection ID format
+- Added explicit tests for ID conversion edge cases
+```
+
+This structured approach makes commits more informative and easier to review.
+
+### Splitting Commits
+
+Before committing your changes, it's recommended to split your work into
+separate logical commits whenever possible. This makes changes easier to review,
+understand, and potentially revert if needed.
+
+## Code Reviews
+
+Code reviews are a critical part of the development process in Content Foundry.
+They help maintain code quality, share knowledge, and ensure consistency across
+the codebase.
+
+### Performing Code Reviews
+
+When reviewing code for Content Foundry, follow these guidelines:
+
+1. **Focus Areas**: Review for:
+   - **Functionality**: Does the code work as intended?
+   - **Security**: Are there any security vulnerabilities?
+   - **Performance**: Are there obvious performance issues?
+   - **Readability**: Is the code clear and maintainable?
+   - **Test Coverage**: Are there appropriate tests?
+
+2. **Style Consistency**: Ensure code follows Content Foundry style guidelines:
+   - PascalCase for classes/types/components (BfComponent)
+   - camelCase for variables/functions
+   - Proper TypeScript typing
+   - Consistent indentation (2 spaces)
+
+3. **Constructive Feedback**: Provide specific, actionable feedback:
+   ```
+   // Instead of: "This code is confusing"
+   // Say: "Consider extracting this logic into a named function to clarify its purpose"
+   ```
+
+4. **Code Review Checklist**:
+   - [ ] Code follows TypeScript best practices
+   - [ ] New functionality has appropriate tests
+   - [ ] No unnecessary console logs or commented code
+   - [ ] Error handling is appropriate
+   - [ ] Component interfaces are clearly defined
+   - [ ] No potential memory leaks
+   - [ ] Permissions and access control are properly handled
+
+### Code Review Workflow
+
+1. **Submitting Code for Review**:
+   ```bash
+   # Ensure code is formatted and passes tests
+   bff f
+   bff test
+
+   # Generate a diff to review your changes
+   sl diff > build/sl.txt
+
+   # Review the changes before committing
+   cat build/sl.txt
+
+   # Create a descriptive commit
+   sl commit
+
+   # Push changes for review
+   sl push
+   ```
+
+2. **Reviewing in Sapling**:
+   - Use `sl web` to open the Sapling web interface
+   - Navigate to "Changes" to see pending reviews
+   - Add inline comments by clicking on specific lines
+   - Use the "Request changes" or "Approve" options when done
+
+3. **Addressing Review Feedback**:
+   ```bash
+   # Make requested changes
+   bff f  # Format code after changes
+
+   # Amend your commit with changes
+   sl amend
+
+   # Push updated changes
+   sl push --force
+   ```
+
+4. **Completing the Review**:
+   - Respond to all comments
+   - Request another review if significant changes were made
+   - Merge once approved with `sl land`
+
+### Code Review Best Practices
+
+- **Review Small Changes**: Aim for small, focused commits that are easier to
+  review
+- **Timely Reviews**: Try to complete reviews within 24 hours
+- **Balance Thoroughness and Progress**: Be thorough but pragmatic
+- **Knowledge Sharing**: Use reviews as an opportunity to share knowledge
+- **Focus on Code, Not the Coder**: Review the code, not the person who wrote it
+
+### Using `sl diff` to Review Changes
+
+The `sl diff` command is an essential part of the code review process, allowing
+you to view and verify your changes before committing:
+
+```bash
+# Basic usage - shows all uncommitted changes
+sl diff
+
+# Save the diff to a file for easier review
+sl diff > build/sl.txt
+
+# View diff for a specific file
+sl diff path/to/file.ts
+
+# Compare with a specific commit
+sl diff -r commit_hash
+
+# Show a more compact summary of changes
+sl diff --stat
+```
+
+The diff output shows:
+
+- Added lines (prefixed with +)
+- Removed lines (prefixed with -)
+- Context lines (unchanged lines around the changes)
+
+This step is crucial for self-review before submitting your code for review by
+others, as it helps catch issues early in the process.
+
+Guidelines for splitting commits:
+
+- Each commit should represent a single logical change or feature
+- Keep related changes together in the same commit
+- Separate unrelated changes into different commits
+- Consider splitting large changes into smaller, incremental commits
+- Make sure each commit can be understood on its own
+
+For example, instead of committing "Update user profile and fix database
+connection", create two separate commits: "Add user profile editing feature" and
+"Fix database connection timeout issue".
+
+#### Using the commit.sh Script or llmCommit
+
+For convenience, there are two options to create properly formatted commits:
+
+1. The `bff llmCommit` command leverages automatic analysis to prepare your
+   commit:
+
+```bash
+# Run the automated commit helper with optional arguments
+bff llmCommit [title] [summary] [test_plan]
+
+# This command will:
+# 1. Format your code with bff f
+# 2. Generate a diff file 
+# 3. Analyze changes to identify logical commits
+# 4. Create a properly formatted github, sapling, sl, or bff commit
+# 5. Split commits into logical units when possible
+```
+
+Note: This command is primarily designed for automated use by agents and
+requires minimal interaction.
+
+2. Alternatively, a traditional commit helper script is available at
+   `build/commit.sh`:
+
+```bash
+# Run the commit helper script
+bash build/commit.sh
+
+# This script will:
+# 1. Format your code with bff f
+# 2. Generate a diff file
+# 3. Open the diff for review
+# 4. Prompt for commit message details
+# 5. Create a properly formatted github, sapling, sl, or bff commit
+```
+
+You can use either of these options to streamline the commit process while
+ensuring all steps are followed correctly.
 
 ### BFF Integration with Sapling
 
@@ -156,6 +432,45 @@ Content Foundry uses GraphQL for its API layer:
 
 - Schema is defined in `packages/graphql/types/`
 - Generated schema available at `packages/graphql/__generated__/schema.graphql`
+
+### Context Usage in Resolvers
+
+GraphQL resolvers in Content Foundry use a context object (`ctx`) to access
+models and data. This pattern ensures proper access control and consistent data
+management:
+
+```typescript
+// Example resolver function
+resolve: (async (parent, args, ctx) => {
+  // Use ctx.find to get a model by ID
+  const model = await ctx.find(ModelClass, id);
+
+  // Use ctx.findX for required models (throws if not found)
+  const requiredModel = await ctx.findX(ModelClass, id);
+
+  // Access current user
+  const currentUser = await ctx.findCurrentViewer();
+
+  // For collections with items, use ctx to retrieve the parent first
+  const collection = await ctx.findX(CollectionClass, parent.id);
+  const items = collection.props.items || [];
+
+  return result;
+});
+```
+
+Key context methods:
+
+- `ctx.find(Class, id)`: Find an object by ID (returns null if not found)
+- `ctx.findX(Class, id)`: Find an object by ID (throws error if not found)
+- `ctx.findCurrentUser()`: Get the current authenticated user
+- `ctx.login()`, `ctx.register()`: Authentication methods
+
+This pattern ensures:
+
+1. Proper access control through the current viewer
+2. Consistent data loading and caching
+3. Type safety through the database model classes
 
 ## Building the Application
 
@@ -310,3 +625,58 @@ committed.
 - **Sapling SCM**: Version control with commands like `sl status`, `sl commit`,
   etc.
 - **Nix**: Environment management system for reproducible builds
+
+## Common Type Errors
+
+### String vs BfGid Type Mismatch
+
+A common error when working with the Content Foundry database layer occurs when
+trying to use string IDs directly with collection caches or database lookups:
+
+```
+TS2345 [ERROR]: Argument of type 'string' is not assignable to parameter of type 'BfGid'.
+  Type 'string' is not assignable to type '{ readonly [__nominal__type]: "BfGid"; }'.
+```
+
+#### Why This Happens
+
+Content Foundry uses a nominal typing system for IDs to prevent accidental
+mix-ups between different types of IDs. The `BfGid` type is a branded string,
+which means it's a string with an additional type property to distinguish it
+from regular strings.
+
+When using collection lookups or database queries, you must convert string IDs
+to `BfGid` using the `toBfGid` function:
+
+```typescript
+// Incorrect - will cause type error
+const collection = collectionsCache.get("collection-id");
+
+// Correct - converts string to BfGid
+const collection = collectionsCache.get(toBfGid("collection-id"));
+```
+
+#### Content Collection ID Format
+
+Content collections follow a specific naming pattern:
+
+- Collections are created with IDs like: `collection-content-marketing`
+- But code might try to access with short names like: `collection-marketing`
+
+This naming mismatch, combined with the BfGid type requirement, causes common
+errors.
+
+#### How to Fix
+
+Always use the `toBfGid` function when passing IDs to database functions:
+
+```typescript
+import { toBfGid } from "packages/bfDb/classes/BfNodeBase.ts";
+
+// Convert string ID to BfGid before using with database methods
+const collectionId = toBfGid("collection-content-marketing");
+const collection = await ctx.find(BfContentCollection, collectionId);
+```
+
+For content collections specifically, ensure you're using the full ID pattern
+that includes the content path prefix.

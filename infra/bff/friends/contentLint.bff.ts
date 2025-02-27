@@ -31,10 +31,11 @@ export async function contentLint(
       const filePath = join(Deno.cwd(), entry.path);
       let content = await Deno.readTextFile(filePath);
 
-      if (!content.startsWith("---")) {
+      if (!content.trim().startsWith("---")) {
         if (shouldFix) {
+          // Add default frontmatter to the beginning of the file
           content =
-            `---\ntitle: "Untitled"\nauthor: "Unknown"\nsummary: "No summary provided"\ncta: "Read more"\n---\n${content}`;
+            `---\ntitle: "Untitled"\nauthor: "Unknown"\nsummary: "No summary provided"\ncta: "Read more"\n---\n\n${content}`;
           await Deno.writeTextFile(filePath, content);
           logger.info(`✅ ${entry.path}: Added missing front matter`);
           continue;
@@ -42,6 +43,27 @@ export async function contentLint(
         logger.error(`❌ ${entry.path}: No front matter found`);
         hasErrors = true;
         continue;
+      }
+
+      // Check if frontmatter is properly closed (has second ---)
+      const frontmatterMatches = content.match(/^---\n([\s\S]*?)\n---/);
+      if (!frontmatterMatches && content.startsWith("---")) {
+        if (shouldFix) {
+          // Try to fix malformed frontmatter - add closing delimiter
+          const updatedContent = content.replace(
+            /^---([\s\S]*?)(\n\n|\n)/,
+            "---$1\n---\n\n",
+          );
+          await Deno.writeTextFile(filePath, updatedContent);
+          logger.info(`✅ ${entry.path}: Fixed malformed front matter`);
+          content = updatedContent;
+        } else {
+          logger.error(
+            `❌ ${entry.path}: Malformed front matter (missing closing delimiter)`,
+          );
+          hasErrors = true;
+          continue;
+        }
       }
 
       const { attrs, body } = extractYaml(content);
