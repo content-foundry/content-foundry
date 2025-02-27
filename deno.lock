@@ -38,6 +38,7 @@
     "jsr:@std/testing@^1.0.9": "1.0.9",
     "jsr:@std/toml@^1.0.1": "1.0.2",
     "jsr:@std/yaml@^1.0.5": "1.0.5",
+    "npm:@anthropic-ai/claude-code@~0.2.18": "0.2.18",
     "npm:@hexagon/base64@^1.1.27": "1.1.28",
     "npm:@hyperdx/browser@~0.21.2": "0.21.2_@hyperdx+otel-web@0.16.3__@opentelemetry+api@1.9.0",
     "npm:@hyperdx/deno@^0.0.4": "0.0.4_@opentelemetry+api@1.6.0_@opentelemetry+api-logs@0.43.0",
@@ -241,6 +242,15 @@
     }
   },
   "npm": {
+    "@anthropic-ai/claude-code@0.2.18": {
+      "integrity": "sha512-Yx3SsVQd3VKDHGswAvPpoT/JqHhJj6B+CFSshb0+rI6KG3Nn5Fv3zQdU8XWfAZwLnVZrUjSAO0JcVqoU+6f5Eg==",
+      "dependencies": [
+        "@img/sharp-darwin-arm64",
+        "@img/sharp-linux-arm",
+        "@img/sharp-linux-x64",
+        "@img/sharp-win32-x64"
+      ]
+    },
     "@asamuzakjp/css-color@2.8.3_@csstools+css-parser-algorithms@3.0.4__@csstools+css-tokenizer@3.0.3_@csstools+css-tokenizer@3.0.3": {
       "integrity": "sha512-GIc76d9UI1hCvOATjZPyHFmE5qhRccp3/zGfMPapK3jBi+yocEzp6BBB0UnfRYP9NP4FANqUZYb0hnfs3TM3hw==",
       "dependencies": [
@@ -547,6 +557,36 @@
         "shimmer",
         "web-vitals@3.5.2"
       ]
+    },
+    "@img/sharp-darwin-arm64@0.33.5": {
+      "integrity": "sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==",
+      "dependencies": [
+        "@img/sharp-libvips-darwin-arm64"
+      ]
+    },
+    "@img/sharp-libvips-darwin-arm64@1.0.4": {
+      "integrity": "sha512-XblONe153h0O2zuFfTAbQYAX2JhYmDHeWikp1LM9Hul9gVPjFY427k6dFEcOL72O01QxQsWi761svJ/ev9xEDg=="
+    },
+    "@img/sharp-libvips-linux-arm@1.0.5": {
+      "integrity": "sha512-gvcC4ACAOPRNATg/ov8/MnbxFDJqf/pDePbBnuBDcjsI8PssmjoKMAz4LtLaVi+OnSb5FK/yIOamqDwGmXW32g=="
+    },
+    "@img/sharp-libvips-linux-x64@1.0.4": {
+      "integrity": "sha512-MmWmQ3iPFZr0Iev+BAgVMb3ZyC4KeFc3jFxnNbEPas60e1cIfevbtuyf9nDGIzOaW9PdnDciJm+wFFaTlj5xYw=="
+    },
+    "@img/sharp-linux-arm@0.33.5": {
+      "integrity": "sha512-JTS1eldqZbJxjvKaAkxhZmBqPRGmxgu+qFKSInv8moZ2AmT5Yib3EQ1c6gp493HvrvV8QgdOXdyaIBrhvFhBMQ==",
+      "dependencies": [
+        "@img/sharp-libvips-linux-arm"
+      ]
+    },
+    "@img/sharp-linux-x64@0.33.5": {
+      "integrity": "sha512-opC+Ok5pRNAzuvq1AG0ar+1owsu842/Ab+4qvU879ippJBHvyY5n2mxF1izXqkPYlGuP/M556uh53jRLJmzTWA==",
+      "dependencies": [
+        "@img/sharp-libvips-linux-x64"
+      ]
+    },
+    "@img/sharp-win32-x64@0.33.5": {
+      "integrity": "sha512-MpY/o8/8kj+EcnxwvrP4aTJSWw/aZ7JIGR4aBeZkZw5B7/Jn+tY9/VNwtcoGmdT7GfggGIU4kygOMSbYnOrAbg=="
     },
     "@isograph/compiler@0.0.0-main-a5a81588": {
       "integrity": "sha512-fBHLwE12skwW0h7ffLSBV6y8dFUZcoIW6jOXYjwValJnf/0qHAs+RCuoZa7Ek/O2g5j6UHyJazl/hKmRUltwrQ=="
@@ -2776,11 +2816,13 @@
       "jsr:@std/http@^1.0.12",
       "jsr:@std/path@^1.0.8",
       "jsr:@std/testing@^1.0.9",
+      "jsr:@std/yaml@^1.0.5",
       "npm:@types/react@19",
       "npm:react@*"
     ],
     "packageJson": {
       "dependencies": [
+        "npm:@anthropic-ai/claude-code@~0.2.18",
         "npm:@hyperdx/browser@~0.21.2",
         "npm:@hyperdx/deno@^0.0.4",
         "npm:@isograph/compiler@0.0.0-main-a5a81588",

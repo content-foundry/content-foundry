@@ -14,6 +14,7 @@
     "@std/http": "jsr:@std/http@^1.0.12",
     "@std/path": "jsr:@std/path@^1.0.8",
     "@std/testing": "jsr:@std/testing@^1.0.9",
+    "@std/yaml": "jsr:@std/yaml@^1.0.5",
 
     "experimental/": "./experimental/",
     "infra/": "./infra/",

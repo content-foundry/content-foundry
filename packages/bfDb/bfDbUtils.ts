@@ -3,6 +3,12 @@ import { getLogger } from "packages/logger.ts";
 import { neon } from "@neondatabase/serverless";
 import { BfErrorDb } from "packages/bfDb/classes/BfErrorDb.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import { toBfGid } from "packages/bfDb/classes/BfNodeIds.ts";
+import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
+import { BfContentCollection } from "packages/bfDb/models/BfContentCollection.ts";
+import { BfContentItem } from "packages/bfDb/models/BfContentItem.ts";
+import * as path from "@std/path";
 
 const logger = getLogger(import.meta);
 
@@ -216,3 +222,194 @@ export async function cleanModelsExcept(
     } from nodes and edges`,
   );
 }
+
+/**
+ * ContentUtils: Utility functions for content collections and items
+ */
+export class ContentUtils {
+  /**
+   * Get content collection by path
+   */
+  static async getCollectionByPath(
+    cv: BfCurrentViewer,
+    dirPath: string,
+  ): Promise<BfContentCollection | null> {
+    // Ensure path is absolute
+    const absolutePath = path.isAbsolute(dirPath) 
+      ? dirPath 
+      : path.resolve(Deno.cwd(), dirPath);
+    
+    try {
+      // Convert path to BfGid and find the collection
+      const collectionsCache = await BfContentCollection.getCollectionsCache(cv);
+      const collection = collectionsCache.get(toBfGid(absolutePath));
+      
+      if (collection) {
+        return collection;
+      }
+      
+      logger.info(`Collection not found for path: ${absolutePath}`);
+      return null;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`Error getting collection by path: ${errorMessage}`);
+      return null;
+    }
+  }
+
+  /**
+   * Get content item by path
+   */
+  static async getItemByPath(
+    cv: BfCurrentViewer,
+    filePath: string,
+  ): Promise<BfContentItem | null> {
+    // Ensure path is absolute
+    const absolutePath = path.isAbsolute(filePath) 
+      ? filePath 
+      : path.resolve(Deno.cwd(), filePath);
+    
+    try {
+      // Convert path to BfGid and find the item
+      const itemsCache = await BfContentItem.getItemsCache(cv);
+      const item = itemsCache.get(toBfGid(absolutePath));
+      
+      if (item) {
+        return item;
+      }
+      
+      logger.info(`Item not found for path: ${absolutePath}`);
+      return null;
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`Error getting item by path: ${errorMessage}`);
+      return null;
+    }
+  }
+
+  /**
+   * Find a collection by slug path (e.g., "blog" or "documentation/community")
+   */
+  static async findCollectionBySlugPath(
+    cv: BfCurrentViewer, 
+    slugPath: string,
+  ): Promise<BfContentCollection | null> {
+    // Start from the root collection
+    const collectionsCache = await BfContentCollection.getCollectionsCache(cv);
+    const rootPath = path.resolve(Deno.cwd(), "content");
+    const rootCollection = collectionsCache.get(toBfGid(rootPath));
+    
+    if (!rootCollection) {
+      logger.warn("Root collection not found");
+      return null;
+    }
+    
+    if (slugPath === "" || slugPath === "/") {
+      return rootCollection;
+    }
+    
+    // Split the path into segments
+    const segments = slugPath.split("/").filter(Boolean);
+    let currentCollection = rootCollection;
+    
+    // Traverse the path
+    for (const segment of segments) {
+      const subcollections = await currentCollection.getSubcollections();
+      const matchingCollection = subcollections.find(c => c.props.slug === segment);
+      
+      if (!matchingCollection) {
+        logger.info(`No subcollection found with slug '${segment}' in ${currentCollection.props.path}`);
+        return null;
+      }
+      
+      currentCollection = matchingCollection;
+    }
+    
+    return currentCollection;
+  }
+
+  /**
+   * Get the entire content tree starting from a specific collection
+   */
+  static async getContentTree(
+    cv: BfCurrentViewer,
+    startCollection?: BfContentCollection,
+  ): Promise<ContentTreeNode> {
+    // If no start collection is provided, use the root collection
+    if (!startCollection) {
+      const rootPath = path.resolve(Deno.cwd(), "content");
+      const rootCollection = await this.getCollectionByPath(cv, rootPath);
+      
+      if (!rootCollection) {
+        throw new Error("Root collection not found");
+      }
+      
+      startCollection = rootCollection;
+    }
+    
+    // Build the tree recursively
+    return this.buildContentTreeNode(cv, startCollection);
+  }
+
+  /**
+   * Helper method to build a content tree node recursively
+   */
+  private static async buildContentTreeNode(
+    cv: BfCurrentViewer,
+    collection: BfContentCollection,
+  ): Promise<ContentTreeNode> {
+    const subcollections = await collection.getSubcollections();
+    const items = await collection.getContentItems();
+    
+    // Build child collection nodes recursively
+    const childCollections: ContentTreeNode[] = [];
+    for (const subcollection of subcollections) {
+      const node = await this.buildContentTreeNode(cv, subcollection);
+      childCollections.push(node);
+    }
+    
+    // Build the tree node for this collection
+    return {
+      type: "collection",
+      collection,
+      id: collection.metadata.bfGid,
+      name: collection.props.name,
+      slug: collection.props.slug,
+      path: collection.props.path,
+      children: childCollections,
+      items: items.map(item => ({
+        type: "item",
+        item,
+        id: item.metadata.bfGid,
+        name: item.title,
+        slug: item.props.slug,
+        filePath: item.filePath,
+        fileType: item.fileType,
+      })),
+    };
+  }
+}
+
+/**
+ * Types for the content tree structure
+ */
+export type ContentTreeItemNode = {
+  type: "item";
+  item: BfContentItem;
+  id: BfGid;
+  name: string;
+  slug: string;
+  filePath: string;
+  fileType: string;
+};
+
+export type ContentTreeNode = {
+  type: "collection";
+  collection: BfContentCollection;
+  id: BfGid;
+  name: string;
+  slug: string;
+  path: string;
+  children: ContentTreeNode[];
+  items: ContentTreeItemNode[];
+};
