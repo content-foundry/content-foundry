@@ -1,5 +1,4 @@
 import { PageUIDemo } from "packages/app/pages/PageUIDemo.tsx";
-import type { IsographEntrypoint } from "@isograph/react";
 import { FinalCutProXML } from "packages/tools/FinalCutProXML.tsx";
 
 function fileHandlerFactory(url: string) {
@@ -23,8 +22,7 @@ export const appRoutes: RouteMap = new Map([
   ["/fcp", { Component: FinalCutProXML }],
 ]);
 
-// deno-lint-ignore no-explicit-any
-export type IsographRoute = IsographEntrypoint<any, RouteEntrypoint>;
+export type IsographRoute = BfIsographEntrypoint;
 
 export type RouteEntrypoint = {
   Body: React.FC | null | undefined;
@@ -45,7 +43,9 @@ import {
   entrypointTwitterIdeatorVoice,
   entrypointTwitterIdeatorWorkshop,
 } from "packages/app/__generated__/builtRoutes.ts";
+import type { BfIsographEntrypoint } from "lib/BfIsographEntrypoint.ts";
 
+// @ts-ignore this errors only at lsp side, not compile side?
 export const loggedInAppRoutes = new Map<string, IsographRoute>([
   ["/formatter", entrypointFormatter],
   ["/formatter/editor/:editorSlug?", entrypointFormatterEditor],
@@ -60,6 +60,7 @@ export const loggedInAppRoutes = new Map<string, IsographRoute>([
   ["/twitter/compose", entrypointTwitterIdeatorCompose],
 ]);
 
+// @ts-ignore this errors only at lsp side, not compile side?
 export const isographAppRoutes = new Map<string, IsographRoute>([
   ["/", entrypointHome],
   ["/login", entrypointContentFoundryApp],

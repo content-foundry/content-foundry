@@ -2,11 +2,7 @@
 
 import React from "react";
 import { renderToReadableStream } from "react-dom/server";
-import {
-  appRoutes,
-  isographAppRoutes,
-  type RouteEntrypoint,
-} from "packages/app/routes.ts";
+import { appRoutes, isographAppRoutes } from "packages/app/routes.ts";
 import { ServerRenderedPage } from "packages/app/server/components/ServerRenderedPage.tsx";
 import { AppRoot } from "packages/app/AppRoot.tsx";
 import { serveDir } from "@std/http";
@@ -17,21 +13,19 @@ import { getIsographEnvironment } from "packages/app/server/isographEnvironment.
 
 import { getLogger } from "packages/logger.ts";
 import { AppEnvironmentProvider } from "packages/app/contexts/AppEnvironmentContext.tsx";
-import {
-  type IsographEntrypoint,
-  useLazyReference,
-  useResult,
-} from "@isograph/react";
+import { useLazyReference, useResult } from "@isograph/react";
 import { matchRouteWithParams } from "packages/app/contexts/RouterContext.tsx";
 import { AssemblyAI } from "assemblyai";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
+import type { BfIsographEntrypoint } from "lib/BfIsographEntrypoint.ts"; // Import added here
 
 const logger = getLogger(import.meta);
 
 function IsographHeaderComponent(
-  // deno-lint-ignore no-explicit-any
-  { entrypoint }: { entrypoint: IsographEntrypoint<any, RouteEntrypoint> },
+  { entrypoint }: {
+    entrypoint: BfIsographEntrypoint;
+  },
 ) {
   const { fragmentReference } = useLazyReference(entrypoint, {});
   const result = useResult(fragmentReference);
@@ -41,8 +35,7 @@ function IsographHeaderComponent(
 
 function getIsographHeaderComponent(
   environment: ServerProps,
-  // deno-lint-ignore no-explicit-any
-  entrypoint: IsographEntrypoint<any, RouteEntrypoint>,
+  entrypoint: BfIsographEntrypoint,
 ) {
   return function IsographHeader() {
     return (
