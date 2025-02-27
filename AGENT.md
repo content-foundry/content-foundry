@@ -245,6 +245,145 @@ Guidelines for splitting commits:
 
 Example commit message:
 
+## Isograph
+
+Isograph is a key technology used in Content Foundry for data fetching and
+component rendering. It provides a type-safe way to declare data dependencies
+for React components and efficiently fetch that data from the GraphQL API.
+
+### What is Isograph?
+
+Isograph is a framework that integrates GraphQL with React components, allowing
+you to:
+
+1. Declare data requirements directly inside component definitions
+2. Automatically generate TypeScript types for your data
+3. Efficiently manage data fetching and caching
+4. Create reusable component fragments
+
+### How Isograph Works in Content Foundry
+
+In Content Foundry, Isograph components are defined using the `iso` function
+imported from the generated isograph module:
+
+```typescript
+import { iso } from "packages/app/__generated__/__isograph/iso.ts";
+
+export const MyComponent = iso(`
+  field TypeName.FieldName @component {
+    id
+    title
+    description
+    items {
+      id
+      name
+    }
+  }
+`)(function MyComponent({ data }) {
+  // data is typed based on the GraphQL fragment above
+  return <div>{data.title}</div>;
+});
+```
+
+The `iso` function takes a GraphQL fragment string that defines what data the
+component needs, and returns a higher-order function that wraps your component,
+providing the requested data via props.
+
+### Key Concepts
+
+#### Field Definitions
+
+Components declare their data needs using GraphQL field definitions:
+
+- `field TypeName.FieldName @component` - Creates a component field
+- `entrypoint TypeName.FieldName` - Creates an entry point for routing
+
+#### Component Structure
+
+Isograph components follow this pattern:
+
+1. Import the `iso` function
+2. Define the GraphQL fragment with fields needed
+3. Create a function component that receives the data
+4. Apply the iso HOC to the component
+
+#### Important Note on Isograph Component Usage
+
+One of the key benefits of Isograph is that you **don't need to explicitly
+import** components that are referenced in your GraphQL fragments. The Isograph
+system automatically makes these components available through the `data` prop.
+
+For example, if your GraphQL fragment includes a field like:
+
+```typescript
+// In ParentComponent.tsx
+export const ParentComponent = iso(`
+  field TypeName.ParentComponent @component {
+    childItems {
+      id
+      ChildComponent  // This references another Isograph component
+    }
+  }
+`)(function ParentComponent({ data }) {
+  return (
+    <div>
+      {data.childItems.map((item) => (
+        // The ChildComponent is automatically available as item.ChildComponent
+        <item.ChildComponent key={item.id} />
+      ))}
+    </div>
+  );
+});
+```
+
+The `ChildComponent` becomes accessible directly through the data object without
+explicit imports. This creates a tightly integrated system where the data
+structure and component structure align perfectly.
+
+#### Environment Setup
+
+Content Foundry sets up the Isograph environment in
+`packages/app/isographEnvironment.ts`:
+
+- Creates an Isograph store
+- Configures network requests to the GraphQL endpoint
+- Sets up caching
+
+### Development Workflow
+
+1. **Define Components**: Create components with their data requirements
+2. **Build**: Run `bff build` to generate Isograph types
+3. **Use Components**: Import and use the components in your app
+
+### Fragment Reader Components
+
+For dynamic component rendering, Content Foundry uses
+`BfIsographFragmentReader`:
+
+```typescript
+<BfIsographFragmentReader
+  fragmentReference={someFragmentReference}
+  networkRequestOptions={{
+    suspendIfInFlight: true,
+    throwOnNetworkError: true,
+  }}
+/>;
+```
+
+This utility component helps render Isograph fragments with proper error
+handling and loading states.
+
+### Common Isograph Patterns
+
+1. **Component Fields**: Use `field TypeName.ComponentName @component` for
+   reusable components
+2. **Entrypoints**: Use `entrypoint TypeName.EntrypointName` for route entry
+   points
+3. **Mutations**: Use `entrypoint Mutation.MutationName` for GraphQL mutations
+
+The Isograph compiler automatically generates TypeScript types and utilities in
+`packages/app/__generated__/__isograph/`.
+
 ```
 Fix content collection ID lookup and add BfGid type documentation
 
@@ -324,7 +463,39 @@ The application uses a custom database abstraction layer:
 
 - Core models in `packages/bfDb/coreModels/`
 - Business models in `packages/bfDb/models/`
-- PostgreSQL via Neon for database storage
+- Backend implementations in `packages/bfDb/backend/`
+  - PostgreSQL backend (default) using Neon
+  - SQLite backend (alternative) for local development
+- Configure backend with environment variable `USE_SQLITE_BACKEND=true`
+
+#### Database Backend Architecture
+
+Content Foundry's database layer supports multiple backends through a clean abstraction:
+
+- `DatabaseBackend` interface defines the core methods required for any backend implementation:
+  - `initialize()`: Set up necessary tables and indexes
+  - `putItem()`: Insert or update items
+  - `getItem()`: Retrieve an item by ID
+  - `queryItems()`: Query items with filters
+  - `deleteItem()`: Remove an item from the database
+
+- Concrete implementations:
+  - `PostgresBackend`: Uses Neon serverless Postgres
+  - `SqliteBackend`: Uses SQLite for local development or testing
+
+#### Switching Between Backends
+
+To use the SQLite backend for development or testing:
+
+```bash
+# Set environment variable to use SQLite backend
+export USE_SQLITE_BACKEND=true
+
+# Optionally, set the SQLite database file path
+export SQLITE_DB_PATH="./data/bfdb.sqlite"
+```
+
+The default backend is PostgreSQL, which requires a valid `DATABASE_URL` environment variable pointing to a Neon or compatible PostgreSQL database.
 
 ### GraphQL API
 
@@ -365,6 +536,38 @@ Key context methods:
 - `ctx.findX(Class, id)`: Find an object by ID (throws error if not found)
 - `ctx.findCurrentUser()`: Get the current authenticated user
 - `ctx.login()`, `ctx.register()`: Authentication methods
+
+### Database Backends
+
+Content Foundry supports multiple database backends through an abstraction layer:
+
+#### Backend Architecture
+
+- Database operations are abstracted through the `DatabaseBackend` interface
+- The database backend is selected based on environment configuration
+- Both PostgreSQL and SQLite backends implement the same interface
+
+#### Switching Database Backends
+
+To switch from the default PostgreSQL backend to SQLite:
+
+```bash
+# Set environment variable to use SQLite backend
+export USE_SQLITE_BACKEND=true
+
+# Optionally, set the SQLite database file path
+export SQLITE_DB_PATH="./data/bfdb.sqlite"
+```
+
+SQLite provides a lightweight alternative that doesn't require a remote database connection, making it ideal for local development or testing.
+
+#### Implementing Custom Backends
+
+The database abstraction makes it easy to add new backend implementations:
+
+1. Implement the `DatabaseBackend` interface in a new class
+2. Add backend selection logic to the `getBackend()` function in `bfDb.ts`
+3. Use environment variables to control backend selection
 
 ### Additional Modules
 
@@ -591,16 +794,31 @@ The `@std/assert` module provides all assertion functions for testing, while
 `@std/testing` contains other testing utilities like mocks and BDD testing
 frameworks.
 
+#### Using Optional Chaining for Nullable Values
+
+When working with potentially null or undefined values, use the optional
+chaining operator (`?.`) to safely access properties or methods:
+
+```typescript
+// PROBLEMATIC - TypeScript will warn about possible null/undefined
+<Component key={item.id} /> // Error: 'item' is possibly 'null'
+
+// BETTER - Using conditional rendering with && and Using optional chaining operator
+{item && <Component key={item?.id} />}
+
+The optional chaining operator (`?.`) short-circuits if the value before it is `null` or `undefined`, returning `undefined` instead of throwing an error.
+
 #### String vs BfGid Type Mismatch
 
 A common error when working with the Content Foundry database layer occurs when
 trying to use string IDs directly with collection caches or database lookups:
-
-```
-TS2345 [ERROR]: Argument of type 'string' is not assignable to parameter of type 'BfGid'.
-  Type 'string' is not assignable to type '{ readonly [__nominal__type]: "BfGid"; }'.
 ```
 
+TS2345 [ERROR]: Argument of type 'string' is not assignable to parameter of type
+'BfGid'. Type 'string' is not assignable to type '{ readonly [__nominal__type]:
+"BfGid"; }'.
+
+````
 ##### Why This Happens
 
 Content Foundry uses a nominal typing system for IDs to prevent accidental
@@ -617,7 +835,7 @@ const collection = collectionsCache.get("collection-id");
 
 // Correct - converts string to BfGid
 const collection = collectionsCache.get(toBfGid("collection-id"));
-```
+````
 
 ##### Content Collection ID Format
 
@@ -654,3 +872,4 @@ that includes the content path prefix.
 6. **Use typed interfaces** for better reliability
 7. **Use `deno add`** for managing dependencies
 8. **Leverage Nix** for consistent environments
+9. **Use project root-relative paths** in imports and file references, not relative to the current file. For example, use `import { X } from "packages/web/component.ts"` instead of `import { X } from "../web/component.ts"`.
