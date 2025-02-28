@@ -20,16 +20,15 @@ export type BfMetadataBase = {
 };
 
 export type BfNodeCache<
-  TProps extends BfNodeBaseProps = DefaultProps,
+  TProps extends BfNodeBaseProps = BfNodeBaseProps,
   T extends typeof BfNodeBase<TProps> = typeof BfNodeBase,
 > = Map<
   BfGid | string,
   InstanceType<T>
 >;
-type DefaultProps = Record<string, never>;
 
 export class BfNodeBase<
-  TProps extends BfNodeBaseProps = DefaultProps,
+  TProps extends BfNodeBaseProps = BfNodeBaseProps,
   TMetadata extends BfMetadataBase = BfMetadataBase,
 > {
   __typename = this.constructor.name;
