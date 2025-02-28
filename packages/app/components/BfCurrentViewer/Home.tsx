@@ -5,19 +5,13 @@ import { useFeatureFlagEnabled } from "packages/app/hooks/useFeatureFlagHooks.ts
 export const Home = iso(`
   field BfCurrentViewer.Home @component {
     __typename
-    # Isograph bug preventing string literals
     contentCollection(slug: "marketing") {
-      items {
-            title
-            body
-            href
-      }
+      ContentCollection
     }
   }
 `)(function Home({ data }) {
   // Extract content items from the data
   const collection = data?.contentCollection;
-  const contentItems = collection?.items || [];
   const showExtendedContent = useFeatureFlagEnabled("show_extended_content");
 
   return (
@@ -36,26 +30,7 @@ export const Home = iso(`
       <div className="loginBox">
         {collection && showExtendedContent
           ? (
-            <div className="content-collection">
-              <div className="content-items">
-                {contentItems.length > 0
-                  ? (
-                    contentItems.map((item, index) => (
-                      <div key={index} className="content-item">
-                        <h3 className="content-item-title">{item?.title}</h3>
-                        <p className="content-item-body">{item?.body}</p>
-                        <a
-                          href={item?.href ?? ""}
-                          className="content-item-link"
-                        >
-                          Read more
-                        </a>
-                      </div>
-                    ))
-                  )
-                  : <p>No content items available.</p>}
-              </div>
-            </div>
+            <data.contentCollection.ContentCollection />
           )
           : <p>Coming soon.</p>}
       </div>

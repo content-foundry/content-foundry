@@ -1,6 +1,7 @@
 import type {ComponentReaderArtifact, ExtractSecondParam, ReaderAst } from '@isograph/react';
 import { BfCurrentViewer__Home__param } from './param_type.ts';
 import { Home as resolver } from '../../../../components/BfCurrentViewer/Home.tsx';
+import BfContentCollection__ContentCollection__resolver_reader from '../../BfContentCollection/ContentCollection/resolver_reader.ts';
 
 const readerAst: ReaderAst<BfCurrentViewer__Home__param> = [
   {
@@ -24,35 +25,11 @@ const readerAst: ReaderAst<BfCurrentViewer__Home__param> = [
     isUpdatable: false,
     selections: [
       {
-        kind: "Linked",
-        fieldName: "items",
-        alias: null,
+        kind: "Resolver",
+        alias: "ContentCollection",
         arguments: null,
-        condition: null,
-        isUpdatable: false,
-        selections: [
-          {
-            kind: "Scalar",
-            fieldName: "title",
-            alias: null,
-            arguments: null,
-            isUpdatable: false,
-          },
-          {
-            kind: "Scalar",
-            fieldName: "body",
-            alias: null,
-            arguments: null,
-            isUpdatable: false,
-          },
-          {
-            kind: "Scalar",
-            fieldName: "href",
-            alias: null,
-            arguments: null,
-            isUpdatable: false,
-          },
-        ],
+        readerArtifact: BfContentCollection__ContentCollection__resolver_reader,
+        usedRefetchQueries: [],
       },
     ],
   },
