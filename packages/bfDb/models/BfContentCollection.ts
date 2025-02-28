@@ -303,12 +303,16 @@ class BfContentCollection extends BfNodeBase<BfContentCollectionProps> {
       return collection as unknown as T;
     }
 
-    // If we're looking for "collection-marketing", try "collection-content-marketing"
-    if (id === "collection-marketing") {
+    // Handle short names: if "collection-marketing", try "collection-content-marketing"
+    const idStr = id.toString();
+    if (idStr.startsWith("collection-") && !idStr.startsWith("collection-content-")) {
+      // Extract the part after "collection-"
+      const shortName = idStr.substring("collection-".length);
+      const alternativeId = toBfGid(`collection-content-${shortName}`);
       logger.info(
-        `Attempting to find collection-marketing as collection-content-marketing`,
+        `Attempting to find ${idStr} as ${alternativeId}`,
       );
-      const alternativeId = toBfGid("collection-content-marketing");
+      
       const alternativeCollection = collectionsCache.get(alternativeId);
       if (alternativeCollection) {
         logger.info(`Found collection using alternative ID: ${alternativeId}`);
