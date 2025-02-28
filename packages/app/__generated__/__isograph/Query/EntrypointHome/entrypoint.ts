@@ -11,10 +11,9 @@ const queryText = 'query EntrypointHome  {\
     __typename,\
     contentCollection____slug___s_marketing: contentCollection(slug: "marketing") {\
       id,\
+      __typename,\
       items {\
         id,\
-        body,\
-        href,\
         title,\
       },\
     },\
@@ -62,6 +61,11 @@ const normalizationAst: NormalizationAst = {
               arguments: null,
             },
             {
+              kind: "Scalar",
+              fieldName: "__typename",
+              arguments: null,
+            },
+            {
               kind: "Linked",
               fieldName: "items",
               arguments: null,
@@ -70,16 +74,6 @@ const normalizationAst: NormalizationAst = {
                 {
                   kind: "Scalar",
                   fieldName: "id",
-                  arguments: null,
-                },
-                {
-                  kind: "Scalar",
-                  fieldName: "body",
-                  arguments: null,
-                },
-                {
-                  kind: "Scalar",
-                  fieldName: "href",
                   arguments: null,
                 },
                 {
