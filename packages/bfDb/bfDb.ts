@@ -11,6 +11,7 @@ import type {
 } from "graphql-relay";
 import type { BfDbMetadata } from "packages/bfDb/backend/DatabaseBackend.ts";
 import { closeBackend, getBackend } from "packages/bfDb/bfDbBackend.ts";
+import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 
 const logger = getLogger(import.meta);
 
@@ -525,4 +526,68 @@ export async function CLEAR_FOR_DEBUGGING() {
 export async function bfCloseConnection(): Promise<void> {
   logger.debug("Closing database connection");
   await closeBackend();
+}
+
+// Modify or add this function to the bfDb.ts file
+// This function ensures database operations are properly isolated,
+// especially useful for testing scenarios
+export async function withIsolatedDb<T>(
+  operation: () => Promise<T>,
+  options: {
+    forceBackendType?: string;
+    customDbPath?: string;
+  } = {},
+): Promise<T> {
+  // Store original environment values
+  const originalDbPath = getConfigurationVariable("SQLITE_DB_PATH");
+  const originalBackend = getConfigurationVariable("FORCE_DB_BACKEND");
+
+  try {
+    // Set temporary environment values if provided
+    if (options.customDbPath) {
+      Deno.env.set("SQLITE_DB_PATH", options.customDbPath);
+    }
+
+    if (options.forceBackendType) {
+      Deno.env.set("FORCE_DB_BACKEND", options.forceBackendType);
+    }
+
+    // Make sure any existing connection is closed
+    await bfCloseConnection();
+
+    // Run the operation with fresh connection
+    return await operation();
+  } finally {
+    // Close the connection
+    await bfCloseConnection();
+
+    // Restore original environment values
+    if (options.customDbPath) {
+      if (originalDbPath) {
+        Deno.env.set("SQLITE_DB_PATH", originalDbPath);
+      } else {
+        Deno.env.delete("SQLITE_DB_PATH");
+      }
+    }
+
+    if (options.forceBackendType) {
+      if (originalBackend) {
+        Deno.env.set("FORCE_DB_BACKEND", originalBackend);
+      } else {
+        Deno.env.delete("FORCE_DB_BACKEND");
+      }
+    }
+
+    // If using a custom SQLite path, try to clean up the file
+    if (options.customDbPath && options.forceBackendType === "sqlite") {
+      try {
+        await Deno.remove(options.customDbPath);
+        logger.debug(
+          `Removed temporary SQLite database: ${options.customDbPath}`,
+        );
+      } catch {
+        // Ignore errors if file doesn't exist or can't be removed
+      }
+    }
+  }
 }
