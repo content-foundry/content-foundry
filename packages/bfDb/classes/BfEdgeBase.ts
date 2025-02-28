@@ -12,9 +12,12 @@ import { BfErrorNotImplemented } from "packages/BfError.ts";
 
 const logger = getLogger(import.meta);
 
-export type BfEdgeBaseProps = BfNodeBaseProps & {
-  role: string;
-};
+export type BfEdgeBaseProps<T extends BfNodeBaseProps = BfNodeBaseProps> =
+  & BfNodeBaseProps
+  & {
+    role: string;
+  }
+  & T;
 
 export type BfMetadataEdgeBase = BfMetadataBase & {
   /** Source ID */
@@ -36,8 +39,8 @@ export class BfEdgeBase<
    * Creates an instance of BfEdgeBase.
    *
    * @param _currentViewer - The current viewer context
-   * @param _props - The edge properties
-   * @param metadata - Optional partial metadata for the edge
+   * @param _props - The edge properties including role information
+   * @param metadata - Optional partial metadata for the edge including source and target IDs
    */
   constructor(
     protected override _currentViewer: BfCurrentViewer,
@@ -85,6 +88,13 @@ export class BfEdgeBase<
   /**
    * Factory method to create an edge between two nodes.
    * This uses a simpler approach without complex generics to avoid type errors.
+   *
+   * @param cv - The current viewer context
+   * @param sourceNode - The source node to connect from
+   * @param targetNode - The target node to connect to
+   * @param role - Optional role/label for the edge relationship
+   * @param additionalProps - Optional additional properties for the edge
+   * @returns A new BfEdgeBase instance representing the edge
    */
   static createBetweenNodes(
     cv: BfCurrentViewer,
@@ -92,7 +102,7 @@ export class BfEdgeBase<
     targetNode: BfNodeBase,
     role?: string,
     additionalProps?: Record<string, unknown>,
-  ): BfEdgeBase {
+  ): Promise<BfEdgeBase> {
     logger.debug("BfEdgeBase.createBetweenNodes", {
       sourceId: sourceNode.metadata.bfGid,
       sourceClass: sourceNode.metadata.className,
@@ -115,7 +125,7 @@ export class BfEdgeBase<
     } as BfEdgeBaseProps;
 
     // Using the concrete class directly for better type safety
-    return new BfEdgeBase(cv, edgeProps, partialMetadata);
+    return Promise.resolve(new BfEdgeBase(cv, edgeProps, partialMetadata));
   }
 
   /**
@@ -144,7 +154,8 @@ export class BfEdgeBase<
   /**
    * Queries source instances connected to a target node.
    *
-   * @param currentViewer - The current viewer context
+   * @param cv - The current viewer context
+   * @param bfNode - The target node instance
    * @param SourceClass - The class of the source nodes to query
    * @param targetId - The ID of the target node
    * @param propsToQuery - Optional properties to filter the query
@@ -152,12 +163,12 @@ export class BfEdgeBase<
    */
   static querySourceInstances<
     TSourceClass extends typeof BfNodeBase,
-    TThis extends typeof BfEdgeBase,
+    TTargetNode extends BfNodeBase,
     TRequiredProps extends BfEdgeBaseProps = BfEdgeBaseProps,
     TOptionalProps extends Record<string, unknown> = Record<string, unknown>,
   >(
-    this: TThis,
     _cv: BfCurrentViewer,
+    _bfNode: TTargetNode,
     _SourceClass: TSourceClass,
     _targetId: BfGid,
     _propsToQuery: Partial<TRequiredProps & TOptionalProps> = {},
@@ -168,7 +179,8 @@ export class BfEdgeBase<
   /**
    * Queries target instances connected to a source node.
    *
-   * @param currentViewer - The current viewer context
+   * @param cv - The current viewer context
+   * @param bfNode - The source node instance
    * @param TargetClass - The class of the target nodes to query
    * @param sourceId - The ID of the source node
    * @param propsToQuery - Optional properties to filter the query
@@ -176,14 +188,17 @@ export class BfEdgeBase<
    * @returns Promise resolving to an array of target instances
    */
   static queryTargetInstances<
-    TTargetClass extends typeof BfNodeBase,
+    TSourcNode extends BfNodeBase,
+    TTargetProps extends BfNodeBaseProps,
+    TEdgeProps extends BfEdgeBaseProps,
+    TTargetClass extends typeof BfNodeBase<TTargetProps>,
   >(
-    this: typeof BfEdgeBase,
     _cv: BfCurrentViewer,
+    _bfNode: TSourcNode,
     _TargetClass: TTargetClass,
     _sourceId: BfGid,
-    _propsToQuery: Partial<BfEdgeBaseProps & Record<string, unknown>> = {},
-    _edgePropsToQuery: Partial<unknown> = {},
+    _propsToQuery: Partial<TTargetProps>,
+    _edgePropsToQuery: Partial<TEdgeProps> = {},
   ): Promise<Array<InstanceType<TTargetClass>>> {
     throw new BfErrorNotImplemented("Not implemented");
   }
@@ -192,12 +207,13 @@ export class BfEdgeBase<
    * Queries all source edges connected to a node.
    *
    * @param node - The node whose source edges to query
+   * @param SourceClass - The class of the source nodes to filter by
    * @returns Promise resolving to an array of edge instances
    */
-  static querySourceEdgesForNode(
-    this: typeof BfEdgeBase,
+  static querySourceEdgesForNode<TProps extends BfEdgeBaseProps>(
     _node: BfNodeBase,
-  ): Promise<Array<InstanceType<typeof BfEdgeBase>>> {
+    _SourceClass: typeof BfNodeBase,
+  ): Promise<Array<InstanceType<typeof BfEdgeBase<TProps>>>> {
     throw new BfErrorNotImplemented("Not implemented");
   }
 
@@ -205,35 +221,13 @@ export class BfEdgeBase<
    * Queries all target edges connected to a node.
    *
    * @param node - The node whose target edges to query
+   * @param TargetClass - The class of the target nodes to filter by
    * @returns Promise resolving to an array of edge instances
    */
   static queryTargetEdgesForNode(
-    this: typeof BfEdgeBase,
     _node: BfNodeBase,
+    _TargetClass: typeof BfNodeBase,
   ): Promise<Array<InstanceType<typeof BfEdgeBase>>> {
-    throw new BfErrorNotImplemented("Not implemented");
-  }
-
-  /**
-   * Finds an edge between source and target nodes.
-   *
-   * @param cv - The current viewer context
-   * @param sourceNode - The source node
-   * @param targetNode - The target node
-   * @param role - Optional role for the relationship
-   * @returns Promise resolving to an edge instance or null if not found
-   */
-  static findBySourceAndTarget<
-    T extends typeof BfEdgeBase = typeof BfEdgeBase,
-    S extends BfNodeBase = BfNodeBase,
-    U extends BfNodeBase = BfNodeBase,
-  >(
-    this: T,
-    _cv: BfCurrentViewer,
-    _sourceNode: S,
-    _targetNode: U,
-    _role = "",
-  ): Promise<InstanceType<T> | null> {
     throw new BfErrorNotImplemented("Not implemented");
   }
 
@@ -241,11 +235,10 @@ export class BfEdgeBase<
    * Deletes all edges touching a specific node.
    *
    * @param cv - The current viewer context
-   * @param id - The ID of the node
+   * @param id - The ID of the node whose edges should be deleted
    * @returns Promise resolving when deletion is complete
    */
   static deleteEdgesTouchingNode(
-    this: typeof BfEdgeBase,
     _cv: BfCurrentViewer,
     _id: BfGid,
   ): Promise<void> {
