@@ -1,37 +1,55 @@
-import { getLogger } from "packages/logger.ts";
 import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
 import type { DatabaseBackend } from "packages/bfDb/backend/DatabaseBackend.ts";
-import { DatabaseBackendNeon } from "packages/bfDb/backend/DatabaseBackendNeon.ts";
-import { DatabaseBackendPg } from "packages/bfDb/backend/DatabaseBackendPg.ts";
+import { getLogger } from "packages/logger.ts";
 
 const logger = getLogger(import.meta);
 
-let backend: DatabaseBackend | null = null;
+// Cache instance for reuse
+let cachedBackend: DatabaseBackend | null = null;
+let backendPromise: Promise<DatabaseBackend> | null = null;
+
+export async function getBackend(): Promise<DatabaseBackend> {
+  if (cachedBackend) {
+    return cachedBackend;
+  }
+
+  if (backendPromise) {
+    return await backendPromise;
+  }
+
+  backendPromise = (async () => {
+    const backendType = getConfigurationVariable("DATABASE_BACKEND") ?? "neon";
+
+    logger.debug(`Creating database backend of type: ${backendType}`);
+
+    switch (backendType.toLowerCase()) {
+      case "neon": {
+        const { DatabaseBackendNeon } = await import(
+          "packages/bfDb/backend/DatabaseBackendNeon.ts"
+        );
+        cachedBackend = new DatabaseBackendNeon();
+        break;
+      }
+
+      default:
+        throw new Error(`Unknown database backend type: ${backendType}`);
+    }
+
+    return cachedBackend;
+  })();
+
+  return await backendPromise;
+}
 
 /**
- * Gets the appropriate database backend based on environment configuration.
- * This allows switching between different database backends without changing application code.
+ * Close the current database backend connection
+ * This is important for tests to prevent connection leaks
  */
-export function getBackend(): DatabaseBackend {
-  if (backend !== null) {
-    return backend;
+export async function closeBackend(): Promise<void> {
+  if (cachedBackend) {
+    logger.debug("Closing database backend connection");
+    await cachedBackend.close();
+    cachedBackend = null;
+    backendPromise = null;
   }
-
-  const backendType = getConfigurationVariable("DB_BACKEND_TYPE") || "neon";
-
-  logger.info(`Initializing database backend: ${backendType}`);
-
-  switch (backendType.toLowerCase()) {
-    case "pg":
-      logger.info("Using direct PostgreSQL backend with pg package");
-      backend = new DatabaseBackendPg();
-      break;
-    case "neon":
-    default:
-      logger.info("Using Neon PostgreSQL backend");
-      backend = new DatabaseBackendNeon();
-      break;
-  }
-
-  return backend;
 }

@@ -616,9 +616,6 @@ development environments across different systems.
 
 ### Testing Approaches
 
-Content Foundry supports both standard Deno testing and Behavior-Driven
-Development (BDD) testing:
-
 #### Standard Testing
 
 The project primarily uses Deno's built-in testing capabilities:
@@ -635,45 +632,6 @@ Deno.test("my test function", () => {
   assertEquals(1 + 1, 2);
 });
 ```
-
-#### BDD Testing
-
-For more complex scenarios, Behavior-Driven Development testing is available:
-
-- Uses `describe`, `it`, `beforeEach`, `afterEach` blocks
-- Better for organizing tests with shared setup/teardown
-- Import from `@std/testing/bdd` module
-- More descriptive test structure
-
-```typescript
-import { assertEquals } from "@std/assert";
-import { afterEach, beforeEach, describe, it } from "@std/testing/bdd";
-
-describe("Calculator", () => {
-  let calculator;
-
-  beforeEach(() => {
-    calculator = new Calculator();
-  });
-
-  it("adds two numbers correctly", () => {
-    assertEquals(calculator.add(1, 2), 3);
-  });
-
-  it("subtracts two numbers correctly", () => {
-    assertEquals(calculator.subtract(5, 2), 3);
-  });
-});
-```
-
-#### When to Use Each Approach
-
-- **Standard Testing**: Suitable for simple unit tests and most scenarios
-- **BDD Testing**: Better for complex user flows, component testing, and cases
-  requiring extensive setup/teardown logic
-
-The standard approach is generally preferred for simplicity unless the
-additional organization of BDD is specifically needed.
 
 ### Code Reviews
 

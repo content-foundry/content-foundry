@@ -587,4 +587,16 @@ export class DatabaseBackendNeon implements DatabaseBackend {
 
     logger.info("Database schema initialized");
   }
+
+  /**
+   * Closes the database connection
+   * This is important to prevent connection leaks in tests
+   */
+  close(): Promise<void> {
+    // The neon serverless driver doesn't have an explicit close method
+    // But we can help clear resources by removing the reference to the connection
+    this._sql = null;
+    logger.debug("Neon database connection reference cleared");
+    return Promise.resolve();
+  }
 }
