@@ -12,7 +12,6 @@ type DbItem<T extends Props> = {
 export type BfDbMetadata = BfMetadataNode | (BfMetadataNode & BfMetadataEdge);
 /**
  * Interface for database backend implementations.
- * This allows for swapping between PostgreSQL and SQLite backends.
  */
 export interface DatabaseBackend {
   /**

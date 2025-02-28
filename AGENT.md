@@ -506,22 +506,6 @@ layer:
 
 - Database operations are abstracted through the `DatabaseBackend` interface
 - The database backend is selected based on environment configuration
-- Both PostgreSQL and SQLite backends implement the same interface
-
-#### Switching Database Backends
-
-To switch from the default PostgreSQL backend to SQLite:
-
-```bash
-# Set environment variable to use SQLite backend
-export USE_SQLITE_BACKEND=true
-
-# Optionally, set the SQLite database file path
-export SQLITE_DB_PATH="./data/bfdb.sqlite"
-```
-
-SQLite provides a lightweight alternative that doesn't require a remote database
-connection, making it ideal for local development or testing.
 
 #### Implementing Custom Backends
 
@@ -634,30 +618,6 @@ development environments across different systems.
 
 Content Foundry supports both standard Deno testing and Behavior-Driven
 Development (BDD) testing:
-
-### Database Testing
-
-When writing tests that interact with the database, it's recommended to use the
-SQLite backend with an in-memory database:
-
-```typescript
-// At the beginning of your test file:
-function setupTestDb() {
-  // Use SQLite backend for tests
-  Deno.env.set("USE_SQLITE_BACKEND", "true");
-  // Set an in-memory SQLite database for tests
-  Deno.env.set("SQLITE_DB_PATH", ":memory:");
-}
-
-Deno.test("my database test", async () => {
-  setupTestDb();
-  // Your test code here...
-});
-```
-
-This approach ensures tests can run consistently without requiring PostgreSQL
-configuration while still validating the database abstraction layer works
-correctly.
 
 #### Standard Testing
 

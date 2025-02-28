@@ -1,20 +1,37 @@
-import { DatabaseBackendNeon } from "packages/bfDb/backend/DatabaseBackendNeon.ts";
-import type { DatabaseBackend } from "packages/bfDb/backend/DatabaseBackend.ts";
 import { getLogger } from "packages/logger.ts";
+import { getConfigurationVariable } from "packages/getConfigurationVariable.ts";
+import type { DatabaseBackend } from "packages/bfDb/backend/DatabaseBackend.ts";
+import { DatabaseBackendNeon } from "packages/bfDb/backend/DatabaseBackendNeon.ts";
+import { DatabaseBackendPg } from "packages/bfDb/backend/DatabaseBackendPg.ts";
 
 const logger = getLogger(import.meta);
 
-// Singleton instance of the database backend
-let _backend: DatabaseBackend | null = null;
+let backend: DatabaseBackend | null = null;
 
 /**
- * Get the database backend instance
- * This function creates a singleton instance of the database backend
+ * Gets the appropriate database backend based on environment configuration.
+ * This allows switching between different database backends without changing application code.
  */
 export function getBackend(): DatabaseBackend {
-  if (_backend === null) {
-    logger.info("Creating new DatabaseBackendNeon instance");
-    _backend = new DatabaseBackendNeon();
+  if (backend !== null) {
+    return backend;
   }
-  return _backend;
+
+  const backendType = getConfigurationVariable("DB_BACKEND_TYPE") || "neon";
+
+  logger.info(`Initializing database backend: ${backendType}`);
+
+  switch (backendType.toLowerCase()) {
+    case "pg":
+      logger.info("Using direct PostgreSQL backend with pg package");
+      backend = new DatabaseBackendPg();
+      break;
+    case "neon":
+    default:
+      logger.info("Using Neon PostgreSQL backend");
+      backend = new DatabaseBackendNeon();
+      break;
+  }
+
+  return backend;
 }
