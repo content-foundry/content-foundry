@@ -208,6 +208,26 @@ export class BfNodeBase<
     throw new BfErrorNotImplemented();
   }
 
+  querySources<
+    TSourceProps extends BfNodeBaseProps,
+    TSourceClass extends typeof BfNodeBase<TSourceProps>
+  >(
+    _SourceClass: TSourceClass,
+    _props?: Partial<TSourceProps>
+  ): Promise<Array<InstanceType<TSourceClass>>> {
+    throw new BfErrorNotImplemented();
+  }
+
+  queryTargets<
+    TTargetProps extends BfNodeBaseProps,
+    TTargetClass extends typeof BfNodeBase<TTargetProps>
+  >(
+    _TargetClass: TTargetClass,
+    _props?: Partial<TTargetProps>
+  ): Promise<Array<InstanceType<TTargetClass>>> {
+    throw new BfErrorNotImplemented();
+  }
+
   /** CALLBACKS */
 
   beforeCreate(): Promise<void> | void {}
