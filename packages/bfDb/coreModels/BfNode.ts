@@ -52,7 +52,6 @@ export class BfNode<
     TProps extends BfNodeBaseProps,
     TThis extends typeof BfNodeBase<TProps>,
   >(
-    this: TThis,
     cv: BfCurrentViewer,
     id: BfGid,
     cache?: BfNodeCache,

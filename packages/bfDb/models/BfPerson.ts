@@ -58,7 +58,7 @@ export class BfPerson extends BfNode<BfPersonProps> {
     this.createTargetNode(BfOrganization, {});
   }
 
-  static findCurrentViewer(cv: BfCurrentViewer): Promise<BfPerson> {
+  static findCurrentViewer(cv: BfCurrentViewer) {
     return this.findX(cv, cv.bfGid);
   }
 
