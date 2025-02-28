@@ -20,7 +20,6 @@ const styles: Record<string, React.CSSProperties> = {
     borderStyle: "solid",
     borderColor: "var(--textSecondary)",
     boxSizing: "border-box",
-    maxHeight: 80,
   },
   label: {
     display: "flex",
@@ -50,8 +49,10 @@ export function BfDsTextArea(
     if (!textarea) return;
 
     const adjustHeight = () => {
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight}px`;
+      if (!xstyle?.height && !xstyle?.flex) {
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      }
     };
 
     adjustHeight();

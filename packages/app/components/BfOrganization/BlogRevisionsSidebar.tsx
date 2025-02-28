@@ -2,6 +2,7 @@ import { iso } from "packages/app/__generated__/__isograph/iso.ts";
 import { BfDsButton } from "packages/bfDs/components/BfDsButton.tsx";
 import { useState } from "react";
 import { BfDsTabs } from "packages/bfDs/components/BfDsTabs.tsx";
+import { BfDsCheckbox } from "packages/bfDs/components/BfDsCheckbox.tsx";
 
 export const BlogRevisionsSidebar = iso(`
   field BfOrganization.BlogRevisionsSidebar @component {
@@ -25,11 +26,18 @@ export const BlogRevisionsSidebar = iso(`
       <div className="flexColumn right-side-bar">
         <div className="revisions-container">
           {data?.creation?.revisions?.map((revision, _index) => {
+            const [checked, setChecked] = useState(false);
             const [showExpanded, setShowExpanded] = useState(false);
             const [selectedTab, setSelectedTab] = useState("Tips");
+
+            const handleCheck = () => {
+              setChecked(!checked);
+              setShowExpanded(!showExpanded);
+            };
             return (
               <div className="revision-item">
-                <div className="flexRow">
+                <div className="flexRow gapMedium">
+                  <BfDsCheckbox value={checked} onChange={handleCheck} />
                   <div className="revision-title">
                     {revision?.revisionTitle ?? ""}
                   </div>
