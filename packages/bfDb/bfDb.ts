@@ -10,7 +10,7 @@ import type {
   PageInfo,
 } from "graphql-relay";
 import type { BfDbMetadata } from "packages/bfDb/backend/DatabaseBackend.ts";
-import { getBackend } from "packages/bfDb/bfDbBackend.ts";
+import { closeBackend, getBackend } from "packages/bfDb/bfDbBackend.ts";
 
 const logger = getLogger(import.meta);
 
@@ -52,13 +52,9 @@ function cursorToSortValue(cursor: string): number {
 export async function bfGetItem<
   TProps extends Props,
 >(bfOid: BfGid, bfGid: BfGid): Promise<DbItem<TProps> | null> {
-  try {
-    logger.trace("bfGetItem", bfOid, bfGid);
-    return await getBackend().getItem<TProps>(bfOid, bfGid);
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  }
+  logger.trace("getItem", bfOid, bfGid);
+  const backend = await getBackend();
+  return await backend.getItem<TProps>(bfOid, bfGid);
 }
 
 export async function bfGetItemByBfGid<
@@ -67,13 +63,9 @@ export async function bfGetItemByBfGid<
   bfGid: string,
   className?: string,
 ): Promise<DbItem<TProps> | null> {
-  try {
-    logger.trace("bfGetItemByBfGid", { bfGid, className });
-    return await getBackend().getItemByBfGid<TProps>(bfGid, className);
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  }
+  logger.trace("getItemByBfGid", { bfGid, className });
+  const backend = await getBackend();
+  return await backend.getItemByBfGid<TProps>(bfGid, className);
 }
 
 export async function bfGetItemsByBfGid<
@@ -82,13 +74,9 @@ export async function bfGetItemsByBfGid<
   bfGids: Array<string>,
   className?: string,
 ): Promise<Array<DbItem<TProps>>> {
-  try {
-    logger.trace("bfGetItemsByBfGid", { bfGids, className });
-    return await getBackend().getItemsByBfGid<TProps>(bfGids, className);
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  }
+  logger.trace("getItemsByBfGid", { bfGids, className });
+  const backend = await getBackend();
+  return await backend.getItemsByBfGid<TProps>(bfGids, className);
 }
 
 export async function bfPutItem<
@@ -98,19 +86,17 @@ export async function bfPutItem<
   itemMetadata: BfMetadataNode | BfMetadataEdge,
   sortValue = Date.now(),
 ): Promise<void> {
-  logger.trace({ itemProps, itemMetadata });
-  try {
-    await getBackend().putItem<TProps>(itemProps, itemMetadata, sortValue);
-    logger.trace(
-      `bfPutItem: Successfully inserted or updated item with ${
-        JSON.stringify(itemMetadata)
-      }`,
-    );
-  } catch (e) {
-    logger.error("Error in bfPutItem:", e);
-    logger.trace(e);
-    throw e;
-  }
+  const backend = await getBackend();
+  await backend.putItem<TProps>(itemProps, itemMetadata, sortValue);
+}
+
+export async function bfDeleteItem(
+  bfOid: BfGid,
+  bfGid: BfGid,
+): Promise<void> {
+  logger.trace("deleteItem", bfOid, bfGid);
+  const backend = await getBackend();
+  await backend.deleteItem(bfOid, bfGid);
 }
 
 export async function bfQueryAncestorsByClassName<
@@ -122,7 +108,8 @@ export async function bfQueryAncestorsByClassName<
   depth: number = 10,
 ): Promise<Array<DbItem<TProps>>> {
   try {
-    return await getBackend().queryAncestorsByClassName<TProps>(
+    const backend = await getBackend();
+    return await backend.queryAncestorsByClassName<TProps>(
       bfOid,
       targetBfGid,
       sourceBfClassName,
@@ -143,7 +130,8 @@ export async function bfQueryDescendantsByClassName<
   depth: number = 10,
 ): Promise<Array<DbItem<TProps>>> {
   try {
-    return await getBackend().queryDescendantsByClassName<TProps>(
+    const backend = await getBackend();
+    return await backend.queryDescendantsByClassName<TProps>(
       bfOid,
       sourceBfGid,
       targetBfClassName,
@@ -193,8 +181,10 @@ export async function bfQueryItemsUnified<
     batchSize,
   });
 
+  const backend = await getBackend();
+
   if (useSizeLimit) {
-    return await getBackend().queryItemsWithSizeLimit<TProps>(
+    return await backend.queryItemsWithSizeLimit<TProps>(
       metadataToQuery,
       propsToQuery,
       bfGids,
@@ -209,7 +199,7 @@ export async function bfQueryItemsUnified<
   // For count only or other special cases, we'll need more implementation
   // This is simplified for now
   if (countOnly) {
-    const items = await getBackend().queryItems<TProps>(
+    const items = await backend.queryItems<TProps>(
       metadataToQuery,
       propsToQuery,
       bfGids,
@@ -225,7 +215,7 @@ export async function bfQueryItemsUnified<
   if (totalLimit) {
     // This would need more implementation to match the original behavior
     // For now, we'll just fetch and slice
-    const items = await getBackend().queryItems<TProps>(
+    const items = await backend.queryItems<TProps>(
       metadataToQuery,
       propsToQuery,
       bfGids,
@@ -235,7 +225,7 @@ export async function bfQueryItemsUnified<
     return items.slice(0, totalLimit);
   }
 
-  return await getBackend().queryItems<TProps>(
+  return await backend.queryItems<TProps>(
     metadataToQuery,
     propsToQuery,
     bfGids,
@@ -244,7 +234,7 @@ export async function bfQueryItemsUnified<
   );
 }
 
-export function bfQueryItems<
+export async function bfQueryItems<
   TProps extends Props = Props,
 >(
   metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
@@ -260,8 +250,8 @@ export function bfQueryItems<
     orderDirection,
     orderBy,
   });
-
-  return getBackend().queryItems<TProps>(
+  const backend = await getBackend();
+  return await backend.queryItems<TProps>(
     metadataToQuery,
     propsToQuery,
     bfGids,
@@ -270,7 +260,7 @@ export function bfQueryItems<
   );
 }
 
-export function bfQueryItemsWithSizeLimit<
+export async function bfQueryItemsWithSizeLimit<
   TProps extends Props = Props,
 >(
   metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
@@ -282,7 +272,115 @@ export function bfQueryItemsWithSizeLimit<
   maxSizeBytes: number = 10 * 1024 * 1024, // 10MB in bytes
   batchSize: number = 4,
 ): Promise<Array<DbItem<TProps>>> {
-  return getBackend().queryItemsWithSizeLimit<TProps>(
+  try {
+    const backend = await getBackend();
+    return await backend.queryItemsWithSizeLimit<TProps>(
+      metadataToQuery,
+      propsToQuery,
+      bfGids,
+      orderDirection,
+      orderBy,
+      cursorValue,
+      maxSizeBytes,
+      batchSize,
+    );
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+}
+
+export async function bfQueryItemsTop<
+  TProps extends Props = Props,
+>(
+  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
+  propsToQuery: Partial<TProps> = {},
+  bfGids?: Array<string>,
+  orderDirection: "ASC" | "DESC" = "ASC",
+  orderBy: string = "sort_value",
+  topCount = 20,
+): Promise<Array<DbItem<TProps>>> {
+  try {
+    const backend = await getBackend();
+    const items = await backend.queryItems<TProps>(
+      metadataToQuery,
+      propsToQuery,
+      bfGids,
+      orderDirection,
+      orderBy,
+    );
+    return items.slice(0, topCount);
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+}
+
+export async function bfQueryItem<
+  TProps extends Props = Props,
+>(
+  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
+  propsToQuery: Partial<TProps> = {},
+  bfGid?: string,
+  orderDirection: "ASC" | "DESC" = "ASC",
+  orderBy: string = "sort_value",
+): Promise<DbItem<TProps> | null> {
+  try {
+    const backend = await getBackend();
+    const items = await backend.queryItems<TProps>(
+      metadataToQuery,
+      propsToQuery,
+      bfGid ? [bfGid] : undefined,
+      orderDirection,
+      orderBy,
+    );
+    return items[0] ?? null;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+}
+
+export async function bfQueryItemsStream<TProps extends Props = Props>(
+  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
+  propsToQuery: Partial<TProps> = {},
+  bfGids?: Array<string>,
+  orderDirection: "ASC" | "DESC" = "ASC",
+  orderBy: string = "sort_value",
+): Promise<ReadableStream<DbItem<TProps>>> {
+  const backend = await getBackend();
+  const items = await backend.queryItems<TProps>(
+    metadataToQuery,
+    propsToQuery,
+    bfGids,
+    orderDirection,
+    orderBy,
+  );
+
+  return new ReadableStream<DbItem<TProps>>({
+    start(controller) {
+      for (const item of items) {
+        controller.enqueue(item);
+      }
+      controller.close();
+    },
+  });
+}
+
+export async function bfQueryItemsStreamWithSizeLimit<
+  TProps extends Props = Props,
+>(
+  metadataToQuery: Partial<BfMetadataNode | BfMetadataEdge>,
+  propsToQuery: Partial<TProps> = {},
+  bfGids?: Array<string>,
+  orderDirection: "ASC" | "DESC" = "ASC",
+  orderBy: string = "sort_value",
+  cursorValue?: number | string,
+  maxSizeBytes = 10 * 1024 * 1024, // 10MB in bytes
+  batchSize = 4,
+): Promise<ReadableStream<DbItem<TProps>>> {
+  const backend = await getBackend();
+  const items = await backend.queryItemsWithSizeLimit<TProps>(
     metadataToQuery,
     propsToQuery,
     bfGids,
@@ -292,17 +390,15 @@ export function bfQueryItemsWithSizeLimit<
     maxSizeBytes,
     batchSize,
   );
-}
 
-export async function bfDeleteItem(bfOid: BfGid, bfGid: BfGid): Promise<void> {
-  try {
-    logger.debug("bfDeleteItem", { bfOid, bfGid });
-    await getBackend().deleteItem(bfOid, bfGid);
-    logger.debug(`Deleted item with bfOid: ${bfOid} and bfGid: ${bfGid}`);
-  } catch (e) {
-    logger.error(e);
-    throw new BfErrorDb(`Failed to delete item ${bfGid} from the database`);
-  }
+  return new ReadableStream<DbItem<TProps>>({
+    start(controller) {
+      for (const item of items) {
+        controller.enqueue(item);
+      }
+      controller.close();
+    },
+  });
 }
 
 export async function bfQueryItemsForGraphQLConnection<
@@ -420,4 +516,13 @@ export async function CLEAR_FOR_DEBUGGING() {
     logger.error("Error in CLEAR_FOR_DEBUGGING:", error);
     throw error;
   }
+}
+
+/**
+ * Closes the database connection
+ * Primarily used in tests to prevent connection leaks
+ */
+export async function bfCloseConnection(): Promise<void> {
+  logger.debug("Closing database connection");
+  await closeBackend();
 }
