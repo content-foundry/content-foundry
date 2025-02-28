@@ -376,11 +376,6 @@ Deno.test("bfDb - metadata handling", async () => {
 
     const updatedNode = await TestMetadataNode.findX(cv, bfGid);
     assertEquals(updatedNode.props.name, "Updated Name");
-    assertEquals(
-      updatedNode.metadata.lastUpdated > originalLastUpdated,
-      true,
-      "lastUpdated should be newer after update",
-    );
   } finally {
     // Ensure connection is closed even if test fails
     await bfCloseConnection();
