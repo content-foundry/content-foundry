@@ -108,6 +108,9 @@ a.dark:visited {
 .spaceBetween {
   justify-content: space-between;
 }
+.selfAlignEnd {
+  align-self: end;
+}
 
 .scrollable {
   overflow-y: auto;
