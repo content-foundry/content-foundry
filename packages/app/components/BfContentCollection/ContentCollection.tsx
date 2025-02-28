@@ -4,15 +4,14 @@ import { useFeatureFlagEnabled } from "packages/app/hooks/useFeatureFlagHooks.ts
 
 const _logger = getLogger(import.meta);
 
-
-
 export const ContentCollection = iso(`
   field BfContentCollection.ContentCollection @component {
     __typename
-      items {
-        title
-      }
+    items {
+      ContentItem
+      id
     }
+  }
 `)(function ContentCollection({ data }) {
   const collection = data;
   const items = collection?.items || [];
@@ -21,6 +20,16 @@ export const ContentCollection = iso(`
   if (!collection) {
     return <div className="content-collection-empty">Collection not found</div>;
   }
+
+  if (items.length === 0) {
+    return (
+      <div className="content-collection-empty">No content items found</div>
+    );
+  }
+
+  const _itemElements = items
+    .map((item) => item && <item.ContentItem key={item.id} />)
+    .filter(Boolean) as React.ReactNode[];
 
   return (
     <div className="loginBox">
