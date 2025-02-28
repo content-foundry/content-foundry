@@ -16,34 +16,51 @@ export const FormatterEditorPanel = iso(`
     { data },
   ) {
     logger.info("FormatterEditorPanel", data.__typename);
+    const [isInFlight, setIsInFlight] = useState(false);
     const [blogPost, setBlogPost] = useState("");
     const { commit } = useMutation(reviseBlogMutation);
+
+    const fullEditorStyle = {
+      flex: 1,
+      width: "100%",
+      border: "none",
+      resize: "none" as const,
+      borderRadius: "0",
+      outline: "none",
+      padding: 30,
+    };
     return (
-      <div className="flex1">
+      <div className="flex1 flexColumn">
         <BfDsTextArea
           onChange={(e) => {
             setBlogPost(e.target.value);
           }}
           value={blogPost}
           placeholder="TODO: Markdown editor"
+          xstyle={fullEditorStyle}
         />
-        <BfDsButton
-          kind="primary"
-          text="Submit"
-          onClick={() => {
-            commit({ blogPost: blogPost }, {
-              onError: () => {
-                logger.error("An error occurred.");
-              },
-              onComplete: (reviseBlogMutationData) => {
-                logger.debug(
-                  "blog created successfully",
-                  reviseBlogMutationData,
-                );
-              },
-            });
-          }}
-        />
+        <div className="selfAlignEnd">
+          <BfDsButton
+            kind="primary"
+            text="Get suggestions"
+            onClick={() => {
+              setIsInFlight(true);
+              commit({ blogPost: blogPost }, {
+                onError: () => {
+                  logger.error("An error occurred.");
+                },
+                onComplete: (reviseBlogMutationData) => {
+                  setIsInFlight(false);
+                  logger.debug(
+                    "blog created successfully",
+                    reviseBlogMutationData,
+                  );
+                },
+              });
+            }}
+            showSpinner={isInFlight}
+          />
+        </div>
       </div>
     );
   },
