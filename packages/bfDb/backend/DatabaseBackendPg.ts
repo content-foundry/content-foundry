@@ -30,34 +30,35 @@ type Row<
 };
 
 export class DatabaseBackendPg implements DatabaseBackend {
-  private _client: pg.Client | null = null; // Corrected type annotation
-  private _connected: boolean = false;
+  private _pool: pg.Pool | null = null;
 
-  private async getClient(): Promise<pg.Client> { // Corrected return type
-    if (this._client === null) {
+  private async getClient(): Promise<pg.PoolClient> {
+    if (this._pool === null) {
       const databaseUrl = getConfigurationVariable("DATABASE_URL");
       if (!databaseUrl) {
         throw new BfErrorDb("DATABASE_URL is not set");
       }
-      this._client = new pg.Client({
+      this._pool = new pg.Pool({
         connectionString: databaseUrl,
+        max: 20, // Maximum number of clients in the pool
+        idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
       });
 
-      logger.info("Created new PostgreSQL client");
+      // Handle pool errors
+      this._pool.on("error", (err) => {
+        logger.error("Unexpected error on idle client", err);
+      });
+
+      logger.info("Created new PostgreSQL connection pool");
     }
 
-    if (!this._connected) {
-      try {
-        await this._client.connect();
-        this._connected = true;
-        logger.info("Connected to PostgreSQL database");
-      } catch (err) {
-        logger.error("Failed to connect to PostgreSQL database", err);
-        throw new BfErrorDb("Failed to connect to PostgreSQL database");
-      }
+    try {
+      const client = await this._pool.connect();
+      return client;
+    } catch (err) {
+      logger.error("Failed to get client from pool", err);
+      throw new BfErrorDb("Failed to get client from PostgreSQL pool");
     }
-
-    return this._client;
   }
 
   private rowToMetadata(row: Row): BfDbMetadata {
@@ -80,9 +81,9 @@ export class DatabaseBackendPg implements DatabaseBackend {
     bfOid: BfGid,
     bfGid: BfGid,
   ): Promise<DbItem<TProps> | null> {
+    const client = await this.getClient();
     try {
       logger.trace("getItem", bfOid, bfGid);
-      const client = await this.getClient();
       const result = await client.query(
         "SELECT * FROM bfdb WHERE bf_oid = $1 AND bf_gid = $2",
         [bfOid, bfGid],
@@ -101,6 +102,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (e) {
       logger.error(e);
       throw e;
+    } finally {
+      client.release();
     }
   }
 
@@ -108,9 +111,9 @@ export class DatabaseBackendPg implements DatabaseBackend {
     bfGid: string,
     className?: string,
   ): Promise<DbItem<TProps> | null> {
+    const client = await this.getClient();
     try {
       logger.trace("getItemByBfGid", { bfGid, className });
-      const client = await this.getClient();
 
       let result;
       if (className) {
@@ -138,6 +141,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (e) {
       logger.error(e);
       throw e;
+    } finally {
+      client.release();
     }
   }
 
@@ -145,9 +150,9 @@ export class DatabaseBackendPg implements DatabaseBackend {
     bfGids: Array<string>,
     className?: string,
   ): Promise<Array<DbItem<TProps>>> {
+    const client = await this.getClient();
     try {
       logger.trace("getItemsByBfGid", { bfGids, className });
-      const client = await this.getClient();
 
       let result;
       if (className) {
@@ -170,6 +175,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (e) {
       logger.error(e);
       throw e;
+    } finally {
+      client.release();
     }
   }
 
@@ -180,8 +187,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
   ): Promise<void> {
     logger.trace({ itemProps, itemMetadata });
 
+    const client = await this.getClient();
     try {
-      const client = await this.getClient();
       let createdAtTimestamp, lastUpdatedTimestamp;
 
       if (itemMetadata.createdAt instanceof Date) {
@@ -252,6 +259,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
       logger.error("Error in putItem:", e);
       logger.trace(e);
       throw e;
+    } finally {
+      client.release();
     }
   }
 
@@ -354,7 +363,7 @@ export class DatabaseBackendPg implements DatabaseBackend {
     const metadataConditions: string[] = [];
     const propsConditions: string[] = [];
     const specificIdConditions: string[] = [];
-    const params: unknown[] = [];
+    const variables: unknown[] = []; //Corrected variable name
 
     // Process metadata conditions
     for (const [originalKey, value] of Object.entries(metadataToQuery)) {
@@ -364,8 +373,13 @@ export class DatabaseBackendPg implements DatabaseBackend {
       ).toLowerCase();
 
       if (DatabaseBackendPg.VALID_METADATA_COLUMN_NAMES.includes(key)) {
-        params.push(value);
-        metadataConditions.push(`${key} = $${params.length}`);
+        // For null values, use IS NULL instead of = $n
+        if (value === null || value === undefined) {
+          metadataConditions.push(`${key} IS NULL`);
+        } else {
+          variables.push(value);
+          metadataConditions.push(`${key} = $${variables.length}`);
+        }
       } else {
         logger.warn(`Invalid metadata column name`, originalKey, key);
       }
@@ -373,17 +387,23 @@ export class DatabaseBackendPg implements DatabaseBackend {
 
     // Process props conditions
     for (const [key, value] of Object.entries(propsToQuery)) {
-      params.push(key);
-      params.push(value);
-      propsConditions.push(
-        `props->>'$${params.length - 1}' = $${params.length}::text`,
-      );
+      variables.push(key);
+      // Handle null/undefined values with explicit IS NULL check
+      if (value === null || value === undefined) {
+        propsConditions.push(`props->>$${variables.length} IS NULL`);
+      } else {
+        // For non-null values, cast the value to TEXT to ensure PostgreSQL knows the type
+        variables.push(value);
+        propsConditions.push(
+          `props->>$${variables.length - 1} = $${variables.length}::TEXT`,
+        );
+      }
     }
 
     // Process bfGids
     if (bfGids && bfGids.length > 0) {
-      params.push(bfGids);
-      specificIdConditions.push(`bf_gid = ANY($${params.length})`);
+      variables.push(bfGids);
+      specificIdConditions.push(`bf_gid = ANY($${variables.length})`);
     }
 
     if (metadataConditions.length === 0) {
@@ -396,9 +416,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
       specificIdConditions.push(DatabaseBackendPg.defaultClause);
     }
 
+    const client = await this.getClient();
     try {
-      const client = await this.getClient();
-
       if (countOnly) {
         const allConditions = [
           ...metadataConditions,
@@ -408,7 +427,7 @@ export class DatabaseBackendPg implements DatabaseBackend {
 
         const query = await client.query(
           `SELECT COUNT(*) FROM bfdb WHERE ${allConditions}`,
-          params,
+          variables,
         );
 
         return Array.from(
@@ -432,7 +451,9 @@ export class DatabaseBackendPg implements DatabaseBackend {
             ORDER BY ${orderBy} ${orderDirection}
             LIMIT ${batchSize} OFFSET ${offset}
           `,
-          values: params,
+          values: variables,
+          // Add a query timeout to prevent hanging queries
+          timeout: 30000, // 30 second timeout
         };
       };
 
@@ -483,6 +504,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (e) {
       logger.error(e);
       throw e;
+    } finally {
+      client.release();
     }
   }
 
@@ -494,8 +517,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     sourceBfClassName: string,
     depth: number = 10,
   ): Promise<Array<DbItem<TProps>>> {
+    const client = await this.getClient();
     try {
-      const client = await this.getClient();
       const result = await client.query(
         `
         WITH RECURSIVE AncestorTree(bf_sid, bf_s_class_name, path, depth) AS (
@@ -539,6 +562,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (error) {
       logger.error("Error finding ancestors by class name:", error);
       throw error;
+    } finally {
+      client.release();
     }
   }
 
@@ -550,8 +575,8 @@ export class DatabaseBackendPg implements DatabaseBackend {
     targetBfClassName: string,
     depth: number = 10,
   ): Promise<Array<DbItem<TProps>>> {
+    const client = await this.getClient();
     try {
-      const client = await this.getClient();
       const result = await client.query(
         `
         WITH RECURSIVE DescendantTree(bf_tid, bf_t_class_name, path, depth) AS (
@@ -595,13 +620,15 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (error) {
       logger.error("Error finding descendants by class name:", error);
       throw error;
+    } finally {
+      client.release();
     }
   }
 
   async deleteItem(bfOid: BfGid, bfGid: BfGid): Promise<void> {
+    const client = await this.getClient();
     try {
       logger.debug("deleteItem", { bfOid, bfGid });
-      const client = await this.getClient();
       await client.query(
         "DELETE FROM bfdb WHERE bf_oid = $1 AND bf_gid = $2",
         [bfOid, bfGid],
@@ -611,13 +638,14 @@ export class DatabaseBackendPg implements DatabaseBackend {
     } catch (e) {
       logger.error(e);
       throw new BfErrorDb(`Failed to delete item ${bfGid} from the database`);
+    } finally {
+      client.release();
     }
   }
 
   async initialize(): Promise<void> {
+    const client = await this.getClient();
     try {
-      const client = await this.getClient();
-
       // Create table if it doesn't exist
       await client.query(`
         CREATE TABLE IF NOT EXISTS bfdb (
@@ -649,36 +677,49 @@ export class DatabaseBackendPg implements DatabaseBackend {
         "class_name",
       ];
 
-      for (const index of indexes) {
+      // Use Promise.all to properly handle all index creation promises
+      await Promise.all(indexes.map(async (index) => {
         try {
           await client.query(`
             CREATE INDEX IF NOT EXISTS idx_bfdb_${index} ON bfdb (${index})
           `);
+          logger.debug(`Created index for ${index}`);
         } catch (e) {
-          logger.warn(
-            `Index creation for ${index} failed, may already exist`,
-            e,
-          );
+          // Distinguish between benign errors and critical failures
+          if (e instanceof Error && e.message.includes("already exists")) {
+            logger.info(`Index for ${index} already exists`);
+          } else {
+            logger.warn(`Index creation for ${index} failed with error:`, e);
+          }
         }
-      }
+      }));
 
       logger.info("Database schema initialized with pg backend");
     } catch (e) {
       logger.error("Error initializing database:", e);
       throw e;
+    } finally {
+      client.release();
     }
   }
 
-  // Method to close the client connection if needed
+  /**
+   * Closes the database connection pool
+   * This is important to prevent connection leaks in tests
+   */
   async close(): Promise<void> {
-    if (this._client && this._connected) {
+    if (this._pool) {
       try {
-        await this._client.end();
-        this._connected = false;
-        logger.info("PostgreSQL client connection closed");
+        // End all pooled connections
+        await this._pool.end();
+        this._pool = null;
+        logger.debug("PostgreSQL connection pool closed and reference cleared");
       } catch (err) {
-        logger.error("Error closing PostgreSQL client connection", err);
+        logger.error("Error closing PostgreSQL connection pool", err);
+        throw new BfErrorDb("Failed to close PostgreSQL connection pool");
       }
+    } else {
+      logger.debug("No active PostgreSQL connection pool to close");
     }
   }
 }
