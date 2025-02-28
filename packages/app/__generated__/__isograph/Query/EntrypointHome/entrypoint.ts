@@ -14,6 +14,9 @@ const queryText = 'query EntrypointHome  {\
       __typename,\
       items {\
         id,\
+        __typename,\
+        body,\
+        href,\
         title,\
       },\
     },\
@@ -74,6 +77,21 @@ const normalizationAst: NormalizationAst = {
                 {
                   kind: "Scalar",
                   fieldName: "id",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "__typename",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "body",
+                  arguments: null,
+                },
+                {
+                  kind: "Scalar",
+                  fieldName: "href",
                   arguments: null,
                 },
                 {

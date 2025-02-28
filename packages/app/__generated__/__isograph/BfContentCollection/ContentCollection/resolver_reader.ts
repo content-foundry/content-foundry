@@ -1,6 +1,7 @@
 import type {ComponentReaderArtifact, ExtractSecondParam, ReaderAst } from '@isograph/react';
 import { BfContentCollection__ContentCollection__param } from './param_type.ts';
 import { ContentCollection as resolver } from '../../../../components/BfContentCollection/ContentCollection.tsx';
+import BfContentItem__ContentItem__resolver_reader from '../../BfContentItem/ContentItem/resolver_reader.ts';
 
 const readerAst: ReaderAst<BfContentCollection__ContentCollection__param> = [
   {
@@ -19,8 +20,15 @@ const readerAst: ReaderAst<BfContentCollection__ContentCollection__param> = [
     isUpdatable: false,
     selections: [
       {
+        kind: "Resolver",
+        alias: "ContentItem",
+        arguments: null,
+        readerArtifact: BfContentItem__ContentItem__resolver_reader,
+        usedRefetchQueries: [],
+      },
+      {
         kind: "Scalar",
-        fieldName: "title",
+        fieldName: "id",
         alias: null,
         arguments: null,
         isUpdatable: false,
