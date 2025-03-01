@@ -4,8 +4,8 @@ import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
 import { generateUUID } from "lib/generateUUID.ts";
 import { getLogger } from "packages/logger.ts";
 import type { JSONValue } from "packages/bfDb/bfDb.ts";
-import type { BfNode } from "packages/bfDb/coreModels/BfNode.ts";
 import { BfErrorNotImplemented } from "packages/BfError.ts";
+import type { BfEdgeBase } from "packages/bfDb/classes/BfEdgeBase.ts";
 
 const logger = getLogger(import.meta);
 
@@ -33,6 +33,7 @@ export class BfNodeBase<
 > {
   __typename = this.constructor.name;
   private _metadata: TMetadata;
+  protected relatedEdge = "packages/bfDb/classes/BfEdgeBase.ts";
 
   static generateSortValue() {
     return Date.now();
@@ -199,15 +200,41 @@ export class BfNodeBase<
   load(): Promise<this> {
     throw new BfErrorNotImplemented();
   }
-  createTargetNode<
+  async createTargetNode<
     TProps extends BfNodeBaseProps,
-    TBfClass extends typeof BfNode<TProps>,
+    TTargetMetadata extends BfMetadataBase,
+    TBfClass extends typeof BfNodeBase<TProps, TTargetMetadata>,
   >(
-    _TargetBfClass: TBfClass,
-    _props: TProps,
-    _metadata?: BfMetadataBase,
+    TargetBfClass: TBfClass,
+    props: TProps,
+    metadata?: TTargetMetadata,
+    role: string | null = null,
   ): Promise<InstanceType<TBfClass>> {
-    throw new BfErrorNotImplemented();
+    logger.debug("createTargetNode called", {
+      targetClassName: TargetBfClass.name,
+      sourceId: this.metadata.bfGid,
+      role,
+    });
+
+    const targetNode = await TargetBfClass.__DANGEROUS__createUnattached(
+      this.cv,
+      props,
+      metadata,
+    );
+
+    const relatedEdgeNameWithTs = this.relatedEdge.split("/").pop() as string;
+    const relatedEdgeName = relatedEdgeNameWithTs.replace(".ts", "");
+    const bfEdgeImport = await import(this.relatedEdge);
+    const BfEdgeClass = bfEdgeImport[relatedEdgeName] as typeof BfEdgeBase;
+
+    BfEdgeClass.createBetweenNodes(this.cv, this, targetNode, role);
+    logger.debug("Edge created successfully", {
+      sourceId: this.metadata.bfGid,
+      targetId: targetNode.metadata.bfGid,
+      role,
+    });
+
+    return targetNode;
   }
 
   querySources<
