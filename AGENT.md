@@ -860,3 +860,106 @@ that includes the content path prefix.
 
     These factory methods ensure proper creation, validation, lifecycle
     callbacks, and database consistency.
+
+## Test-Driven Development (TDD)
+
+Content Foundry encourages Test-Driven Development for creating robust and
+maintainable code. TDD follows a specific workflow cycle known as
+"Red-Green-Refactor":
+
+### TDD Workflow
+
+1. **Red**: Write a failing test that defines a function or improvements of a
+   function
+   - Write a test that defines how the code should behave
+   - Run the test to see it fail (it should fail because the functionality
+     doesn't exist yet)
+   - This validates that your test is actually testing something
+
+2. **Green**: Write the simplest code to make the test pass
+   - Focus on just making the test pass, not on perfect code
+   - The goal is to satisfy the requirements defined by the test
+   - Avoid optimizing at this stage
+
+3. **Refactor**: Clean up the code while ensuring tests still pass
+   - Improve the implementation without changing its behavior
+   - Eliminate code duplication, improve naming, etc.
+   - Run tests after each change to ensure functionality is preserved
+
+### Example TDD Process
+
+Here's a simple example of how TDD might be applied to a Content Foundry
+feature:
+
+```typescript
+// 1. RED: Write a failing test first
+Deno.test("BfEdgeInMemory should find edges by source node", async () => {
+  const mockCv = getMockCurrentViewer();
+  const sourceNode = await MockNode.__DANGEROUS__createUnattached(mockCv, { name: "Source" });
+  const targetNode = await MockNode.__DANGEROUS__createUnattached(mockCv, { name: "Target" });
+  
+  // Create an edge between nodes
+  await BfEdgeInMemory.createBetweenNodes(mockCv, sourceNode, targetNode, "test-role");
+  
+  // Test the findBySource method (which doesn't exist yet)
+  const edges = await BfEdgeInMemory.findBySource(mockCv, sourceNode);
+  
+  assertEquals(edges.length, 1);
+  assertEquals(edges[0].metadata.bfSid, sourceNode.metadata.bfGid);
+  assertEquals(edges[0].metadata.bfTid, targetNode.metadata.bfGid);
+});
+
+// 2. GREEN: Implement the minimum code to make the test pass
+static async findBySource(
+  cv: BfCurrentViewer,
+  sourceNode: BfNodeBase,
+): Promise<BfEdgeInMemory[]> {
+  const result: BfEdgeInMemory[] = [];
+  
+  for (const edge of this.inMemoryEdges.values()) {
+    if (edge.metadata.bfSid === sourceNode.metadata.bfGid) {
+      result.push(edge);
+    }
+  }
+  
+  return result;
+}
+
+// 3. REFACTOR: Improve the implementation while keeping tests passing
+static async findBySource(
+  cv: BfCurrentViewer,
+  sourceNode: BfNodeBase,
+  role?: string,
+): Promise<BfEdgeInMemory[]> {
+  return Array.from(this.inMemoryEdges.values()).filter(edge => {
+    const sourceMatches = edge.metadata.bfSid === sourceNode.metadata.bfGid;
+    return role ? (sourceMatches && edge.props.role === role) : sourceMatches;
+  });
+}
+```
+
+### Benefits of TDD in Content Foundry
+
+- **Clear requirements**: Tests document what the code is supposed to do
+- **Confidence in changes**: Existing tests catch regressions when modifying
+  code
+- **Design improvement**: Writing tests first encourages more modular, testable
+  code
+- **Focus on user needs**: Tests represent user requirements, keeping
+  development focused
+- **Documentation**: Tests serve as executable documentation showing how
+  components should work
+
+### Running Tests
+
+Content Foundry provides several ways to run tests:
+
+- Run all tests: `bff test`
+- Run specific tests: `deno test -A packages/path/to/test.ts`
+- Test coverage: `bff testCoverage`
+
+When writing tests, remember to use the `@std/assert` module for assertions:
+
+```typescript
+import { assertEquals, assertThrows } from "@std/assert";
+```
