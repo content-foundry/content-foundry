@@ -846,3 +846,17 @@ that includes the content path prefix.
     name, followed by specifics, like `DatabaseBackendPostgres` instead of
     `DatabaseBackendPostgres`. This makes imports and directory listings easier
     to scan and understand inheritance hierarchies.
+11. **Use static factory methods instead of constructors** for BfModels (BfNode,
+    BfEdge, etc.). Never use the `new` keyword directly with these classes.
+    Instead:
+    - For creating a new node:
+      `await BfMyNode.__DANGEROUS__createUnattached(cv, props, metadata)`
+    - For creating a node connected to an existing node:
+      `await existingNode.createTargetNode(BfMyNode, props, metadata, role)`
+    - For creating an edge between nodes:
+      `await BfEdge.createBetweenNodes(cv, sourceNode, targetNode, role)`
+    - For retrieving existing nodes: `await BfMyNode.find(cv, id)` or
+      `await BfMyNode.findX(cv, id)`
+
+    These factory methods ensure proper creation, validation, lifecycle
+    callbacks, and database consistency.
