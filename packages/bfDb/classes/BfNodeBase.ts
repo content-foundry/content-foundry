@@ -39,18 +39,21 @@ export class BfNodeBase<
   }
 
   static generateMetadata<
-    TGenerationMetadata extends BfMetadataBase = BfMetadataBase,
+    TProps extends BfNodeBaseProps,
+    TMetadata extends BfMetadataBase,
+    TThis extends typeof BfNodeBase<TProps, TMetadata>,
   >(
+    this: TThis,
     cv: BfCurrentViewer,
-    metadata?: Partial<TGenerationMetadata>,
-  ): TGenerationMetadata {
+    metadata?: Partial<TMetadata>,
+  ): TMetadata {
     const bfGid = toBfGid(generateUUID());
     const defaults = {
       bfGid: bfGid,
       bfOid: cv.bfOid,
       className: this.name,
-    } as TGenerationMetadata;
-    return { ...defaults, ...metadata } as TGenerationMetadata;
+    } as TMetadata;
+    return { ...defaults, ...metadata } as TMetadata;
   }
 
   static findX<
@@ -71,8 +74,8 @@ export class BfNodeBase<
   >(
     this: TThis,
     _cv: BfCurrentViewer,
-    _metadata: BfMetadataBase,
-    _props: TProps,
+    _metadata: Partial<BfMetadataBase>,
+    _props: Partial<TProps>,
     _bfGids: Array<BfGid>,
     _cache: BfNodeCache,
   ): Promise<Array<InstanceType<TThis>>> {
@@ -163,7 +166,7 @@ export class BfNodeBase<
   }
 
   isDirty(): boolean {
-    return true;
+    return false;
   }
 
   toGraphql() {
