@@ -3,12 +3,8 @@ import {
   type BfNodeBaseProps,
 } from "packages/bfDb/classes/BfNodeBase.ts";
 import type { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
-import type {
-  BfMetadataBase,
-  BfNodeCache,
-} from "packages/bfDb/classes/BfNodeBase.ts";
+import type { BfNodeCache } from "packages/bfDb/classes/BfNodeBase.ts";
 import type { BfGid } from "packages/bfDb/classes/BfNodeIds.ts";
-import { BfErrorNotImplemented } from "packages/BfError.ts";
 import { getLogger } from "packages/logger.ts";
 
 const _logger = getLogger(import.meta);
@@ -38,19 +34,6 @@ export class BfBlog extends BfNodeBase<BfBlogProps> {
       bfGid: id,
     }) as InstanceType<TThis>;
     return Promise.resolve(nextItem);
-  }
-
-  static override query<
-    TProps extends BfNodeBaseProps,
-    T extends BfNodeBase<TProps>,
-  >(
-    _cv: BfCurrentViewer,
-    _metadata: BfMetadataBase,
-    _props: TProps,
-    _bfGids: Array<BfGid>,
-    _cache?: BfNodeCache,
-  ): Promise<Array<T>> {
-    throw new BfErrorNotImplemented();
   }
 
   override save() {
