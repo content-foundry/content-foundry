@@ -20,16 +20,15 @@ export type BfMetadataBase = {
 };
 
 export type BfNodeCache<
-  TProps extends BfNodeBaseProps = DefaultProps,
+  TProps extends BfNodeBaseProps = BfNodeBaseProps,
   T extends typeof BfNodeBase<TProps> = typeof BfNodeBase,
 > = Map<
   BfGid | string,
   InstanceType<T>
 >;
-type DefaultProps = Record<string, never>;
 
 export class BfNodeBase<
-  TProps extends BfNodeBaseProps = DefaultProps,
+  TProps extends BfNodeBaseProps = BfNodeBaseProps,
   TMetadata extends BfMetadataBase = BfMetadataBase,
 > {
   __typename = this.constructor.name;
@@ -205,6 +204,26 @@ export class BfNodeBase<
     _props: TProps,
     _metadata?: BfMetadataBase,
   ): Promise<InstanceType<TBfClass>> {
+    throw new BfErrorNotImplemented();
+  }
+
+  querySources<
+    TSourceProps extends BfNodeBaseProps,
+    TSourceClass extends typeof BfNodeBase<TSourceProps>,
+  >(
+    _SourceClass: TSourceClass,
+    _props?: Partial<TSourceProps>,
+  ): Promise<Array<InstanceType<TSourceClass>>> {
+    throw new BfErrorNotImplemented();
+  }
+
+  queryTargets<
+    TTargetProps extends BfNodeBaseProps,
+    TTargetClass extends typeof BfNodeBase<TTargetProps>,
+  >(
+    _TargetClass: TTargetClass,
+    _props?: Partial<TTargetProps>,
+  ): Promise<Array<InstanceType<TTargetClass>>> {
     throw new BfErrorNotImplemented();
   }
 
