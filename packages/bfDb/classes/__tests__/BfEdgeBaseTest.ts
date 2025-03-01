@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import type { BfEdgeBase } from "packages/bfDb/classes/BfEdgeBase.ts";
 import { BfCurrentViewer } from "packages/bfDb/classes/BfCurrentViewer.ts";
-
 import { BfNodeBase } from "packages/bfDb/classes/BfNodeBase.ts";
 
 type MockBfNodeProps = {
