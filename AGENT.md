@@ -547,7 +547,8 @@ To get started with Content Foundry development:
 - Format: `bff format` (alias: `bff f`)
 - Type check: `bff check [file_path]`
 - Test all: `bff test`
-- Run single test: `deno test -A path/to/test/file.test.ts`
+- Run single test: `bff t path/to/test/file.test.ts` (shorthand for
+  `deno test -A path/to/test/file.test.ts`)
 - Development environment: `bff devTools`
 - Full CI check: `bff ci` (combines format, lint, check, test, build)
 
